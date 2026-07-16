@@ -394,7 +394,7 @@ body:not(.admin-mode) tbody tr{cursor:default}
 </div>
 <div class="share-preparing" id="sharePreparing"><div class="share-preparing-box"><span class="share-spinner"></span><span>جارٍ تجهيز الصورة…</span></div></div>
 <script id="v16-app" type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, inMemoryPersistence } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import { getDatabase, ref, onValue, set, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -414,7 +414,10 @@ const auth=getAuth(firebaseApp);
 const db=getDatabase(firebaseApp);
 const PUBLIC_REF=ref(db,"public/trip");
 const SPONSORS_REF=ref(db,"admin/sponsors");
-setPersistence(auth,browserLocalPersistence).catch(()=>{});
+// تبدأ الصفحة دائمًا بوضع المشاهدة العام. دخول الإدارة يستمر فقط في التبويب الحالي وحتى إعادة تحميل الصفحة.
+const authInit=setPersistence(auth,inMemoryPersistence)
+  .then(()=>signOut(auth))
+  .catch(err=>console.warn("تعذر تهيئة جلسة الإدارة",err));
 let isAdmin=false;
 let firebaseSaveTimer=null;
 let sponsorsUnsubscribe=null;
@@ -535,7 +538,9 @@ function closeAdminLogin(){adminLoginModal.classList.remove("open");adminLoginMo
 async function submitAdminLogin(){const pin=adminPinInput.value.trim();if(pin.length!==6){adminLoginError.textContent="أدخل رمز الإدارة المكون من 6 أرقام";return}const submit=document.getElementById("adminLoginSubmit");submit.disabled=true;submit.textContent="جاري الدخول…";adminLoginError.textContent="";try{const credential=await signInWithEmailAndPassword(auth,ADMIN_EMAIL,pin);if(credential.user.uid!==ADMIN_UID){await signOut(auth);throw new Error("unauthorized")}closeAdminLogin();toast("تم فتح وضع الإدارة")}catch(err){console.error(err);adminLoginError.textContent="رمز الإدارة غير صحيح"}finally{submit.disabled=false;submit.textContent="دخول"}}
 document.getElementById("adminAccessBtn")?.addEventListener("click",async()=>{if(isAdmin){await signOut(auth);toast("تم الخروج من الإدارة")}else openAdminLogin()});
 document.getElementById("adminLoginClose")?.addEventListener("click",closeAdminLogin);adminLoginModal?.addEventListener("click",e=>{if(e.target===adminLoginModal)closeAdminLogin()});document.getElementById("adminLoginSubmit")?.addEventListener("click",submitAdminLogin);adminPinInput?.addEventListener("keydown",e=>{if(e.key==="Enter")submitAdminLogin()});
-onAuthStateChanged(auth,async user=>{isAdmin=Boolean(user&&user.uid===ADMIN_UID);if(user&&!isAdmin)await signOut(auth);applyAdminMode();startSponsorsSync();if(isAdmin)await seedFirebaseIfEmpty()});
+authInit.finally(()=>{
+  onAuthStateChanged(auth,async user=>{isAdmin=Boolean(user&&user.uid===ADMIN_UID);if(user&&!isAdmin)await signOut(auth);applyAdminMode();startSponsorsSync();if(isAdmin)await seedFirebaseIfEmpty()});
+});
 startPublicSync();
 
 function weatherInfo(code){if(code===0)return['☀️','صحو'];if([1,2].includes(code))return['🌤️','غائم جزئيًا'];if(code===3)return['☁️','غائم'];if([45,48].includes(code))return['🌫️','ضباب'];if([51,53,55,56,57].includes(code))return['🌦️','رذاذ'];if([61,63,65,66,67,80,81,82].includes(code))return['🌧️','أمطار متفرقة'];if([71,73,75,77,85,86].includes(code))return['🌨️','ثلوج'];if([95,96,99].includes(code))return['⛈️','عواصف رعدية'];return['🌥️','متغير']}
