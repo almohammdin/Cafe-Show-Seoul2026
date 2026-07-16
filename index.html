@@ -255,7 +255,7 @@ body{scroll-behavior:smooth}.nav a{display:inline-flex!important;align-items:cen
 @keyframes shareSpin{to{transform:rotate(360deg)}}
 @media(max-width:640px){.share-preview-modal .modal-actions .btn{flex:1 1 42%}.share-preview-body{padding:10px}}
 </style><style id="v20-firebase-admin-style">
-/* v20 — مزامنة Firebase ووضع الإدارة */
+/* v23 — إصلاح نافذة دخول الإدارة ومزامنة Firebase */
 .last-updated{margin-top:5px;color:rgba(255,255,255,.78);font-size:12px;font-weight:600}
 .admin-section[hidden]{display:none!important}
 body:not(.admin-mode) .add-btn,
@@ -406,6 +406,37 @@ body.admin-mode .admin-mode-badge:not([hidden]){display:inline-flex!important}
 </div>
 </div>
 <div class="share-preparing" id="sharePreparing"><div class="share-preparing-box"><span class="share-spinner"></span><span>جارٍ تجهيز الصورة…</span></div></div>
+<script id="admin-ui-bootstrap">
+(function(){
+  const backdrop=document.getElementById('editorModal');
+  const login=document.getElementById('adminLoginModal');
+  const button=document.getElementById('adminAccessBtn');
+  const closeButton=document.getElementById('adminLoginClose');
+  const editor=backdrop?[...backdrop.children].find(el=>el.classList.contains('modal')&&el.id!=='adminLoginModal'):null;
+  function openLoginUI(){
+    if(!backdrop||!login||document.body.classList.contains('admin-mode'))return;
+    backdrop.dataset.mode='admin';
+    if(editor)editor.hidden=true;
+    login.hidden=false;
+    login.setAttribute('aria-hidden','false');
+    backdrop.classList.add('open');
+    setTimeout(()=>document.getElementById('adminPinInput')?.focus(),60);
+  }
+  function closeLoginUI(){
+    if(!backdrop||!login)return;
+    backdrop.classList.remove('open');
+    backdrop.dataset.mode='';
+    login.hidden=true;
+    login.setAttribute('aria-hidden','true');
+    if(editor)editor.hidden=false;
+  }
+  window.__openAdminLoginUI=openLoginUI;
+  window.__closeAdminLoginUI=closeLoginUI;
+  button?.addEventListener('click',()=>{if(!document.body.classList.contains('admin-mode'))openLoginUI()});
+  closeButton?.addEventListener('click',closeLoginUI);
+  backdrop?.addEventListener('click',e=>{if(e.target===backdrop&&backdrop.dataset.mode==='admin')closeLoginUI()});
+})();
+</script>
 <script id="v16-app" type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, setPersistence, inMemoryPersistence } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import { getDatabase, ref, onValue, set, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
@@ -479,13 +510,13 @@ function renderSuggestionFilters(){const sel=document.getElementById('suggestion
 function renderSponsors(){const section=document.getElementById('sponsors'),body=document.getElementById('sponsorBody');if(section)section.hidden=!isAdmin;if(!body||!isAdmin)return;body.innerHTML=state.sponsors.map((r,i)=>`<tr data-edit="sponsors" data-index="${i}"><td class="row-index">${i+1}</td><td><strong>${esc(r.entity||'—')}</strong></td><td>${esc(r.contact||'—')}</td><td>${esc(r.interest||'—')}</td><td>${esc(r.approach||'—')}</td><td>${esc(r.status||'—')}</td><td>${editButton('sponsors',i)}</td></tr>`).join('');ensureHeaderNumber(document.querySelector('#sponsors table'))}
 function renderExportCategories(){const sel=document.getElementById('programExportCategory');if(!sel)return;const v=sel.value;const cats=[...new Set(state.program.map(x=>x.category).filter(Boolean))];sel.innerHTML='<option value="">كل فئات النشاط</option>'+cats.map(c=>`<option ${c===v?'selected':''}>${esc(c)}</option>`).join('')}
 function renderAll(){renderLegend();renderProgram();renderFlights();renderLodging();renderSuggestionFilters();renderSuggestions();renderSponsors();renderExportCategories()}
-const modal=document.getElementById('editorModal'),fieldsHost=document.getElementById('modalFields');let editCtx=null;
+const modal=document.getElementById('editorModal'),fieldsHost=document.getElementById('modalFields'),dataEditorDialog=[...document.getElementById('editorModal').children].find(el=>el.classList.contains('modal')&&el.id!=='adminLoginModal');let editCtx=null;
 function defaultRow(type,prefill={}){const base={program:{category:'أخرى',date:DAYS[0],time:'',title:'',details:'',place:'',maps:'',owner:'',status:'مقترح'},suggestions:{category:'نشاط معرفي',title:'',description:'',dates:[],time:'',place:'',site:'',maps:'',owner:'',status:'مقترح'},flights:{origin:'',airline:'',departDate:'',firstFlight:'',hubArrival:'',seoulFlight:'',seoulArrival:'',notes:'',status:'مقترح'},lodging:{name:'',maps:'',reason:''},sponsors:{entity:'',contact:'',interest:'',approach:'',status:''}}[type];return {...base,...prefill}}
-function openEditor(type,index=null,prefill={}){editCtx={type,index};const schema=SCHEMAS[type];if(!schema)return;const row=index===null?defaultRow(type,prefill):clone(state[type][index]);document.getElementById('modalTitle').textContent=(index===null?'إضافة ':'تعديل ')+schema.title;fieldsHost.innerHTML=schema.fields.map(([key,label,kind,opts])=>{const v=row[key]??'';if(kind==='textarea')return `<div class="field full"><label>${label}</label><textarea data-modal-field="${key}">${esc(v)}</textarea></div>`;if(kind==='select')return `<div class="field"><label>${label}</label><select data-modal-field="${key}">${opts.map(o=>`<option value="${esc(o)}" ${String(v)===String(o)?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`;if(kind==='multiday')return `<div class="field full"><label>${label}</label><div class="multi-day-grid" data-multiday="${key}">${opts.map(d=>`<label class="multi-day-option"><input type="checkbox" value="${esc(d)}" ${safeArray(v).includes(d)?'checked':''}>${esc(d)}</label>`).join('')}</div></div>`;return `<div class="field ${kind==='url'?'full':''}"><label>${label}</label><input type="text" data-modal-field="${key}" value="${esc(v)}" dir="auto"></div>`}).join('');document.getElementById('modalDelete').style.display=index===null?'none':'block';modal.dataset.row=JSON.stringify(row);modal.classList.add('open')}
-function closeModal(){modal.classList.remove('open');editCtx=null}
+function openEditor(type,index=null,prefill={}){editCtx={type,index};const schema=SCHEMAS[type];if(!schema)return;const row=index===null?defaultRow(type,prefill):clone(state[type][index]);document.getElementById('modalTitle').textContent=(index===null?'إضافة ':'تعديل ')+schema.title;fieldsHost.innerHTML=schema.fields.map(([key,label,kind,opts])=>{const v=row[key]??'';if(kind==='textarea')return `<div class="field full"><label>${label}</label><textarea data-modal-field="${key}">${esc(v)}</textarea></div>`;if(kind==='select')return `<div class="field"><label>${label}</label><select data-modal-field="${key}">${opts.map(o=>`<option value="${esc(o)}" ${String(v)===String(o)?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`;if(kind==='multiday')return `<div class="field full"><label>${label}</label><div class="multi-day-grid" data-multiday="${key}">${opts.map(d=>`<label class="multi-day-option"><input type="checkbox" value="${esc(d)}" ${safeArray(v).includes(d)?'checked':''}>${esc(d)}</label>`).join('')}</div></div>`;return `<div class="field ${kind==='url'?'full':''}"><label>${label}</label><input type="text" data-modal-field="${key}" value="${esc(v)}" dir="auto"></div>`}).join('');document.getElementById('modalDelete').style.display=index===null?'none':'block';modal.dataset.row=JSON.stringify(row);modal.dataset.mode='editor';if(document.getElementById('adminLoginModal'))document.getElementById('adminLoginModal').hidden=true;if(dataEditorDialog)dataEditorDialog.hidden=false;modal.classList.add('open')}
+function closeModal(){modal.classList.remove('open');modal.dataset.mode='';if(dataEditorDialog)dataEditorDialog.hidden=false;const login=document.getElementById('adminLoginModal');if(login)login.hidden=true;editCtx=null}
 function collectModal(){const row=JSON.parse(modal.dataset.row||'{}');fieldsHost.querySelectorAll('[data-modal-field]').forEach(el=>row[el.dataset.modalField]=el.value);fieldsHost.querySelectorAll('[data-multiday]').forEach(box=>row[box.dataset.multiday]=[...box.querySelectorAll('input:checked')].map(x=>x.value));return row}
 document.addEventListener('click',e=>{const add=e.target.closest('[data-add]');if(add){if(!isAdmin){openAdminLogin();return}openEditor(add.dataset.add,null,add.dataset.date?{date:add.dataset.date}:{});return}const edit=e.target.closest('[data-edit]');if(edit&&!e.target.closest('a')){if(!isAdmin)return;openEditor(edit.dataset.edit,Number(edit.dataset.index));return}});
-document.getElementById('modalClose').onclick=closeModal;document.getElementById('modalCancel').onclick=closeModal;modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});document.getElementById('modalSave').onclick=()=>{if(!isAdmin||!editCtx)return;const {type,index}=editCtx,row=collectModal();if(index===null)state[type].push(row);else state[type][index]=row;save();renderAll();closeModal()};document.getElementById('modalDelete').onclick=()=>{if(!isAdmin||!editCtx||editCtx.index===null)return;if(!confirm('حذف هذا الصف؟'))return;state[editCtx.type].splice(editCtx.index,1);save();renderAll();closeModal()};
+document.getElementById('modalClose').onclick=closeModal;document.getElementById('modalCancel').onclick=closeModal;modal.addEventListener('click',e=>{if(e.target===modal){if(modal.dataset.mode==='admin')closeAdminLogin();else closeModal()}});document.getElementById('modalSave').onclick=()=>{if(!isAdmin||!editCtx)return;const {type,index}=editCtx,row=collectModal();if(index===null)state[type].push(row);else state[type][index]=row;save();renderAll();closeModal()};document.getElementById('modalDelete').onclick=()=>{if(!isAdmin||!editCtx||editCtx.index===null)return;if(!confirm('حذف هذا الصف؟'))return;state[editCtx.type].splice(editCtx.index,1);save();renderAll();closeModal()};
 const transferModal=document.getElementById('transferModal');let transferIndex=null;
 function openTransfer(i){if(!isAdmin){openAdminLogin();return}transferIndex=i;const r=state.suggestions[i];document.getElementById('transferSummary').innerHTML=`<strong>${esc(r.title)}</strong><div class="muted">${esc(r.category)}</div>`;document.getElementById('transferDays').innerHTML=DAYS.map(d=>`<label class="multi-day-option"><input type="checkbox" value="${d}" ${safeArray(r.dates).includes(d)?'checked':''}>${d}</label>`).join('');document.getElementById('transferTime').value=r.time||'';document.getElementById('transferStatus').value=['مقترح','قيد التواصل','معتمد'].includes(r.status)?r.status:'مقترح';transferModal.classList.add('open')}
 function closeTransfer(){transferModal.classList.remove('open');transferIndex=null}
@@ -562,8 +593,9 @@ function startPublicSync(){onValue(PUBLIC_REF,snapshot=>{const remote=snapshot.v
 function startSponsorsSync(){if(sponsorsUnsubscribe){sponsorsUnsubscribe();sponsorsUnsubscribe=null}if(!isAdmin)return;sponsorsUnsubscribe=onValue(SPONSORS_REF,snapshot=>{if(snapshot.exists()){state.sponsors=safeArray(snapshot.val());localStorage.setItem(STORAGE_KEY,JSON.stringify(state));renderSponsors()}else{set(SPONSORS_REF,safeArray(state.sponsors)).catch(console.error)}},err=>console.error(err))}
 async function seedFirebaseIfEmpty(){if(!isAdmin)return;try{const snap=await get(PUBLIC_REF);if(!snap.exists())await persistToFirebase()}catch(err){console.error(err)}}
 const adminLoginModal=document.getElementById("adminLoginModal"),adminPinInput=document.getElementById("adminPinInput"),adminLoginError=document.getElementById("adminLoginError");
-function openAdminLogin(){if(isAdmin)return;adminLoginError.textContent="";adminPinInput.value="";adminLoginModal.classList.add("open");adminLoginModal.setAttribute("aria-hidden","false");setTimeout(()=>adminPinInput.focus(),80)}
-function closeAdminLogin(){adminLoginModal.classList.remove("open");adminLoginModal.setAttribute("aria-hidden","true");adminLoginError.textContent=""}
+if(adminLoginModal)adminLoginModal.hidden=true;
+function openAdminLogin(){if(isAdmin)return;adminLoginError.textContent="";adminPinInput.value="";if(window.__openAdminLoginUI)window.__openAdminLoginUI();else{modal.dataset.mode="admin";if(dataEditorDialog)dataEditorDialog.hidden=true;adminLoginModal.hidden=false;adminLoginModal.setAttribute("aria-hidden","false");modal.classList.add("open")}setTimeout(()=>adminPinInput.focus(),80)}
+function closeAdminLogin(){if(window.__closeAdminLoginUI)window.__closeAdminLoginUI();else{modal.classList.remove("open");modal.dataset.mode="";adminLoginModal.hidden=true;adminLoginModal.setAttribute("aria-hidden","true");if(dataEditorDialog)dataEditorDialog.hidden=false}adminLoginError.textContent=""}
 async function submitAdminLogin(){
   const pin=adminPinInput.value.trim();
   if(pin.length!==6){adminLoginError.textContent="أدخل رمز الإدارة المكون من 6 أرقام";return}
@@ -594,7 +626,7 @@ document.getElementById("adminAccessBtn")?.addEventListener("click",async()=>{
   try{await signOut(auth)}catch(err){console.error(err)}
   toast("تم الخروج من وضع الإدارة")
 });
-document.getElementById("adminLoginClose")?.addEventListener("click",closeAdminLogin);adminLoginModal?.addEventListener("click",e=>{if(e.target===adminLoginModal)closeAdminLogin()});document.getElementById("adminLoginSubmit")?.addEventListener("click",submitAdminLogin);adminPinInput?.addEventListener("keydown",e=>{if(e.key==="Enter")submitAdminLogin()});
+document.getElementById("adminLoginSubmit")?.addEventListener("click",submitAdminLogin);adminPinInput?.addEventListener("keydown",e=>{if(e.key==="Enter")submitAdminLogin()});
 // تثبيت وضع المشاهدة الآن؛ اكتمال Firebase لا يفتح الإدارة تلقائيًا بأي حال.
 applyAdminMode();
 authInit.catch(()=>{});
