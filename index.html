@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 
+<!-- Cafe Show Seoul 2026 — Firebase UI v27 -->
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="utf-8"/>
@@ -350,6 +351,107 @@ body.admin-mode .admin-mode-badge:not([hidden]){display:inline-flex!important}
 @media(max-width:1050px){.program-featured .event-row{grid-template-columns:82px 66px 1fr!important}.program-featured .event-row .event-details,.program-featured .event-row .event-place,.program-row-actions{grid-column:2/-1}.program-row-actions{justify-content:flex-start;min-width:0}}
 @media(max-width:700px){.program-featured .event-row{grid-template-columns:1fr!important}.program-featured .event-row>*{grid-column:auto!important}.program-row-actions{width:100%;justify-content:flex-start}.program-action span{display:inline}.compact-service-btn,.program-action,.edit-btn,.add-btn,.transfer-btn,.day-share,.share-action{font-size:10.5px!important;padding:5px 8px!important}}
 </style>
+
+<style id="v27-filter-admin-refinements">
+/* فلاتر البرنامج: شارات صغيرة ومسطحة، بلا بطاقة داخل بطاقة */
+.program-featured .legend{
+  gap:5px!important;
+  margin:12px 0 12px!important;
+  padding:0!important;
+}
+.program-featured .legend .program-filter-btn{
+  min-height:27px!important;
+  padding:4px 8px!important;
+  gap:5px!important;
+  border-radius:7px!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  background:rgba(255,255,255,.065)!important;
+  color:rgba(255,255,255,.92)!important;
+  font-size:10.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.program-featured .legend .program-filter-btn:hover{
+  background:rgba(255,255,255,.12)!important;
+  border-color:rgba(255,255,255,.23)!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.program-featured .legend .program-filter-btn.active{
+  background:#f2d88f!important;
+  color:#102f52!important;
+  border-color:#f2d88f!important;
+  box-shadow:none!important;
+}
+/* إلغاء تنسيق الشارة الموروث عن .legend span، وهو سبب مظهر البطاقة داخل البطاقة */
+.program-featured .legend .program-filter-btn > span,
+.program-featured .legend .program-filter-btn .filter-label{
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  line-height:1!important;
+  box-shadow:none!important;
+}
+.program-featured .legend .program-filter-btn > i{
+  width:6px!important;
+  height:6px!important;
+  min-width:6px!important;
+  border-radius:50%!important;
+  background:var(--dot)!important;
+}
+.program-featured .legend .program-filter-btn > .filter-all-icon{
+  width:10px!important;
+  height:10px!important;
+  min-width:10px!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,3px)!important;
+  grid-template-rows:repeat(2,3px)!important;
+  gap:2px!important;
+  place-content:center!important;
+}
+.program-featured .legend .filter-all-icon b{
+  display:block;
+  width:3px;
+  height:3px;
+  border-radius:1px;
+  background:currentColor;
+}
+/* زر المشاركة الرئيسي بنفس لغة الأيقونات الصغيرة */
+#shareProgramAll .ui-action-icon{
+  width:13px!important;
+  height:13px!important;
+  min-width:13px!important;
+}
+/* إبقاء الخروج من الإدارة متاحًا طوال التصفح */
+body.admin-mode #adminAccessBtn{
+  position:fixed!important;
+  left:16px!important;
+  bottom:max(16px,env(safe-area-inset-bottom))!important;
+  z-index:99990!important;
+  margin:0!important;
+  min-height:36px!important;
+  padding:7px 13px!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+  background:#8f2135!important;
+  color:#fff!important;
+  box-shadow:0 10px 28px rgba(39,12,20,.28)!important;
+}
+body.admin-mode #adminAccessBtn:hover{background:#771a2b!important}
+@media(max-width:700px){
+  .program-featured .legend{gap:4px!important;margin:10px 0!important}
+  .program-featured .legend .program-filter-btn{min-height:25px!important;padding:4px 7px!important;font-size:10px!important}
+  body.admin-mode #adminAccessBtn{left:10px!important;bottom:max(10px,env(safe-area-inset-bottom))!important;font-size:10.5px!important;padding:6px 10px!important;min-height:33px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="ribbon"></div>
@@ -395,7 +497,7 @@ body.admin-mode .admin-mode-badge:not([hidden]){display:inline-flex!important}
 <div class="look"><h3>المقاهي والمطاعم</h3><p>مظهر يومي مرتب (Casual) مع جاكيت خفيف أو متوسط.</p></div>
 <div class="look"><h3>الزيارات الرسمية</h3><p>عمل رسمي (Business Formal) بحسب مستوى الجهة والاجتماع.</p></div>
 </div>
-<div class="wardrobe-note"><strong>ملاحظة عامة:</strong> يفضل حمل معطف متوسط، وجاكيت يمكن نزعه داخل الأماكن المدفأة، ومظلة صغيرة، وحذاء مريح مقاوم للمطر. للزيارات الرسمية يضاف جاكيت رسمي، وتكون ربطة العنق بحسب مستوى الاجتماع.</div>
+<div class="wardrobe-note">يفضل حمل معطف متوسط، وجاكيت يمكن نزعه داخل الأماكن المدفأة، ومظلة صغيرة، وحذاء مريح مقاوم للمطر. للزيارات الرسمية يضاف جاكيت رسمي، وتكون ربطة العنق بحسب مستوى الاجتماع.</div>
 </div>
 <div class="live-weather-widget">
 <div class="live-weather-title"><div><span class="live-dot"></span><strong id="liveWeatherHeading">توقعات الطقس خلال الرحلة</strong><small id="liveWeatherSubtitle">10–15 نوفمبر 2026</small></div></div>
@@ -407,7 +509,7 @@ body.admin-mode .admin-mode-badge:not([hidden]){display:inline-flex!important}
 <section id="lodging"><div class="section-head"><h2>الفنادق المقترحة</h2><button class="add-btn" data-add="lodging">إضافة خيار</button></div><div class="table-wrap"><table><thead><tr><th>السكن</th><th>Google Maps</th><th>ملاحظة</th><th></th></tr></thead><tbody id="lodgingBody"></tbody></table></div></section><section class="program-featured" id="program">
 <div class="program-featured-head">
 <div><h2>برنامج الرحلة</h2><div class="last-updated" id="lastUpdatedText">آخر تحديث: جاري الاتصال</div></div>
-<div class="section-actions program-export-actions"><button class="share-action" id="shareProgramAll" type="button"><span>مشاركة</span></button></div>
+<div class="section-actions program-export-actions"><button class="share-action" id="shareProgramAll" type="button"><svg class="ui-action-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"></path></svg><span>مشاركة</span></button></div>
 </div>
 <div class="legend" id="programLegend"></div>
 <div class="day-grid" id="programDays"></div>
@@ -428,7 +530,7 @@ body.admin-mode .admin-mode-badge:not([hidden]){display:inline-flex!important}
       <div class="ref-2025-stat"><strong>35</strong><span>دولة مشاركة</span></div>
       <div class="ref-2025-stat"><strong><span dir="ltr">37,791 m²</span></strong><span>في مركز COEX</span></div>
     </div>
-    <div class="ref-2025-theme"><span>هوية النسخة</span><strong dir="ltr">One Cup, All Worlds</strong></div>
+    <div class="ref-2025-theme"><span>هوية النسخة السابقة</span><strong dir="ltr">One Cup, All Worlds</strong></div>
     <div class="source-links ref-2025-links"><a href="https://eng.cafeshow.com/eng/cafeshow/result2025.asp" target="_blank">نتائج نسخة 2025</a><a href="https://eng.cafeshow.com/eng/brochure/CafeShow2025_Show%20Report.pdf" target="_blank">تقرير النسخة PDF</a><a href="https://eng.cafeshow.com/eng/" target="_blank">موقع المعرض</a></div>
   </div>
 </div>
@@ -560,7 +662,7 @@ function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));if(isAdm
 function toast(msg){let t=document.querySelector('.status-toast');if(!t){t=document.createElement('div');t.className='status-toast';document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 let activeProgramCategory='';
 const PROGRAM_FILTER_CATEGORIES=CATEGORIES.filter(c=>c!=='أخرى');
-function renderLegend(){const el=document.getElementById('programLegend');if(!el)return;const items=['',...PROGRAM_FILTER_CATEGORIES];el.innerHTML=items.map(c=>{const isAll=!c;const active=c===activeProgramCategory;const icon=isAll?`<span class="filter-all-icon">${actionIcon('grid')}</span>`:`<i style="--dot:${CATEGORY_COLORS[c]||'#708090'}"></i>`;return `<button type="button" class="program-filter-btn ${isAll?'filter-all':''} ${active?'active':''}" data-program-filter="${esc(c)}" aria-pressed="${active?'true':'false'}" aria-label="${isAll?'عرض جميع الأنشطة':`عرض تصنيف ${esc(c)}`}">${icon}<span class="filter-label">${isAll?'الكل':esc(c)}</span></button>`}).join('');el.querySelectorAll('[data-program-filter]').forEach(btn=>btn.addEventListener('click',e=>{e.preventDefault();activeProgramCategory=btn.dataset.programFilter||'';renderLegend();renderProgram()}))}
+function renderLegend(){const el=document.getElementById('programLegend');if(!el)return;const items=['',...PROGRAM_FILTER_CATEGORIES];el.innerHTML=items.map(c=>{const isAll=!c;const active=c===activeProgramCategory;const icon=isAll?`<span class="filter-all-icon" aria-hidden="true"><b></b><b></b><b></b><b></b></span>`:`<i style="--dot:${CATEGORY_COLORS[c]||'#708090'}"></i>`;return `<button type="button" class="program-filter-btn ${isAll?'filter-all':''} ${active?'active':''}" data-program-filter="${esc(c)}" aria-pressed="${active?'true':'false'}" aria-label="${isAll?'عرض جميع الأنشطة':`عرض تصنيف ${esc(c)}`}">${icon}<span class="filter-label">${isAll?'الكل':esc(c)}</span></button>`}).join('');el.querySelectorAll('[data-program-filter]').forEach(btn=>btn.addEventListener('click',e=>{e.preventDefault();activeProgramCategory=btn.dataset.programFilter||'';renderLegend();renderProgram()}))}
 function renderProgram(){const host=document.getElementById('programDays');if(!host)return;const dayCards=DAYS.map(day=>{const rows=state.program.map((r,i)=>({r,i})).filter(x=>x.r.date===day&&(!activeProgramCategory||x.r.category===activeProgramCategory));if(activeProgramCategory&&!rows.length)return'';return `<div class="day-card"><div class="day-head"><h3>${day}</h3><div class="day-actions"><button type="button" class="day-share compact-service-btn" data-share-day="${day}" ${rows.length?'':'disabled'}>${actionIcon('share')}<span>مشاركة اليوم</span></button>${isAdmin?`<button class="add-btn compact-service-btn" data-add="program" data-date="${day}" type="button">${actionIcon('plus')}<span>إضافة بند</span></button>`:''}</div></div><div class="events">${rows.length?rows.map(({r,i})=>`<div class="event-row ${catClass(r.category)}" data-edit="program" data-index="${i}"><span class="cat-chip">${esc(r.category)}</span><span class="event-time">${esc(r.time||'—')}</span><span class="event-title">${esc(r.title)}</span><span class="event-details">${esc(r.details)}</span><span class="event-place">${r.maps?`<a href="${esc(r.maps)}" target="_blank">${esc(r.place||'الموقع')}</a>`:esc(r.place||'')}</span>${programRowActions(i)}</div>`).join(''):`<div class="muted empty-day">لم يُعتمد أي نشاط لهذا اليوم بعد.<br><small>اختر من جدول الأنشطة والزيارات المقترحة أو أضف بندًا مباشرة.</small></div>`}</div></div>`}).join('');host.innerHTML=dayCards||`<div class="muted empty-day" style="background:#fff;padding:28px;text-align:center;border-radius:18px">لا توجد أنشطة ضمن تصنيف «${esc(activeProgramCategory)}» في برنامج الرحلة.</div>`;host.querySelectorAll('[data-share-day]').forEach(btn=>btn.addEventListener('click',()=>shareProgramImage([btn.dataset.shareDay],`جمعية-ملاك-المطاعم-والمقاهي-برنامج-${btn.dataset.shareDay}-سيئول-2026.png`,activeProgramCategory)))}
 function normalizedTitle(value){return String(value||'').trim().replace(/\s+/g,' ').toLowerCase()}
 function deleteProgramItem(index){if(!isAdmin)return;if(!Number.isInteger(index)||!state.program[index])return;if(!confirm('حذف هذا البند من برنامج الرحلة؟'))return;state.program.splice(index,1);save();renderAll();toast('تم حذف البند من البرنامج')}
@@ -584,7 +686,7 @@ document.getElementById('modalClose').onclick=closeModal;document.getElementById
 const transferModal=document.getElementById('transferModal');let transferIndex=null;
 function openTransfer(i){if(!isAdmin){openAdminLogin();return}transferIndex=i;const r=state.suggestions[i];document.getElementById('transferSummary').innerHTML=`<strong>${esc(r.title)}</strong><div class="muted">${esc(r.category)}</div>`;document.getElementById('transferDays').innerHTML=DAYS.map(d=>`<label class="multi-day-option"><input type="checkbox" value="${d}" ${safeArray(r.dates).includes(d)?'checked':''}>${d}</label>`).join('');document.getElementById('transferTime').value=r.time||'';document.getElementById('transferStatus').value=['مقترح','قيد التواصل','معتمد'].includes(r.status)?r.status:'مقترح';transferModal.classList.add('open')}
 function closeTransfer(){transferModal.classList.remove('open');transferIndex=null}
-document.getElementById('transferClose').onclick=closeTransfer;document.getElementById('transferCancel').onclick=closeTransfer;transferModal.addEventListener('click',e=>{if(e.target===transferModal)closeTransfer()});document.getElementById('transferConfirm').onclick=()=>{if(!isAdmin||transferIndex===null)return;const dates=[...document.querySelectorAll('#transferDays input:checked')].map(x=>x.value);if(!dates.length)return alert('اختر يومًا واحدًا على الأقل');const r=state.suggestions[transferIndex],time=document.getElementById('transferTime').value,status=document.getElementById('transferStatus').value;let added=0;dates.forEach(date=>{const duplicate=state.program.some(x=>x.date===date&&x.title===r.title);if(duplicate)return;state.program.push({category:r.category,date,time,title:r.title,details:r.description,place:r.place||r.title,maps:r.maps||'',owner:r.owner||'',status});added++});state.program.sort((a,b)=>DAYS.indexOf(a.date)-DAYS.indexOf(b.date)||String(a.time).localeCompare(String(b.time),'ar'));save();renderAll();closeTransfer();toast(added?`أضيف إلى ${added} يوم`:'البند موجود مسبقًا في الأيام المختارة')};
+document.getElementById('transferClose').onclick=closeTransfer;document.getElementById('transferCancel').onclick=closeTransfer;transferModal.addEventListener('click',e=>{if(e.target===transferModal)closeTransfer()});document.getElementById('transferConfirm').onclick=()=>{if(!isAdmin||transferIndex===null)return;const dates=[...document.querySelectorAll('#transferDays input:checked')].map(x=>x.value);if(!dates.length)return alert('اختر يومًا واحدًا على الأقل');const r=state.suggestions[transferIndex],time=document.getElementById('transferTime').value,status=document.getElementById('transferStatus').value;let added=0;dates.forEach(date=>{const duplicate=state.program.some(x=>x.date===date&&x.title===r.title);if(duplicate)return;state.program.push({category:r.category,date,time,title:r.title,details:r.description,place:r.place||r.title,maps:r.maps||'',owner:r.owner||'',status});added++});state.program.sort((a,b)=>DAYS.indexOf(a.date)-DAYS.indexOf(b.date)||String(a.time).localeCompare(String(b.time),'ar'));if(added>0){state.suggestions.splice(transferIndex,1)}save();renderAll();closeTransfer();toast(added?`نُقل إلى ${added} يوم وأزيل من المقترحات`:'البند موجود مسبقًا في الأيام المختارة')};
 
 function downloadBlob(blob,filename){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500)}
 function canvasRoundRect(ctx,x,y,w,h,r,fill,stroke){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke()}}
