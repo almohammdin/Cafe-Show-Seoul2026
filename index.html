@@ -291,6 +291,19 @@ body:not(.admin-mode) tbody tr{cursor:default}
 .live-day .day-name{font-size:13px!important}.live-day .day-date{font-size:10px!important;margin:1px 0 3px!important}.live-day .wicon{font-size:24px!important}.live-day .wdesc{font-size:10px!important;min-height:0!important}.live-day .temps{font-size:12px!important;margin-top:2px!important}.live-day .rain{font-size:9px!important;margin-top:0!important}
 @media(max-width:800px){.live-weather-days{grid-template-columns:repeat(3,minmax(0,1fr))!important}.live-day{min-height:132px}.admin-footer-controls{width:100%;justify-content:center;margin-inline-start:0}}
 @media(max-width:480px){.live-weather-days{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+<style id="v22-viewer-first-fix">
+/* الوضع العام هو الافتراضي بصورة قاطعة؛ خاصية hidden لا تتغلب عليها أي قاعدة تصميم أخرى. */
+[hidden]{display:none!important}
+body:not(.admin-mode) #sponsors,
+body:not(.admin-mode) .admin-mode-badge,
+body:not(.admin-mode) .add-btn,
+body:not(.admin-mode) .edit-btn,
+body:not(.admin-mode) .transfer-btn,
+body:not(.admin-mode) #exportBtn,
+body:not(.admin-mode) #resetBtn{display:none!important}
+body.admin-mode .admin-mode-badge:not([hidden]){display:inline-flex!important}
+</style>
 </style></head>
 <body>
 <div class="ribbon"></div>
@@ -394,7 +407,7 @@ body:not(.admin-mode) tbody tr{cursor:default}
 </div>
 <div class="share-preparing" id="sharePreparing"><div class="share-preparing-box"><span class="share-spinner"></span><span>جارٍ تجهيز الصورة…</span></div></div>
 <script id="v16-app" type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, inMemoryPersistence } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut, setPersistence, inMemoryPersistence } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import { getDatabase, ref, onValue, set, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -414,13 +427,20 @@ const auth=getAuth(firebaseApp);
 const db=getDatabase(firebaseApp);
 const PUBLIC_REF=ref(db,"public/trip");
 const SPONSORS_REF=ref(db,"admin/sponsors");
-// تبدأ الصفحة دائمًا بوضع المشاهدة العام. دخول الإدارة يستمر فقط في التبويب الحالي وحتى إعادة تحميل الصفحة.
-const authInit=setPersistence(auth,inMemoryPersistence)
-  .then(()=>signOut(auth))
-  .catch(err=>console.warn("تعذر تهيئة جلسة الإدارة",err));
+// يبدأ الموقع دائمًا بوضع المشاهدة العام، ولا يُفتح وضع الإدارة إلا بعد إدخال الرمز في التبويب الحالي.
 let isAdmin=false;
 let firebaseSaveTimer=null;
 let sponsorsUnsubscribe=null;
+// إغلاق واجهة الإدارة فورًا قبل أي اتصال شبكي أو استعادة جلسة.
+document.body.classList.remove("admin-mode");
+document.getElementById("sponsors")?.setAttribute("hidden","");
+document.getElementById("adminModeBadge")?.setAttribute("hidden","");
+const initialAdminButton=document.getElementById("adminAccessBtn");
+if(initialAdminButton) initialAdminButton.textContent="إدارة البرنامج";
+// ذاكرة الجلسة داخل التبويب فقط، مع تسجيل خروج صريح عند كل تحميل.
+const authInit=setPersistence(auth,inMemoryPersistence)
+  .then(async()=>{try{await signOut(auth)}catch(_e){}})
+  .catch(err=>console.warn("تعذر تهيئة جلسة الإدارة",err));
 
 
 const DEFAULT_STATE={"program":[],"suggestions":[{"category":"مواصلات","title":"الوصول والاستقبال","description":"الاستقبال في مطار إنشيون والانتقال إلى السكن بجوار مركز المعارض والمؤتمرات COEX، ثم لقاء تعارف وعشاء جماعي.","dates":["10 نوفمبر"],"time":"10:50","place":"مطار إنشيون / السكن","site":"","maps":"https://www.google.com/maps/search/?api=1&query=Incheon+International+Airport","owner":"فريق التنظيم","status":"مقترح"},{"category":"المعرض","title":"Cafe Show Seoul 2026","description":"زيارة المعرض، تقسيم المشاركين حسب الاهتمامات، لقاءات مع العارضين، وتوثيق الموردين والمنتجات والأفكار.","dates":["11 نوفمبر"],"time":"10:00","place":"COEX","site":"","maps":"https://www.google.com/maps/search/?api=1&query=COEX+Seoul","owner":"نايف المحمدي / علي الديواني","status":"مقترح"},{"category":"ورش عمل","title":"First Barista Academy","description":"جلسة التحميص والكبنق مع علي الديواني. خيار تدريبي محتمل لتوفير مختبر وقاعة خاصة للمجموعة. التجهيزات المطلوبة: قاعة تتسع لـ17 شخصًا، Sample Roaster، أدوات كبنق، مطاحن، غلايات، وأكواب تذوق.","dates":[],"time":"","place":"First Barista Academy","site":"","maps":"https://www.google.com/maps/search/?api=1&query=First+Barista+Academy+Seoul","owner":"علي الديواني","status":"للتواصل"},{"category":"ورش عمل","title":"Anthracite Coffee","description":"جلسة التحميص والكبنق مع علي الديواني. محمصة وعلامة معروفة ويمكن بحث استئجار مساحة خاصة داخل أحد مواقعها. التجهيزات المطلوبة: محمصة عينات، طاولات كبنق، عينات بن أخضر، ومكان مغلق للمجموعة.","dates":[],"time":"","place":"Anthracite Coffee","site":"https://anthracitecoffee.com/","maps":"https://www.google.com/maps/search/?api=1&query=Anthracite+Coffee+Seoul","owner":"علي الديواني","status":"للتواصل"},{"category":"ورش عمل","title":"SCA Korea / مركز تدريب معتمد","description":"جلسة التحميص والكبنق مع علي الديواني. مختبر احترافي وفق معايير التدريب والتذوق. التجهيزات المطلوبة: قاعة كاملة التجهيز للتحميص والكبنق تتسع لـ17 شخصًا.","dates":[],"time":"","place":"SCA Korea / مركز تدريب معتمد","site":"https://korea.sca.coffee/","maps":"https://www.google.com/maps/search/?api=1&query=SCA+Korea+Seoul","owner":"علي الديواني","status":"للتواصل"},{"category":"ورش عمل","title":"EDIYA Coffee Lab","description":"جلسة التحميص والكبنق مع علي الديواني. موقع مناسب لفهم البحث والتطوير في القهوة مع إمكانية طلب مساحة خاصة. التجهيزات المطلوبة: موافقة على استقبال الوفد وإتاحة قاعة أو مختبر ومعدات الجلسة.","dates":[],"time":"","place":"EDIYA Coffee Lab","site":"https://www.ediya.com/","maps":"https://www.google.com/maps/search/?api=1&query=EDIYA+Coffee+Lab+Seoul","owner":"علي الديواني","status":"للتواصل"},{"category":"زيارة رسمية","title":"السفارة السعودية في سيئول","description":"التعرف على العلاقات السعودية الكورية ودعم حضور الوفد وتيسير التواصل الرسمي عند الحاجة. المخرج المتوقع: إحاطة رسمية وقناة تنسيق للوفد.","dates":[],"time":"","place":"السفارة السعودية في سيئول","site":"https://embassies.mofa.gov.sa/sites/Korea/EN/Pages/default.aspx","maps":"https://www.google.com/maps/search/?api=1&query=Embassy+of+Saudi+Arabia+Seoul","owner":"","status":"للتواصل"},{"category":"زيارة رسمية","title":"الملحقية التجارية السعودية في سيئول","description":"تقديم إحاطة عن السوق الكوري، ودعم الوصول إلى الشركات والجهات التجارية ذات العلاقة بالقطاع. المخرج المتوقع: ترشيحات واتصالات عملية، وتوجيه الوفد إلى فرص التبادل التجاري والاستيراد والشراكات.","dates":[],"time":"","place":"الملحقية التجارية السعودية في سيئول","site":"https://gaft.gov.sa/en/knowledge-center/commercial-attaches/","maps":"https://www.google.com/maps/search/?api=1&query=Saudi+Commercial+Attache+Seoul","owner":"","status":"للتواصل"},{"category":"زيارة رسمية","title":"مجلس الأعمال السعودي الكوري","description":"ربط ملاك المطاعم والمقاهي بشركات ومستثمرين كوريين وبناء لقاء قطاعي مشترك. المخرج المتوقع: لقاء أعمال وفرص تعاون قابلة للمتابعة.","dates":[],"time":"","place":"مجلس الأعمال السعودي الكوري","site":"https://www.saudikoreabc.com/","maps":"","owner":"","status":"للتواصل"},{"category":"زيارة رسمية","title":"KOTRA","description":"الوصول إلى موردين وشركات كورية وترتيب لقاءات B2B وإحاطة عن السوق. المخرج المتوقع: قائمة شركات ولقاءات أعمال منظمة.","dates":[],"time":"","place":"KOTRA","site":"https://www.kotra.or.kr/english","maps":"https://www.google.com/maps/search/?api=1&query=KOTRA+Seoul","owner":"","status":"للتواصل"},{"category":"زيارة شركة","title":"Bear Robotics","description":"مشاهدة تطبيقات روبوتات الخدمة داخل المطاعم وتحليل ملاءمتها للسوق السعودي. المخرج المتوقع: فهم نموذج التشغيل والتكلفة والصيانة.","dates":[],"time":"","place":"Bear Robotics","site":"https://www.bearrobotics.ai/","maps":"https://www.google.com/maps/search/?api=1&query=Bear+Robotics+Seoul","owner":"","status":"مقترح"},{"category":"زيارة شركة","title":"LG Electronics / LG CLOi","description":"الاطلاع على حلول الروبوتات والأتمتة الموجهة للضيافة والمنشآت. المخرج المتوقع: تصور عملي لتقنيات الخدمة الذكية.","dates":[],"time":"","place":"LG Electronics / LG CLOi","site":"https://www.lg.com/global/business","maps":"https://www.google.com/maps/search/?api=1&query=LG+Sciencepark+Seoul","owner":"","status":"مقترح"},{"category":"زيارة شركة","title":"NAVER Cloud","description":"فهم استخدام الذكاء الاصطناعي في خدمة العملاء والتوصية وتحليل البيانات والمحتوى. المخرج المتوقع: أفكار قابلة للتطبيق في التسويق والتشغيل.","dates":[],"time":"","place":"NAVER Cloud","site":"https://www.ncloud.com/","maps":"https://www.google.com/maps/search/?api=1&query=NAVER+Cloud+Seoul","owner":"","status":"مقترح"},{"category":"زيارة شركة","title":"EDIYA Coffee","description":"دراسة إدارة شبكة واسعة من الفروع، توحيد الجودة، وسلسلة الإمداد. المخرج المتوقع: دروس تشغيلية في التوسع والامتياز.","dates":[],"time":"","place":"EDIYA Coffee","site":"https://www.ediya.com/","maps":"https://www.google.com/maps/search/?api=1&query=EDIYA+Coffee+Seoul","owner":"","status":"مقترح"},{"category":"زيارة شركة","title":"Mega MGC Coffee","description":"دراسة نموذج السعر المناسب والانتشار السريع وكفاءة المساحات والفروع. المخرج المتوقع: مقارنة نموذج التوسع مع السوق السعودي.","dates":[],"time":"","place":"Mega MGC Coffee","site":"https://www.mega-mgccoffee.com/","maps":"https://www.google.com/maps/search/?api=1&query=Mega+MGC+Coffee+Seoul","owner":"","status":"مقترح"},{"category":"مقهى","title":"Rain Report","description":"تجربة حسية وهوية مبنية على المطر، ومثال واضح على صناعة المكان القابل للتصوير والتسويق. التكلفة التقريبية: ₩8,000–18,000 تقريبًا","dates":[],"time":"","place":"Rain Report","site":"https://www.instagram.com/rainreport_official/","maps":"https://www.google.com/maps/search/?api=1&query=Rain+Report+Seoul","owner":"","status":"أساسي"},{"category":"مقهى","title":"Fritz Coffee Company","description":"دراسة علامة قهوة مختصة نجحت في المزج بين الهوية الكورية والمنتج والتجربة. التكلفة التقريبية: ₩6,000–15,000 تقريبًا","dates":[],"time":"","place":"Fritz Coffee Company","site":"https://fritz.co.kr/","maps":"https://www.google.com/maps/search/?api=1&query=Fritz+Coffee+Company+Seoul","owner":"","status":"أساسي"},{"category":"مقهى","title":"Cafe Onion Anguk","description":"تجربة تجمع مبنى تقليديًا مع تشغيل معاصر وخبز يقود حركة الزوار. التكلفة التقريبية: ₩10,000–20,000 تقريبًا","dates":[],"time":"","place":"Cafe Onion Anguk","site":"https://cafeonion.kr/","maps":"https://www.google.com/maps/search/?api=1&query=Cafe+Onion+Anguk+Seoul","owner":"","status":"مقترح"},{"category":"مطعم","title":"Noryangjin Fisheries Wholesale Market","description":"تجربة اختيار السمك الطازج وتجهيزه في مطاعم السوق، ومشاهدة نموذج تشغيل سوق متخصص. التكلفة التقريبية: حسب نوع السمك والطلبية","dates":[],"time":"","place":"Noryangjin Fisheries Wholesale Market","site":"https://www.susansijang.co.kr/","maps":"https://www.google.com/maps/search/?api=1&query=Noryangjin+Fisheries+Wholesale+Market","owner":"","status":"أساسي"},{"category":"مطعم","title":"Grand Samarkand Restaurant","description":"مطعم حلال مناسب للمجموعة وتجربة لمطبخ آسيا الوسطى في سيئول. التكلفة التقريبية: ₩15,000–35,000 تقريبًا","dates":[],"time":"","place":"Grand Samarkand Restaurant","site":"https://www.instagram.com/grand_samarkand_restaurant/","maps":"https://www.google.com/maps/search/?api=1&query=Grand+Samarkand+Restaurant+Seoul","owner":"","status":"مقترح"},{"category":"ثقافي","title":"Gyeongbokgung Palace","description":"مدخل رئيسي لفهم التاريخ والعمارة والثقافة الكورية. التكلفة التقريبية: نحو ₩3,000","dates":[],"time":"","place":"Gyeongbokgung Palace","site":"https://www.royalpalace.go.kr/","maps":"https://www.google.com/maps/search/?api=1&query=Gyeongbokgung+Palace","owner":"","status":"أساسي"},{"category":"ثقافي","title":"Seoul Central Mosque","description":"زيارة الجامع المركزي والتعرف على حضور المجتمع المسلم في كوريا. التكلفة التقريبية: مجاني","dates":[],"time":"","place":"Seoul Central Mosque","site":"http://www.koreaislam.org/","maps":"https://www.google.com/maps/search/?api=1&query=Seoul+Central+Mosque","owner":"","status":"أساسي"},{"category":"ثقافي","title":"Starfield Library – COEX","description":"محطة ثقافية خفيفة داخل COEX ويمكن زيارتها في يوم المعرض. التكلفة التقريبية: مجاني","dates":[],"time":"","place":"Starfield Library – COEX","site":"https://www.starfield.co.kr/coexmall/main/library.do","maps":"https://www.google.com/maps/search/?api=1&query=Starfield+Library+COEX","owner":"","status":"مقترح"},{"category":"نشاط معرفي","title":"لقاء الشيخ سليمان السيف","description":"لقاء مباشر عبر الاتصال المرئي أثناء وجود الوفد في سيئول، يروي فيه الشيخ سليمان السيف، مؤسس السيف غاليري، قصة رحلته إلى كوريا الجنوبية عام 1977م وما حملته من تجربة مبكرة في السوق الكوري. الاحتياجات: شاشة وصوت واتصال مستقر.","dates":["14 نوفمبر"],"time":"مساءً","place":"لقاء الشيخ سليمان السيف","site":"","maps":"","owner":"نايف المحمدي","status":"مقترح"},{"category":"نشاط معرفي","title":"مجلس الزملاء","description":"جلسة لتبادل تجارب ملاك المطاعم والمقاهي والتحديات والفرص مع مداخلة قصيرة لكل مشارك. الاحتياجات: قاعة اجتماعات.","dates":[],"time":"","place":"مجلس الزملاء","site":"","maps":"","owner":"ممثل الجمعية","status":"مقترح"},{"category":"تجربة","title":"تصميم عطر شخصي في GRANHAND Seochon","description":"زيارة علامة عطور كورية وتجربة اختيار أو تركيب رائحة شخصية وتخصيص العبوة باسم كل مشارك. تُطلب للمجموعة بصيغة خاصة حسب توفر الورشة. الاحتياجات: تأكيد استقبال 17 شخصًا، إمكانية تنظيم ورشة جماعية، والاتفاق على السعر. التكلفة: يطلب عرض جماعي","dates":["14 نوفمبر"],"time":"60–90 دقيقة","place":"تصميم عطر شخصي في GRANHAND Seochon","site":"https://en.granhand.com/","maps":"https://maps.app.goo.gl/MpAMeTEvuLZne6nt9","owner":"فريق التنظيم","status":"للتواصل"},{"category":"نشاط معرفي","title":"جلسة المخرجات","description":"جمع أبرز الملاحظات والموردين والأفكار والفرص وتحديد ما يستحق المتابعة بعد العودة. الاحتياجات: نموذج موحد للملاحظات وشاشة عرض.","dates":["14 نوفمبر"],"time":"قبل عشاء الوداع","place":"جلسة المخرجات","site":"","maps":"","owner":"فريق التنظيم","status":"مقترح"}],"flights":[{"origin":"جدة","airline":"طيران الإمارات","departDate":"9 نوفمبر 2026","firstFlight":"EK804 | جدة 20:10 → دبي 00:10 (+1)","hubArrival":"دبي 00:10 – 10 نوفمبر","seoulFlight":"EK322 | دبي 03:40 → سيئول 17:00","seoulArrival":"إنشيون 17:00 – 10 نوفمبر 2026","notes":"مدة الرحلة الإجمالية 14 ساعة و50 دقيقة، والتوقف في دبي 3 ساعات و30 دقيقة.","status":"أولوية أولى"},{"origin":"الرياض","airline":"طيران الإمارات","departDate":"9 نوفمبر 2026","firstFlight":"EK818 | الرياض 20:25 → دبي 23:35","hubArrival":"دبي 23:35","seoulFlight":"EK322 | دبي 03:40 → سيئول 17:00","seoulArrival":"إنشيون 17:00 – 10 نوفمبر 2026","notes":"مدة الرحلة الإجمالية 14 ساعة و35 دقيقة، والتوقف في دبي 4 ساعات و5 دقائق.","status":"أولوية أولى"},{"origin":"جدة","airline":"الاتحاد للطيران","departDate":"9 نوفمبر 2026","firstFlight":"EY616 | جدة 15:20 → أبوظبي 19:05","hubArrival":"أبوظبي 19:05","seoulFlight":"EY822 | أبوظبي 21:10 → سيئول 10:50 (+1)","seoulArrival":"إنشيون 10:50 – 10 نوفمبر 2026","notes":"الخيار الثاني المقترح.","status":"أولوية ثانية"},{"origin":"الرياض","airline":"الاتحاد للطيران","departDate":"9 نوفمبر 2026","firstFlight":"EY554 | الرياض 10:30 → أبوظبي 13:15","hubArrival":"أبوظبي 13:15","seoulFlight":"EY822 | أبوظبي 21:10 → سيئول 10:50 (+1)","seoulArrival":"إنشيون 10:50 – 10 نوفمبر 2026","notes":"الخيار الثاني المقترح.","status":"أولوية ثانية"}],"lodging":[{"name":"Oakwood Premier Coex Center Seoul","maps":"https://www.google.com/maps/search/?api=1&query=Oakwood+Premier+Coex+Center+Seoul","reason":"شقق فندقية فاخرة بجوار مركز المعارض والمؤتمرات COEX ومناسبة للوفود."},{"name":"Shilla Stay Samsung","maps":"https://www.google.com/maps/search/?api=1&query=Shilla+Stay+Samsung","reason":"فندق أعمال قريب من COEX."},{"name":"GLAD Gangnam COEX Center","maps":"https://www.google.com/maps/search/?api=1&query=GLAD+Gangnam+COEX+Center","reason":"خيار عملي قريب من المعرض ومحطة Samseong."}],"sponsors":[{"entity":"","contact":"","interest":"","approach":"","status":""}],"generalNotes":""};
@@ -527,7 +547,16 @@ document.getElementById('exportBtn').onclick=()=>{if(!isAdmin)return;downloadBlo
 
 function formatUpdatedAt(value){if(!value)return "آخر تحديث: لم يُحفظ بعد";try{return "آخر تحديث: "+new Intl.DateTimeFormat("ar-SA-u-nu-latn-ca-gregory",{day:"numeric",month:"long",year:"numeric",hour:"numeric",minute:"2-digit",timeZone:"Asia/Riyadh"}).format(new Date(value))}catch(_e){return "آخر تحديث: تم الحفظ"}}
 function updateLastUpdated(value){const el=document.getElementById("lastUpdatedText");if(el)el.textContent=formatUpdatedAt(value)}
-function applyAdminMode(){document.body.classList.toggle("admin-mode",isAdmin);const section=document.getElementById("sponsors");if(section)section.hidden=!isAdmin;const btn=document.getElementById("adminAccessBtn");if(btn)btn.textContent=isAdmin?"الخروج من الإدارة":"إدارة البرنامج";const badge=document.getElementById("adminModeBadge");if(badge)badge.hidden=!isAdmin;renderAll()}
+function applyAdminMode(){
+  document.body.classList.toggle("admin-mode",Boolean(isAdmin));
+  const section=document.getElementById("sponsors");
+  if(section){section.hidden=!isAdmin;section.setAttribute("aria-hidden",isAdmin?"false":"true")}
+  const btn=document.getElementById("adminAccessBtn");
+  if(btn){btn.textContent=isAdmin?"الخروج من وضع الإدارة":"إدارة البرنامج";btn.setAttribute("aria-pressed",isAdmin?"true":"false")}
+  const badge=document.getElementById("adminModeBadge");
+  if(badge){badge.hidden=!isAdmin;badge.setAttribute("aria-hidden",isAdmin?"false":"true")}
+  renderAll()
+}
 function normalizePublic(remote){const base=clone(DEFAULT_STATE);return {program:Array.isArray(remote?.program)?remote.program:base.program,suggestions:Array.isArray(remote?.suggestions)?remote.suggestions:base.suggestions,flights:Array.isArray(remote?.flights)?remote.flights:base.flights,lodging:Array.isArray(remote?.lodging)?remote.lodging:base.lodging}}
 function startPublicSync(){onValue(PUBLIC_REF,snapshot=>{const remote=snapshot.val();if(!remote){updateLastUpdated(null);return}const clean=normalizePublic(remote);state={...state,...clean,sponsors:safeArray(state.sponsors)};localStorage.setItem(STORAGE_KEY,JSON.stringify(state));updateLastUpdated(remote.updatedAt);renderAll()},err=>{console.error(err);toast("تعذر تحميل آخر تحديث")})}
 function startSponsorsSync(){if(sponsorsUnsubscribe){sponsorsUnsubscribe();sponsorsUnsubscribe=null}if(!isAdmin)return;sponsorsUnsubscribe=onValue(SPONSORS_REF,snapshot=>{if(snapshot.exists()){state.sponsors=safeArray(snapshot.val());localStorage.setItem(STORAGE_KEY,JSON.stringify(state));renderSponsors()}else{set(SPONSORS_REF,safeArray(state.sponsors)).catch(console.error)}},err=>console.error(err))}
@@ -535,12 +564,40 @@ async function seedFirebaseIfEmpty(){if(!isAdmin)return;try{const snap=await get
 const adminLoginModal=document.getElementById("adminLoginModal"),adminPinInput=document.getElementById("adminPinInput"),adminLoginError=document.getElementById("adminLoginError");
 function openAdminLogin(){if(isAdmin)return;adminLoginError.textContent="";adminPinInput.value="";adminLoginModal.classList.add("open");adminLoginModal.setAttribute("aria-hidden","false");setTimeout(()=>adminPinInput.focus(),80)}
 function closeAdminLogin(){adminLoginModal.classList.remove("open");adminLoginModal.setAttribute("aria-hidden","true");adminLoginError.textContent=""}
-async function submitAdminLogin(){const pin=adminPinInput.value.trim();if(pin.length!==6){adminLoginError.textContent="أدخل رمز الإدارة المكون من 6 أرقام";return}const submit=document.getElementById("adminLoginSubmit");submit.disabled=true;submit.textContent="جاري الدخول…";adminLoginError.textContent="";try{const credential=await signInWithEmailAndPassword(auth,ADMIN_EMAIL,pin);if(credential.user.uid!==ADMIN_UID){await signOut(auth);throw new Error("unauthorized")}closeAdminLogin();toast("تم فتح وضع الإدارة")}catch(err){console.error(err);adminLoginError.textContent="رمز الإدارة غير صحيح"}finally{submit.disabled=false;submit.textContent="دخول"}}
-document.getElementById("adminAccessBtn")?.addEventListener("click",async()=>{if(isAdmin){await signOut(auth);toast("تم الخروج من الإدارة")}else openAdminLogin()});
-document.getElementById("adminLoginClose")?.addEventListener("click",closeAdminLogin);adminLoginModal?.addEventListener("click",e=>{if(e.target===adminLoginModal)closeAdminLogin()});document.getElementById("adminLoginSubmit")?.addEventListener("click",submitAdminLogin);adminPinInput?.addEventListener("keydown",e=>{if(e.key==="Enter")submitAdminLogin()});
-authInit.finally(()=>{
-  onAuthStateChanged(auth,async user=>{isAdmin=Boolean(user&&user.uid===ADMIN_UID);if(user&&!isAdmin)await signOut(auth);applyAdminMode();startSponsorsSync();if(isAdmin)await seedFirebaseIfEmpty()});
+async function submitAdminLogin(){
+  const pin=adminPinInput.value.trim();
+  if(pin.length!==6){adminLoginError.textContent="أدخل رمز الإدارة المكون من 6 أرقام";return}
+  const submit=document.getElementById("adminLoginSubmit");
+  submit.disabled=true;submit.textContent="جاري الدخول…";adminLoginError.textContent="";
+  try{
+    await authInit;
+    const credential=await signInWithEmailAndPassword(auth,ADMIN_EMAIL,pin);
+    if(credential.user.uid!==ADMIN_UID){await signOut(auth);throw new Error("unauthorized")}
+    isAdmin=true;
+    applyAdminMode();
+    startSponsorsSync();
+    await seedFirebaseIfEmpty();
+    closeAdminLogin();
+    toast("تم فتح وضع الإدارة")
+  }catch(err){
+    console.error(err);isAdmin=false;applyAdminMode();adminLoginError.textContent="رمز الإدارة غير صحيح"
+  }finally{submit.disabled=false;submit.textContent="دخول"}
+}
+document.getElementById("adminAccessBtn")?.addEventListener("click",async()=>{
+  if(!isAdmin){openAdminLogin();return}
+  // الخروج يغيّر الواجهة فورًا، ثم ينهي جلسة Firebase.
+  isAdmin=false;
+  if(sponsorsUnsubscribe){sponsorsUnsubscribe();sponsorsUnsubscribe=null}
+  state.sponsors=[];
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  applyAdminMode();
+  try{await signOut(auth)}catch(err){console.error(err)}
+  toast("تم الخروج من وضع الإدارة")
 });
+document.getElementById("adminLoginClose")?.addEventListener("click",closeAdminLogin);adminLoginModal?.addEventListener("click",e=>{if(e.target===adminLoginModal)closeAdminLogin()});document.getElementById("adminLoginSubmit")?.addEventListener("click",submitAdminLogin);adminPinInput?.addEventListener("keydown",e=>{if(e.key==="Enter")submitAdminLogin()});
+// تثبيت وضع المشاهدة الآن؛ اكتمال Firebase لا يفتح الإدارة تلقائيًا بأي حال.
+applyAdminMode();
+authInit.catch(()=>{});
 startPublicSync();
 
 function weatherInfo(code){if(code===0)return['☀️','صحو'];if([1,2].includes(code))return['🌤️','غائم جزئيًا'];if(code===3)return['☁️','غائم'];if([45,48].includes(code))return['🌫️','ضباب'];if([51,53,55,56,57].includes(code))return['🌦️','رذاذ'];if([61,63,65,66,67,80,81,82].includes(code))return['🌧️','أمطار متفرقة'];if([71,73,75,77,85,86].includes(code))return['🌨️','ثلوج'];if([95,96,99].includes(code))return['⛈️','عواصف رعدية'];return['🌥️','متغير']}
