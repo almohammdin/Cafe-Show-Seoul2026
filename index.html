@@ -744,6 +744,64 @@ body:not(.admin-mode) .admin-only-nav{display:none!important}
 }
 </style>
 
+<style id="v31-highlight-gallery-style">
+/* عرض تسويقي كامل لصور أبرز أنشطة وبرامج الرحلة */
+#trip-highlights .experience-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+#trip-highlights .experience-card{
+  border-radius:20px;
+  box-shadow:0 14px 34px rgba(7,29,56,.09);
+}
+#trip-highlights .experience-visual{
+  width:100%;
+  height:auto;
+  min-height:0;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  background:linear-gradient(145deg,#e7eef3,#f7fafc);
+}
+#trip-highlights .experience-visual::before,
+#trip-highlights .experience-visual::after{
+  display:none;
+}
+#trip-highlights .experience-visual img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain !important;
+  object-position:center;
+}
+#trip-highlights .experience-body{
+  padding:17px 18px 18px;
+}
+#trip-highlights .experience-name{
+  font-size:18px;
+}
+@media(max-width:760px){
+  #trip-highlights .experience-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+  #trip-highlights .experience-card{
+    display:flex;
+    flex-direction:column;
+  }
+  #trip-highlights .experience-visual{
+    width:100%;
+    height:auto;
+    min-height:0;
+    aspect-ratio:16/9;
+  }
+  #trip-highlights .experience-body{
+    padding:14px 15px 16px;
+  }
+  #trip-highlights .experience-name{
+    font-size:16px;
+  }
+}
+</style>
 </head>
 <body>
 <div class="ribbon"></div>
