@@ -1641,6 +1641,12 @@ function normalizeFollowupTask(task){
     updatedAt:String(task?.updatedAt||new Date().toISOString())
   }
 }
+function readLegacyFinance(){
+  try{
+    const value=JSON.parse(localStorage.getItem("rcoa-seoul-2026-finance-v1")||"null");
+    return value?normalizeFinance(value):privateClone(DEFAULT_FINANCE)
+  }catch(_e){return privateClone(DEFAULT_FINANCE)}
+}
 function normalizeFinance(value){
   const base=privateClone(DEFAULT_FINANCE);
   const params=value?.params||{};
@@ -1677,7 +1683,7 @@ function startPrivateToolsSync(){
   },err=>{console.error(err);toast("تعذر تحميل المتابعات")});
   financeUnsubscribe=onValue(FINANCE_REF,snapshot=>{
     const value=snapshot.val();
-    financeState=normalizeFinance(value);
+    financeState=snapshot.exists()?normalizeFinance(value):readLegacyFinance();
     financeUpdatedAt=Number(value?.updatedAt||0)||null;
     renderFinance();
     if(!snapshot.exists())persistFinance()
