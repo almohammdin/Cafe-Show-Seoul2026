@@ -2,7 +2,7 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% capture head_injection %}
-<style id="participation-layout-v382">
+<style id="participation-layout-v383">
 .offer-shell{
   grid-template-columns:minmax(0,1fr) minmax(248px,288px) !important;
   gap:22px !important;
@@ -239,7 +239,7 @@
 {% endcapture %}
 {% assign page_source = page_source | replace: '</head>', head_injection %}
 {% capture body_injection %}
-<script id="participation-layout-script-v382">
+<script id="participation-layout-script-v383">
 (function(){
   var riyalSvgUrl='https://sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-2.svg';
 
@@ -319,7 +319,7 @@
     var footer=document.querySelector('footer')||document.body;
     var version=document.createElement('small');
     version.className='private-version-tag';
-    version.textContent='v38.2';
+    version.textContent='v38.3';
     version.title='الإصدار الداخلي';
     footer.appendChild(version);
   }
@@ -351,6 +351,17 @@
         node.classList.add('price-masked');
       });
       replaceRiyalWords(panel);
+
+      Array.prototype.slice.call(panel.querySelectorAll('p,div,span,small')).forEach(function(element){
+        if(element.closest('.price-soon-badge')) return;
+        var noteText=(element.textContent||'').replace(/\s+/g,' ').trim();
+        if(
+          /ستعلن القيمة النهائية بعد اكتمال التعاقدات واعتماد تفاصيل البرنامج/.test(noteText) ||
+          /ستُعلن القيمة النهائية بعد اكتمال التعاقدات واعتماد تفاصيل البرنامج/.test(noteText)
+        ){
+          element.remove();
+        }
+      });
     }
 
     if(shell) shell.classList.add('participation-layout-ready');
