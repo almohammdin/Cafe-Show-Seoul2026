@@ -1,0 +1,89 @@
+name: Extract exact state and render logic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/extract-logic.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract logic
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('index.html').read_text(encoding='utf-8')
+          html=re.sub(r'data:image/[^;]+;base64,[A-Za-z0-9+/=]+','DATA_IMAGE_REMOVED',html)
+          out=[]
+
+          def around(label,needle,before=800,after=2200,count=5,regex=False):
+              out.append(f'\n===== {label} =====')
+              patt=needle if regex else re.escape(needle)
+              hits=0
+              for m in re.finditer(patt,html,re.I|re.S):
+                  out.append(html[max(0,m.start()-before):min(len(html),m.end()+after)])
+                  hits+=1
+                  if hits>=count:break
+              if not hits:out.append('NO MATCH')
+
+          def function_block(label,name):
+              out.append(f'\n===== {label} =====')
+              pats=[rf'function\s+{re.escape(name)}\s*\(',rf'const\s+{re.escape(name)}\s*=\s*\(']
+              m=None
+              for p in pats:
+                  m=re.search(p,html,re.I)
+                  if m:break
+              if not m:out.append('NO MATCH');return
+              brace=html.find('{',m.end())
+              if brace<0:out.append('NO BRACE');return
+              depth=0;quote=None;esc=False
+              for i in range(brace,len(html)):
+                  c=html[i]
+                  if quote:
+                      if esc:esc=False
+                      elif c=='\\':esc=True
+                      elif c==quote:quote=None
+                      continue
+                  if c in ('"',"'",'`'):quote=c;continue
+                  if c=='{':depth+=1
+                  elif c=='}':
+                      depth-=1
+                      if depth==0:
+                          out.append(html[m.start():i+1]);return
+              out.append(html[m.start():brace+5000])
+
+          around('DEFAULT STATE','DEFAULT_STATE',900,4500,6)
+          around('PUBLIC PAYLOAD','function publicPayload',700,1600,2)
+          around('PUBLIC SNAPSHOT LISTENER','onValue(PUBLIC_REF',900,4200,4)
+          around('PUBLIC GET','get(PUBLIC_REF',900,3500,4)
+          around('ADMIN STATE CLASS','classList.toggle("admin-mode"',1200,3500,5)
+          around('LOGIN HANDLER','signInWithEmailAndPassword',1200,3800,5)
+          function_block('RENDER PROGRAM','renderProgram')
+          function_block('RENDER HIGHLIGHTS','renderHighlights')
+          function_block('OPEN MODAL','openModal')
+          function_block('SAVE EDITOR','saveEditor')
+          around('HIGHLIGHTS DELETE','state.highlights.splice',1000,2200,8)
+          around('HIGHLIGHTS INDEX','data-highlight-index',900,2500,10)
+          around('PROGRAM DRAG','row-drag-handle',1000,4500,8)
+          around('PROGRAM DAY ORDER','programDayOrder',900,3000,8)
+          around('STATE PROGRAM','state.program',900,2500,15)
+          around('STATE HIGHLIGHTS','state.highlights',900,2500,15)
+
+          Path('_logic.txt').write_text('\n'.join(out),encoding='utf-8')
+          PY
+      - name: Commit logic
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _logic.txt
+          git commit -m "Add temporary logic extraction"
+          git push
