@@ -1,4 +1,5 @@
 name: Restore participation section layout
+# Trigger the one-time repair after the workflow exists on main.
 
 on:
   push:
