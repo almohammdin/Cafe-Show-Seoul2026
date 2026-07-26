@@ -2,16 +2,13 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% capture head_injection %}
-<style id="participation-layout-v36">
-/* Direct, zero-network enhancement for the participation section */
+<style id="participation-layout-v38">
 .offer-shell{
   grid-template-columns:minmax(0,1fr) minmax(248px,288px) !important;
   gap:22px !important;
   align-items:start !important;
 }
-.offer-copy{
-  min-width:0 !important;
-}
+.offer-copy{min-width:0 !important}
 .offer-price-panel{
   align-self:start !important;
   width:100% !important;
@@ -32,72 +29,161 @@
   margin-top:0 !important;
   box-sizing:border-box !important;
 }
-.offer-price-value{
-  filter:blur(.68px) !important;
-  opacity:.96 !important;
-  text-shadow:0 0 8px rgba(255,255,255,.12) !important;
+.offer-price-value,
+.price-masked{
+  filter:blur(1.7px) !important;
+  opacity:.88 !important;
+  letter-spacing:.35px !important;
+  text-shadow:0 0 8px rgba(255,255,255,.18) !important;
+  user-select:none !important;
 }
 .price-soon-badge{
   position:relative !important;
   isolation:isolate !important;
   overflow:hidden !important;
-  display:inline-flex !important;
+  display:grid !important;
+  grid-template-columns:46px 1fr !important;
+  grid-template-areas:"icon title" "icon hint" !important;
   align-items:center !important;
-  justify-content:center !important;
-  gap:9px !important;
-  width:max-content !important;
-  max-width:100% !important;
-  margin:8px auto 18px !important;
-  padding:11px 18px !important;
-  border:1px solid rgba(255,255,255,.92) !important;
-  border-radius:999px !important;
-  background:linear-gradient(135deg,#fffdf7 0%,#ffffff 55%,#fff5d8 100%) !important;
-  color:#8a5b0b !important;
-  box-shadow:0 10px 24px rgba(2,25,49,.2),inset 0 1px 0 rgba(255,255,255,.95) !important;
-  font-weight:800 !important;
-  line-height:1 !important;
-  transform:rotate(-1deg) !important;
+  column-gap:12px !important;
+  row-gap:3px !important;
+  width:calc(100% - 8px) !important;
+  margin:9px auto 20px !important;
+  padding:13px 15px !important;
+  border:1px solid rgba(255,255,255,.76) !important;
+  border-radius:20px !important;
+  background:
+    radial-gradient(circle at 88% 8%,rgba(255,218,124,.38),transparent 34%),
+    linear-gradient(135deg,rgba(255,255,255,.98),rgba(255,247,222,.95)) !important;
+  color:#7b4d08 !important;
+  box-shadow:
+    0 15px 32px rgba(2,25,49,.24),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(211,157,51,.16) !important;
+  box-sizing:border-box !important;
+  transform:rotate(-.65deg) !important;
 }
 .price-soon-badge::before{
   content:"" !important;
   position:absolute !important;
   z-index:-1 !important;
-  inset:-70% auto -70% -35% !important;
-  width:34% !important;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent) !important;
+  top:-85% !important;
+  bottom:-85% !important;
+  left:-46% !important;
+  width:31% !important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.96),transparent) !important;
   transform:skewX(-18deg) !important;
-  animation:priceSoonShine 3.2s ease-in-out infinite !important;
+  animation:priceSoonShine 3.5s ease-in-out infinite !important;
 }
-.price-soon-dot{
-  width:9px !important;
-  height:9px !important;
-  flex:0 0 9px !important;
-  border-radius:50% !important;
-  background:#d7a238 !important;
-  box-shadow:0 0 0 0 rgba(215,162,56,.52) !important;
-  animation:priceSoonPulse 1.8s ease-out infinite !important;
+.price-soon-badge::after{
+  content:"" !important;
+  position:absolute !important;
+  inset:5px !important;
+  z-index:-1 !important;
+  border:1px dashed rgba(180,121,20,.17) !important;
+  border-radius:15px !important;
+  pointer-events:none !important;
 }
-.price-soon-text{
-  position:relative !important;
-  z-index:1 !important;
-  font-size:14px !important;
+.price-soon-icon{
+  grid-area:icon !important;
+  width:46px !important;
+  height:46px !important;
+  display:grid !important;
+  place-items:center !important;
+  border-radius:15px !important;
+  background:linear-gradient(145deg,#e7b957,#b97813) !important;
+  color:#fff !important;
+  box-shadow:0 8px 17px rgba(163,102,12,.28),inset 0 1px 0 rgba(255,255,255,.38) !important;
+  transform-origin:center !important;
+  animation:hourglassTurn 4.4s cubic-bezier(.68,-.25,.32,1.25) infinite !important;
+}
+.price-soon-icon svg{
+  width:25px !important;
+  height:25px !important;
+  display:block !important;
+  overflow:visible !important;
+}
+.price-soon-icon .hourglass-frame{
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:1.8 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.price-soon-icon .hourglass-sand{
+  fill:#fff2bd !important;
+  transform-origin:center !important;
+  animation:hourglassSand 2.2s ease-in-out infinite alternate !important;
+}
+.price-soon-icon .hourglass-stream{
+  stroke:#fff2bd !important;
+  stroke-width:1.45 !important;
+  stroke-linecap:round !important;
+  stroke-dasharray:2.5 2.5 !important;
+  animation:hourglassFlow .7s linear infinite !important;
+}
+.price-soon-title{
+  grid-area:title !important;
+  align-self:end !important;
+  font-size:15px !important;
+  font-weight:900 !important;
+  line-height:1.15 !important;
   white-space:nowrap !important;
 }
-@keyframes priceSoonPulse{
-  0%{box-shadow:0 0 0 0 rgba(215,162,56,.52)}
-  70%{box-shadow:0 0 0 11px rgba(215,162,56,0)}
-  100%{box-shadow:0 0 0 0 rgba(215,162,56,0)}
+.price-soon-hint{
+  grid-area:hint !important;
+  align-self:start !important;
+  color:#a47425 !important;
+  font-size:10.5px !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+  white-space:nowrap !important;
 }
+.sar-symbol{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:.78em !important;
+  height:.9em !important;
+  margin-inline-start:.14em !important;
+  vertical-align:-.08em !important;
+  line-height:1 !important;
+}
+.sar-symbol img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  filter:brightness(0) invert(1) !important;
+}
+.sar-symbol-unicode{
+  display:none;
+  font-family:"Segoe UI Symbol","Noto Sans Symbols 2",sans-serif !important;
+  font-size:.82em !important;
+  color:inherit !important;
+}
+.sar-symbol.is-fallback img{display:none !important}
+.sar-symbol.is-fallback .sar-symbol-unicode{display:inline !important}
 @keyframes priceSoonShine{
-  0%,55%{left:-38%;opacity:0}
-  62%{opacity:.9}
-  82%{left:112%;opacity:0}
-  100%{left:112%;opacity:0}
+  0%,54%{left:-46%;opacity:0}
+  61%{opacity:.95}
+  80%{left:118%;opacity:0}
+  100%{left:118%;opacity:0}
+}
+@keyframes hourglassTurn{
+  0%,36%{transform:rotate(0deg)}
+  48%,84%{transform:rotate(180deg)}
+  96%,100%{transform:rotate(360deg)}
+}
+@keyframes hourglassSand{
+  from{opacity:.96;transform:scaleY(1)}
+  to{opacity:.66;transform:scaleY(.72)}
+}
+@keyframes hourglassFlow{
+  to{stroke-dashoffset:-5}
 }
 @media(max-width:900px){
-  .offer-shell{
-    grid-template-columns:1fr !important;
-  }
+  .offer-shell{grid-template-columns:1fr !important}
   .offer-price-panel,
   .offer-registration{
     grid-column:1 !important;
@@ -106,15 +192,28 @@
   }
 }
 @media(max-width:640px){
-  .offer-price-panel{
-    padding:22px 17px 19px !important;
-  }
-  .offer-price-value{
-    filter:blur(.48px) !important;
-    opacity:.97 !important;
+  .offer-price-panel{padding:22px 17px 19px !important}
+  .offer-price-value,
+  .price-masked{
+    filter:blur(1.5px) !important;
+    opacity:.9 !important;
   }
   .price-soon-badge{
-    padding:10px 16px !important;
+    width:100% !important;
+    grid-template-columns:43px 1fr !important;
+    padding:12px 13px !important;
+  }
+  .price-soon-icon{
+    width:43px !important;
+    height:43px !important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .price-soon-badge::before,
+  .price-soon-icon,
+  .price-soon-icon .hourglass-sand,
+  .price-soon-icon .hourglass-stream{
+    animation:none !important;
   }
 }
 </style>
@@ -122,52 +221,110 @@
 {% endcapture %}
 {% assign page_source = page_source | replace: '</head>', head_injection %}
 {% capture body_injection %}
-<script id="participation-layout-script-v36">
+<script id="participation-layout-script-v38">
 (function(){
+  var riyalSvgUrl='https://sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-2.svg';
+
+  function createRiyalSymbol(){
+    var symbol=document.createElement('span');
+    symbol.className='sar-symbol';
+    symbol.setAttribute('role','img');
+    symbol.setAttribute('aria-label','ريال سعودي');
+
+    var image=document.createElement('img');
+    image.src=riyalSvgUrl;
+    image.alt='';
+    image.loading='eager';
+    image.decoding='async';
+    image.onerror=function(){symbol.classList.add('is-fallback');};
+
+    var fallback=document.createElement('span');
+    fallback.className='sar-symbol-unicode';
+    fallback.setAttribute('aria-hidden','true');
+    fallback.innerHTML='&#x20C1;';
+
+    symbol.appendChild(image);
+    symbol.appendChild(fallback);
+    return symbol;
+  }
+
+  function replaceRiyalWords(root){
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(node){
+        if(!node.nodeValue||!node.nodeValue.includes('ريال')) return NodeFilter.FILTER_REJECT;
+        var parent=node.parentElement;
+        if(!parent||parent.closest('.price-soon-badge,.sar-symbol,script,style')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    var nodes=[];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(function(node){
+      var parts=node.nodeValue.split(/(ريال(?:\s+سعودي)?)/g);
+      var fragment=document.createDocumentFragment();
+      parts.forEach(function(part){
+        if(/^ريال/.test(part)) fragment.appendChild(createRiyalSymbol());
+        else if(part) fragment.appendChild(document.createTextNode(part));
+      });
+      node.parentNode.replaceChild(fragment,node);
+    });
+  }
+
+  function createHourglassBadge(){
+    var badge=document.createElement('div');
+    badge.className='price-soon-badge';
+    badge.setAttribute('aria-label','سيُعلن قريبًا');
+
+    var icon=document.createElement('span');
+    icon.className='price-soon-icon';
+    icon.setAttribute('aria-hidden','true');
+    icon.innerHTML='<svg viewBox="0 0 24 24"><path class="hourglass-frame" d="M7 3h10M7 21h10M8 3c0 4.4 1.7 6.1 4 9-2.3 2.9-4 4.6-4 9m8-18c0 4.4-1.7 6.1-4 9 2.3 2.9 4 4.6 4 9"/><path class="hourglass-sand" d="M9.35 6.1h5.3c-.36 1.8-1.2 3.08-2.65 4.78-1.45-1.7-2.29-2.98-2.65-4.78Zm2.65 7.35c1.55 1.87 2.37 3.08 2.7 4.45H9.3c.33-1.37 1.15-2.58 2.7-4.45Z"/><path class="hourglass-stream" d="M12 11.15v2.1"/></svg>';
+
+    var title=document.createElement('span');
+    title.className='price-soon-title';
+    title.textContent='سيُعلن قريبًا';
+
+    var hint=document.createElement('span');
+    hint.className='price-soon-hint';
+    hint.textContent='التفاصيل قيد الاعتماد';
+
+    badge.appendChild(icon);
+    badge.appendChild(title);
+    badge.appendChild(hint);
+    return badge;
+  }
+
   function applyParticipationLayout(){
     var panel=document.querySelector('.offer-price-panel');
     var registration=document.getElementById('participation-registration');
     var shell=(panel&&panel.closest('.offer-shell'))||(registration&&registration.closest('.offer-shell'));
 
-    if(shell&&registration){
-      shell.appendChild(registration);
-    }
+    if(shell&&registration) shell.appendChild(registration);
 
     if(panel){
+      var existingBadge=panel.querySelector('.price-soon-badge');
+      if(existingBadge) existingBadge.remove();
+
       var candidates=Array.prototype.slice.call(panel.querySelectorAll('*'));
-      var badge=candidates.find(function(element){
+      var oldBadge=candidates.find(function(element){
         var text=(element.textContent||'').replace(/\s+/g,' ').trim();
         return element.children.length===0&&/قريب/.test(text)&&text.length<=45;
       });
+      if(oldBadge) oldBadge.remove();
 
-      if(!badge){
-        badge=document.createElement('div');
-        var priceValue=panel.querySelector('.offer-price-value');
-        if(priceValue){
-          priceValue.insertAdjacentElement('beforebegin',badge);
-        }else{
-          panel.insertBefore(badge,panel.firstChild);
-        }
-      }
+      var priceValue=panel.querySelector('.offer-price-value');
+      var badge=createHourglassBadge();
+      if(priceValue) priceValue.insertAdjacentElement('beforebegin',badge);
+      else panel.insertBefore(badge,panel.firstChild);
 
-      badge.classList.add('price-soon-badge');
-      badge.textContent='';
-
-      var dot=document.createElement('span');
-      dot.className='price-soon-dot';
-      dot.setAttribute('aria-hidden','true');
-
-      var text=document.createElement('span');
-      text.className='price-soon-text';
-      text.textContent='سيُعلن قريبًا';
-
-      badge.appendChild(dot);
-      badge.appendChild(text);
+      var priceNodes=panel.querySelectorAll('.offer-price-value');
+      priceNodes.forEach(function(node){node.classList.add('price-masked');});
+      replaceRiyalWords(panel);
     }
 
-    if(shell){
-      shell.classList.add('participation-layout-ready');
-    }
+    if(shell) shell.classList.add('participation-layout-ready');
   }
 
   if(document.readyState==='loading'){
