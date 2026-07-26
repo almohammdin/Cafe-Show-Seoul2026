@@ -1,1 +1,1 @@
-Trigger the one-time participation section layout fix.
+Trigger the approved participation section layout fix through a pull request event.
