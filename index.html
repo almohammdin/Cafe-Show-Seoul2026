@@ -2,7 +2,7 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% capture head_injection %}
-<style id="participation-layout-v38">
+<style id="participation-layout-v382">
 .offer-shell{
   grid-template-columns:minmax(0,1fr) minmax(248px,288px) !important;
   gap:22px !important;
@@ -31,11 +31,16 @@
 }
 .offer-price-value,
 .price-masked{
-  filter:blur(1.7px) !important;
-  opacity:.88 !important;
-  letter-spacing:.35px !important;
-  text-shadow:0 0 8px rgba(255,255,255,.18) !important;
+  filter:blur(3.25px) contrast(.82) !important;
+  opacity:.76 !important;
+  letter-spacing:.55px !important;
+  text-shadow:
+    0 0 4px currentColor,
+    0 0 10px rgba(255,255,255,.3) !important;
+  transform:scale(.985) !important;
+  transform-origin:center !important;
   user-select:none !important;
+  pointer-events:none !important;
 }
 .price-soon-badge{
   position:relative !important;
@@ -164,6 +169,23 @@
 }
 .sar-symbol.is-fallback img{display:none !important}
 .sar-symbol.is-fallback .sar-symbol-unicode{display:inline !important}
+.private-version-tag{
+  display:block !important;
+  width:100% !important;
+  margin:10px auto 0 !important;
+  padding:0 12px 4px !important;
+  box-sizing:border-box !important;
+  direction:ltr !important;
+  text-align:center !important;
+  font-size:9px !important;
+  font-weight:500 !important;
+  letter-spacing:.45px !important;
+  line-height:1 !important;
+  opacity:.28 !important;
+  color:inherit !important;
+  user-select:none !important;
+  pointer-events:none !important;
+}
 @keyframes priceSoonShine{
   0%,54%{left:-46%;opacity:0}
   61%{opacity:.95}
@@ -179,9 +201,7 @@
   from{opacity:.96;transform:scaleY(1)}
   to{opacity:.66;transform:scaleY(.72)}
 }
-@keyframes hourglassFlow{
-  to{stroke-dashoffset:-5}
-}
+@keyframes hourglassFlow{to{stroke-dashoffset:-5}}
 @media(max-width:900px){
   .offer-shell{grid-template-columns:1fr !important}
   .offer-price-panel,
@@ -195,8 +215,8 @@
   .offer-price-panel{padding:22px 17px 19px !important}
   .offer-price-value,
   .price-masked{
-    filter:blur(1.5px) !important;
-    opacity:.9 !important;
+    filter:blur(2.85px) contrast(.84) !important;
+    opacity:.79 !important;
   }
   .price-soon-badge{
     width:100% !important;
@@ -212,16 +232,14 @@
   .price-soon-badge::before,
   .price-soon-icon,
   .price-soon-icon .hourglass-sand,
-  .price-soon-icon .hourglass-stream{
-    animation:none !important;
-  }
+  .price-soon-icon .hourglass-stream{animation:none !important}
 }
 </style>
 </head>
 {% endcapture %}
 {% assign page_source = page_source | replace: '</head>', head_injection %}
 {% capture body_injection %}
-<script id="participation-layout-script-v38">
+<script id="participation-layout-script-v382">
 (function(){
   var riyalSvgUrl='https://sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-2.svg';
 
@@ -296,6 +314,16 @@
     return badge;
   }
 
+  function addVersionTag(){
+    if(document.querySelector('.private-version-tag')) return;
+    var footer=document.querySelector('footer')||document.body;
+    var version=document.createElement('small');
+    version.className='private-version-tag';
+    version.textContent='v38.2';
+    version.title='الإصدار الداخلي';
+    footer.appendChild(version);
+  }
+
   function applyParticipationLayout(){
     var panel=document.querySelector('.offer-price-panel');
     var registration=document.getElementById('participation-registration');
@@ -319,12 +347,14 @@
       if(priceValue) priceValue.insertAdjacentElement('beforebegin',badge);
       else panel.insertBefore(badge,panel.firstChild);
 
-      var priceNodes=panel.querySelectorAll('.offer-price-value');
-      priceNodes.forEach(function(node){node.classList.add('price-masked');});
+      panel.querySelectorAll('.offer-price-value').forEach(function(node){
+        node.classList.add('price-masked');
+      });
       replaceRiyalWords(panel);
     }
 
     if(shell) shell.classList.add('participation-layout-ready');
+    addVersionTag();
   }
 
   if(document.readyState==='loading'){
