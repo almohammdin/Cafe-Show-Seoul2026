@@ -1,0 +1,63 @@
+name: Extract targeted snippets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/extract-targets.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract snippets
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          html = Path('index.html').read_text(encoding='utf-8')
+          blocks = []
+
+          def add(label, pattern, before=500, after=1200, flags=re.I|re.S, max_hits=6):
+              blocks.append(f'\n===== {label} =====')
+              hits = 0
+              for m in re.finditer(pattern, html, flags):
+                  s=max(0,m.start()-before); e=min(len(html),m.end()+after)
+                  snippet=html[s:e]
+                  snippet=re.sub(r'\s+', ' ', snippet)
+                  blocks.append(snippet)
+                  hits += 1
+                  if hits >= max_hits: break
+              if hits == 0: blocks.append('NO MATCH')
+
+          add('FOOTER', r'<footer\b', 400, 2600, max_hits=2)
+          add('ADMIN ACCESS', r'adminAccessBtn', 900, 1800, max_hits=8)
+          add('REGISTRATION SECTION', r'<section\b[^>]*id=["\']registration["\'][^>]*>', 300, 4200, max_hits=1)
+          add('PUBLIC PROGRAM SECTION', r'<section\b[^>]*id=["\']public-program["\'][^>]*>', 300, 5000, max_hits=1)
+          add('PROGRAM ADMIN SECTION', r'<section\b[^>]*id=["\']program-admin["\'][^>]*>', 300, 4000, max_hits=1)
+          add('TRIP HIGHLIGHTS SECTION', r'<section\b[^>]*id=["\']trip-highlights["\'][^>]*>', 300, 2600, max_hits=1)
+          add('HIGHLIGHTS DATA', r'\bhighlights\b', 700, 1800, max_hits=10)
+          add('HIGHLIGHT GRID', r'highlightGrid', 800, 2200, max_hits=8)
+          add('PROGRAM DATA', r'\bprogram\b', 800, 2000, max_hits=10)
+          add('PUBLIC PROGRAM DATA', r'public-program', 700, 1800, max_hits=6)
+          add('RENDER PROGRAM', r'function\s+renderProgram|const\s+renderProgram|renderProgram\s*=|renderProgram\(', 1000, 3000, max_hits=8)
+          add('RENDER HIGHLIGHTS', r'function\s+renderHighlights|const\s+renderHighlights|renderHighlights\s*=|renderHighlights\(', 1000, 3000, max_hits=8)
+          add('FIREBASE PROGRAM', r'programDays|programItems|tripHighlights', 1200, 2800, max_hits=12)
+          add('MOVE OR SORT', r'draggable|dragstart|dragover|sort\(|moveUp|moveDown|order', 800, 1800, max_hits=20)
+
+          Path('_targets.txt').write_text('\n'.join(blocks), encoding='utf-8')
+          PY
+      - name: Commit snippets
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _targets.txt
+          git commit -m "Add temporary targeted snippets"
+          git push
