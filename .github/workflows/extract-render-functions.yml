@@ -1,0 +1,59 @@
+name: Extract render functions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/extract-render-functions.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract exact functions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('index.html').read_text(encoding='utf-8')
+          html=re.sub(r'data:image/[^;]+;base64,[A-Za-z0-9+/=]+','DATA_IMAGE_REMOVED',html)
+
+          def block(name):
+              m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',html)
+              if not m:return 'NO MATCH'
+              brace=html.find('{',m.end());depth=0;quote=None;esc=False
+              for i in range(brace,len(html)):
+                  c=html[i]
+                  if quote:
+                      if esc:esc=False
+                      elif c=='\\':esc=True
+                      elif c==quote:quote=None
+                      continue
+                  if c in ('"',"'",'`'):quote=c;continue
+                  if c=='{':depth+=1
+                  elif c=='}':
+                      depth-=1
+                      if depth==0:return html[m.start():i+1]
+              return html[m.start():brace+10000]
+
+          names=['renderProgram','renderHighlights','initProgramDragAndDrop','applyAdminMode','normalizePublic','startPublicSync','saveEditor','openModal']
+          out=[]
+          for name in names:
+              text=block(name)
+              # Basic formatting outside template literals is hard; keep exact and add label.
+              out.append(f'===== {name} =====\n{text}\n')
+          Path('_render-functions.txt').write_text('\n'.join(out),encoding='utf-8')
+          PY
+      - name: Commit functions
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _render-functions.txt
+          git commit -m "Add temporary render function extraction"
+          git push
