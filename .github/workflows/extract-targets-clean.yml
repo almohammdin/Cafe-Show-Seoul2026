@@ -1,0 +1,75 @@
+name: Extract clean code snippets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/extract-targets-clean.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract clean snippets
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          html = Path('index.html').read_text(encoding='utf-8')
+          clean = re.sub(r'data:image/[^;]+;base64,[A-Za-z0-9+/=]+', 'DATA_IMAGE_REMOVED', html)
+
+          blocks=[]
+          def section_by_id(idv):
+              m=re.search(r'<section\b[^>]*\bid=["\']'+re.escape(idv)+r'["\'][^>]*>', clean, re.I)
+              if not m:return 'NO MATCH'
+              pos=m.start(); depth=0
+              for t in re.finditer(r'</?section\b[^>]*>', clean[pos:], re.I):
+                  tag=t.group(0)
+                  if tag.lower().startswith('</section'): depth-=1
+                  else: depth+=1
+                  if depth==0:
+                      return clean[pos:pos+t.end()]
+              return clean[pos:pos+8000]
+
+          def around(label, pattern, before=1000, after=2500, max_hits=5):
+              blocks.append('\n===== '+label+' =====')
+              hits=0
+              for m in re.finditer(pattern, clean, re.I|re.S):
+                  s=max(0,m.start()-before);e=min(len(clean),m.end()+after)
+                  blocks.append(clean[s:e])
+                  hits+=1
+                  if hits>=max_hits:break
+              if not hits:blocks.append('NO MATCH')
+
+          blocks.append('===== FOOTER =====\n'+(re.search(r'<footer\b.*?</footer>', clean, re.I|re.S).group(0) if re.search(r'<footer\b.*?</footer>', clean, re.I|re.S) else 'NO MATCH'))
+          for sid in ['registration','public-program','program-admin','trip-highlights']:
+              blocks.append('\n===== SECTION '+sid+' =====\n'+section_by_id(sid))
+
+          around('GLOBAL STATE DECLARATIONS', r'let\s+state\b|const\s+state\b|let\s+appData\b|const\s+appData\b|let\s+data\b|const\s+data\b', 500, 2500, 10)
+          around('FIREBASE INIT AND REFS', r'initializeApp|getDatabase|ref\(|onValue|set\(|update\(', 700, 2400, 18)
+          around('SAVE FUNCTIONS', r'function\s+(save|persist|sync)[A-Za-z0-9_]*|const\s+(save|persist|sync)[A-Za-z0-9_]*\s*=|async\s+function\s+(save|persist|sync)[A-Za-z0-9_]*', 500, 3000, 16)
+          around('RENDER ALL', r'function\s+renderAll|const\s+renderAll\s*=|renderAll\(', 700, 3000, 10)
+          around('PROGRAM RENDER', r'function\s+renderProgram|const\s+renderProgram\s*=|renderProgram\s*=|renderProgram\(', 700, 3500, 10)
+          around('HIGHLIGHT RENDER', r'function\s+renderHighlights|const\s+renderHighlights\s*=|renderHighlights\s*=|renderHighlights\(', 700, 3500, 10)
+          around('ADD HIGHLIGHT', r'data-add=["\']highlights["\']|case\s+["\']highlights["\']|highlights\.push|state\.highlights|data\.highlights', 600, 2600, 16)
+          around('PROGRAM MUTATION', r'program\.push|program\.splice|programDays|state\.program|data\.program|saveProgram|event-row', 700, 2600, 18)
+          around('ADMIN MODE', r'admin-mode|adminAccessBtn', 700, 2400, 12)
+
+          text='\n'.join(blocks)
+          text=re.sub(r'\n{3,}','\n\n',text)
+          Path('_targets-clean.txt').write_text(text,encoding='utf-8')
+          PY
+      - name: Commit clean snippets
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _targets-clean.txt
+          git commit -m "Add clean targeted code snippets"
+          git push
