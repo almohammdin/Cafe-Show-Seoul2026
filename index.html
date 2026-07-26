@@ -881,6 +881,19 @@ body:not(.admin-mode) #program-public{display:none!important}
 @media(max-width:640px){.offer-section{padding-top:18px}.offer-shell{padding:17px;border-radius:21px}.offer-copy h2{font-size:25px}.offer-inclusions,.program-preview-grid{grid-template-columns:1fr}.offer-price-panel{padding:18px}.offer-price-value{font-size:27px}.program-preview-card{min-height:auto}}
 </style>
 
+
+<style id="v31-admin-route-separation">
+/* Operational content lives only on /admin.html -> ?admin=1 */
+body:not(.admin-route) #flights,
+body:not(.admin-route) #lodging,
+body:not(.admin-route) #program-admin,
+body:not(.admin-route) #suggestions,
+body:not(.admin-route) #sponsors,
+body:not(.admin-route) #followups,
+body:not(.admin-route) #finance,
+body:not(.admin-route) .admin-only-nav{display:none!important}
+</style>
+
 </head>
 <body>
 <div class="ribbon"></div>
