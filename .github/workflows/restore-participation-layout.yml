@@ -3,6 +3,10 @@ name: Apply participation layout fix
 on:
   issues:
     types: [opened]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - trigger-participation-fix.txt
   workflow_dispatch:
 
 permissions:
@@ -10,7 +14,10 @@ permissions:
 
 jobs:
   apply-fix:
-    if: github.event_name == 'workflow_dispatch' || github.event.issue.title == 'Apply Seoul participation layout fix'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && github.event.issue.title == 'Apply Seoul participation layout fix') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.title == 'Apply Seoul participation layout fix')
     runs-on: ubuntu-latest
     steps:
       - name: Check out main
@@ -34,7 +41,6 @@ jobs:
           if registration_start == -1:
               raise SystemExit('Participation registration block was not found')
 
-          # Move the registration block outside the two-column content area so it spans the full section.
           aside_after_registration = html.find('<aside class="offer-price-panel"', registration_start)
           if aside_after_registration != -1:
               div_tags = re.compile(r'<div\b[^>]*>|</div\s*>', re.IGNORECASE)
@@ -63,7 +69,6 @@ jobs:
               aside_end = aside_close + len('</aside>')
               html = html[:aside_end] + '\n      ' + registration_block + html[aside_end:]
 
-          # Replace the old badge wording only inside the price panel and add an animated indicator.
           aside_start = html.find('<aside class="offer-price-panel"')
           aside_close = html.find('</aside>', aside_start)
           if aside_start == -1 or aside_close == -1:
@@ -88,13 +93,10 @@ jobs:
               raise SystemExit('The existing soon badge text was not found')
 
           html = html[:aside_start] + aside_html + html[aside_end:]
-
-          # Remove prior one-time overrides if they exist, then add the final direct CSS override.
           html = re.sub(r'\s*<style id="v3[34]-participation-layout">.*?</style>\s*', '\n', html, flags=re.DOTALL)
 
           style = r'''
 <style id="v35-participation-layout">
-/* Final participation layout: compact pricing, full-width registration, soft masking */
 .offer-shell{
   grid-template-columns:minmax(0,1fr) minmax(250px,292px) !important;
   gap:22px !important;
@@ -184,7 +186,6 @@ jobs:
           if '</head>' not in html:
               raise SystemExit('Closing head tag was not found')
           html = html.replace('</head>', style + '\n</head>', 1)
-
           path.write_text(html, encoding='utf-8')
           PY
 
@@ -192,7 +193,7 @@ jobs:
         shell: bash
         run: |
           rm -f .github/workflows/restore-participation-layout.yml
-          rm -f api-blob-link.md
+          rm -f api-blob-link.md noop.txt tmp-trigger.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
