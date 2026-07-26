@@ -1,0 +1,120 @@
+name: Adjust participation section layout
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/adjust-participation-layout.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Move registration and refine pricing layout
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("index.html")
+          html = path.read_text(encoding="utf-8")
+
+          registration_open = '<div class="offer-registration" id="participation-registration">'
+          registration_start = html.find(registration_open)
+          if registration_start == -1:
+              raise SystemExit("Participation registration block was not found")
+
+          aside_start = html.find('<aside class="offer-price-panel"', registration_start)
+          if aside_start == -1:
+              # The block may already have been moved in a prior run.
+              aside_start = html.find('<aside class="offer-price-panel"')
+          else:
+              token_pattern = re.compile(r'<div\b[^>]*>|</div\s*>', re.IGNORECASE)
+              depth = 0
+              registration_end = None
+              for match in token_pattern.finditer(html, registration_start):
+                  token = match.group(0).lower()
+                  if token.startswith('<div'):
+                      depth += 1
+                  else:
+                      depth -= 1
+                      if depth == 0:
+                          registration_end = match.end()
+                          break
+
+              if registration_end is None:
+                  raise SystemExit("Could not determine the end of the registration block")
+
+              registration_block = html[registration_start:registration_end]
+              html = html[:registration_start] + html[registration_end:]
+
+              aside_start = html.find('<aside class="offer-price-panel"')
+              aside_end = html.find('</aside>', aside_start)
+              if aside_end == -1:
+                  raise SystemExit("Price panel closing tag was not found")
+              aside_end += len('</aside>')
+              html = html[:aside_end] + "\n      " + registration_block + html[aside_end:]
+
+          style_marker = 'id="v33-participation-layout"'
+          if style_marker not in html:
+              style = r'''
+<style id="v33-participation-layout">
+/* Compact price card, full-width registration and lighter price masking */
+.offer-shell{
+  grid-template-columns:minmax(0,1fr) minmax(270px,330px);
+  align-items:start;
+}
+.offer-copy{min-width:0}
+.offer-price-panel{
+  align-self:start;
+  min-height:0;
+  padding:20px 18px;
+  justify-content:flex-start;
+}
+.offer-registration{
+  grid-column:1 / -1;
+  width:100%;
+  min-width:0;
+  margin-top:0;
+  box-sizing:border-box;
+}
+.offer-price-value{
+  filter:blur(2px);
+  opacity:.82;
+}
+@media(max-width:900px){
+  .offer-shell{grid-template-columns:1fr}
+  .offer-price-panel,.offer-registration{grid-column:1;width:100%;max-width:none}
+}
+@media(max-width:640px){
+  .offer-price-value{filter:blur(1.7px);opacity:.84}
+}
+</style>
+'''
+              if '</head>' not in html:
+                  raise SystemExit("Closing head tag was not found")
+              html = html.replace('</head>', style + '\n</head>', 1)
+
+          path.write_text(html, encoding="utf-8")
+          PY
+
+      - name: Commit updated page
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Refine participation pricing and registration layout"
+          git push
