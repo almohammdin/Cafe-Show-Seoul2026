@@ -1,1 +1,1 @@
-Refresh GitHub Pages after publishing the public offer, program preview, separate admin entry, and final route separation.
+Refresh GitHub Pages after merging registration into the participation offer and adding program publishing and activity ordering controls.
