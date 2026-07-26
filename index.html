@@ -2,7 +2,7 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% capture head_injection %}
-<style id="participation-layout-v383">
+<style id="participation-layout-v384">
 .offer-shell{
   grid-template-columns:minmax(0,1fr) minmax(248px,288px) !important;
   gap:22px !important;
@@ -145,6 +145,7 @@
   white-space:nowrap !important;
 }
 .sar-symbol{
+  position:relative !important;
   display:inline-flex !important;
   align-items:center !important;
   justify-content:center !important;
@@ -155,20 +156,22 @@
   line-height:1 !important;
 }
 .sar-symbol img{
-  display:block !important;
+  display:none !important;
   width:100% !important;
   height:100% !important;
   object-fit:contain !important;
   filter:brightness(0) invert(1) !important;
 }
 .sar-symbol-unicode{
-  display:none;
+  display:inline-block !important;
   font-family:"Segoe UI Symbol","Noto Sans Symbols 2",sans-serif !important;
   font-size:.82em !important;
   color:inherit !important;
 }
+.sar-symbol.image-loaded img{display:block !important}
+.sar-symbol.image-loaded .sar-symbol-unicode{display:none !important}
 .sar-symbol.is-fallback img{display:none !important}
-.sar-symbol.is-fallback .sar-symbol-unicode{display:inline !important}
+.sar-symbol.is-fallback .sar-symbol-unicode{display:inline-block !important}
 .private-version-tag{
   display:block !important;
   width:100% !important;
@@ -239,9 +242,9 @@
 {% endcapture %}
 {% assign page_source = page_source | replace: '</head>', head_injection %}
 {% capture body_injection %}
-<script id="participation-layout-script-v383">
+<script id="participation-layout-script-v384">
 (function(){
-  var riyalSvgUrl='https://sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-2.svg';
+  var riyalSymbolUrl='https://www.sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-1.png';
 
   function createRiyalSymbol(){
     var symbol=document.createElement('span');
@@ -250,10 +253,11 @@
     symbol.setAttribute('aria-label','ريال سعودي');
 
     var image=document.createElement('img');
-    image.src=riyalSvgUrl;
+    image.src=riyalSymbolUrl;
     image.alt='';
     image.loading='eager';
     image.decoding='async';
+    image.onload=function(){symbol.classList.add('image-loaded');};
     image.onerror=function(){symbol.classList.add('is-fallback');};
 
     var fallback=document.createElement('span');
@@ -315,63 +319,119 @@
   }
 
   function addVersionTag(){
-    if(document.querySelector('.private-version-tag')) return;
+    var version=document.querySelector('.private-version-tag');
+    if(version){
+      version.textContent='v38.4';
+      return;
+    }
     var footer=document.querySelector('footer')||document.body;
-    var version=document.createElement('small');
+    version=document.createElement('small');
     version.className='private-version-tag';
-    version.textContent='v38.3';
+    version.textContent='v38.4';
     version.title='الإصدار الداخلي';
     footer.appendChild(version);
   }
 
+  var participationApplying=false;
+  var participationScheduled=false;
+
+  function normalizedText(element){
+    return (element&&element.textContent||'').replace(/\s+/g,' ').trim();
+  }
+
+  function removeFinalPriceNote(panel){
+    var notePattern=/ست[ُ]?علن القيمة النهائية بعد اكتمال التعاقدات واعتماد تفاصيل البرنامج[.]?/;
+    var matches=Array.prototype.slice.call(panel.querySelectorAll('p,small,span,div')).filter(function(element){
+      return !element.closest('.price-soon-badge')&&notePattern.test(normalizedText(element));
+    });
+
+    matches.filter(function(element){
+      return !matches.some(function(other){
+        return other!==element&&element.contains(other);
+      });
+    }).forEach(function(element){
+      element.remove();
+    });
+  }
+
+  function ensureHourglassBadge(panel){
+    var badge=panel.querySelector('.price-soon-badge');
+    if(badge) return badge;
+
+    var oldBadge=Array.prototype.slice.call(panel.querySelectorAll('*')).find(function(element){
+      var text=normalizedText(element);
+      return element.children.length===0&&/قريب/.test(text)&&text.length<=45;
+    });
+    if(oldBadge) oldBadge.remove();
+
+    var priceValue=panel.querySelector('.offer-price-value');
+    badge=createHourglassBadge();
+    if(priceValue) priceValue.insertAdjacentElement('beforebegin',badge);
+    else panel.insertBefore(badge,panel.firstChild);
+    return badge;
+  }
+
   function applyParticipationLayout(){
-    var panel=document.querySelector('.offer-price-panel');
-    var registration=document.getElementById('participation-registration');
-    var shell=(panel&&panel.closest('.offer-shell'))||(registration&&registration.closest('.offer-shell'));
+    if(participationApplying) return;
+    participationApplying=true;
+    try{
+      var panel=document.querySelector('.offer-price-panel');
+      var registration=document.getElementById('participation-registration');
+      var shell=(panel&&panel.closest('.offer-shell'))||(registration&&registration.closest('.offer-shell'));
 
-    if(shell&&registration) shell.appendChild(registration);
+      if(shell&&registration&&registration.parentElement!==shell){
+        shell.appendChild(registration);
+      }
 
-    if(panel){
-      var existingBadge=panel.querySelector('.price-soon-badge');
-      if(existingBadge) existingBadge.remove();
+      if(panel){
+        ensureHourglassBadge(panel);
+        panel.querySelectorAll('.offer-price-value').forEach(function(node){
+          node.classList.add('price-masked');
+        });
+        replaceRiyalWords(panel);
+        removeFinalPriceNote(panel);
+      }
 
-      var candidates=Array.prototype.slice.call(panel.querySelectorAll('*'));
-      var oldBadge=candidates.find(function(element){
-        var text=(element.textContent||'').replace(/\s+/g,' ').trim();
-        return element.children.length===0&&/قريب/.test(text)&&text.length<=45;
-      });
-      if(oldBadge) oldBadge.remove();
-
-      var priceValue=panel.querySelector('.offer-price-value');
-      var badge=createHourglassBadge();
-      if(priceValue) priceValue.insertAdjacentElement('beforebegin',badge);
-      else panel.insertBefore(badge,panel.firstChild);
-
-      panel.querySelectorAll('.offer-price-value').forEach(function(node){
-        node.classList.add('price-masked');
-      });
-      replaceRiyalWords(panel);
-
-      Array.prototype.slice.call(panel.querySelectorAll('p,div,span,small')).forEach(function(element){
-        if(element.closest('.price-soon-badge')) return;
-        var noteText=(element.textContent||'').replace(/\s+/g,' ').trim();
-        if(
-          /ستعلن القيمة النهائية بعد اكتمال التعاقدات واعتماد تفاصيل البرنامج/.test(noteText) ||
-          /ستُعلن القيمة النهائية بعد اكتمال التعاقدات واعتماد تفاصيل البرنامج/.test(noteText)
-        ){
-          element.remove();
-        }
-      });
+      if(shell) shell.classList.add('participation-layout-ready');
+      addVersionTag();
+    }finally{
+      participationApplying=false;
     }
+  }
 
-    if(shell) shell.classList.add('participation-layout-ready');
-    addVersionTag();
+  function scheduleParticipationLayout(){
+    if(participationScheduled) return;
+    participationScheduled=true;
+    window.requestAnimationFrame(function(){
+      participationScheduled=false;
+      applyParticipationLayout();
+    });
+  }
+
+  function startParticipationEnhancements(){
+    applyParticipationLayout();
+
+    var observer=new MutationObserver(function(mutations){
+      if(participationApplying) return;
+      var relevant=mutations.some(function(mutation){
+        var target=mutation.target.nodeType===1?mutation.target:mutation.target.parentElement;
+        return target&&(
+          target.closest&&target.closest('.offer-shell,.offer-price-panel,#participation-registration')||
+          mutation.addedNodes.length
+        );
+      });
+      if(relevant) scheduleParticipationLayout();
+    });
+
+    observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+    window.setTimeout(applyParticipationLayout,350);
+    window.setTimeout(applyParticipationLayout,1200);
   }
 
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',applyParticipationLayout,{once:true});
+    document.addEventListener('DOMContentLoaded',startParticipationEnhancements,{once:true});
   }else{
-    applyParticipationLayout();
+    startParticipationEnhancements();
   }
 })();
 </script>
