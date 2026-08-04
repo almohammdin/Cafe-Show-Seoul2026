@@ -255,15 +255,15 @@
 .trip-leader-mini .trip-leader-copy p{margin:7px 0 0;color:#dbe4ec;font-size:10.5px;line-height:1.65}
 .trip-leader-mini .photo-credit{display:block;margin-top:5px;color:#aebdcc;font-size:7.5px}
 .public-language-switcher{position:fixed;top:15px;inset-inline-end:15px;z-index:99990;display:flex;align-items:center;gap:4px;padding:6px;border:1px solid rgba(255,255,255,.45);border-radius:999px;background:rgba(7,29,56,.94);box-shadow:0 12px 28px rgba(0,0,0,.2);backdrop-filter:blur(12px)}
-.public-language-switcher .language-globe{display:grid;place-items:center;width:28px;height:28px;color:#f2d88f;font-size:17px}
-.public-language-switcher button{border:0;border-radius:999px;padding:6px 9px;background:transparent;color:#d9e4ef;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.public-language-switcher button{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:999px;padding:7px 10px;background:transparent;color:#d9e4ef;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.public-language-switcher .flag{font-size:15px;line-height:1}
 .public-language-switcher button.active{background:#fff;color:#071d38}
 body.admin-mode .public-language-switcher{display:none!important}
 body[data-public-lang="en"],body[data-public-lang="ko"]{direction:ltr}
 body[data-public-lang="ko"]{font-family:"IBM Plex Sans","Noto Sans KR",system-ui,sans-serif}
 body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter-spacing:-.025em}
 @media(max-width:900px){.trip-leaders-mini{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:680px){.public-language-switcher{top:9px;inset-inline-end:9px}.public-language-switcher .language-globe{display:none}.trip-leaders-mini{grid-template-columns:1fr}.trip-leader-mini{grid-template-columns:96px minmax(0,1fr);min-height:138px}.trip-leader-mini .trip-leader-copy{padding:13px 12px}.trip-leader-mini .trip-leader-copy h3{font-size:16px}}
+@media(max-width:680px){.public-language-switcher{top:9px;inset-inline:9px;width:calc(100% - 18px);justify-content:center;border-radius:15px}.public-language-switcher button{flex:1;padding:7px 5px}.trip-leaders-mini{grid-template-columns:1fr}.trip-leader-mini{grid-template-columns:96px minmax(0,1fr);min-height:138px}.trip-leader-mini .trip-leader-copy{padding:13px 12px}.trip-leader-mini .trip-leader-copy h3{font-size:16px}}
 </style>
 </head>
 {% endcapture %}
@@ -271,7 +271,7 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
 {% assign page_source = page_source | replace: 'رحلة سيئول المعرفية 2026', 'رحلة كوريا بالتزامن مع معرض كوفي شو 2026' %}
 {% assign page_source = page_source | replace: 'رحلة سيئول المعرفية', 'رحلة كوريا بالتزامن مع معرض كوفي شو 2026' %}
 {% capture body_injection %}
-<div class="public-language-switcher" aria-label="Language"><span class="language-globe" aria-hidden="true">◎</span><button type="button" data-public-language="ar" class="active">العربية</button><button type="button" data-public-language="en">EN</button><button type="button" data-public-language="ko">한국어</button></div>
+<div class="public-language-switcher" aria-label="Language"><button type="button" data-public-language="ar" class="active"><span class="flag" aria-hidden="true">🇸🇦</span><span>العربية</span></button><button type="button" data-public-language="en"><span class="flag" aria-hidden="true">🇬🇧</span><span>English</span></button><button type="button" data-public-language="ko"><span class="flag" aria-hidden="true">🇰🇷</span><span>한국어</span></button></div>
 <script id="participation-layout-script-v385">
 (function(){
   var riyalSymbolUrl='https://www.sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-1.png';
