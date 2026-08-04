@@ -247,7 +247,7 @@
 .trip-leader-mini .trip-leader-photo{overflow:hidden;background:#fff}
 .trip-leader-mini .trip-leader-photo img{width:100%;height:100%;display:block;object-fit:cover}
 .trip-leader-mini .trip-leader-photo.naif img{object-position:center top}
-.trip-leader-mini .trip-leader-photo.ali img{object-fit:cover;object-position:center top}
+.trip-leader-mini .trip-leader-photo.ali-photo img{object-fit:cover;object-position:center top}
 .trip-leader-mini .trip-leader-copy{padding:15px 14px;color:#fff}
 .trip-leader-mini .trip-leader-copy small{display:block;color:#f2d88f;font-size:10px;font-weight:800}
 .trip-leader-mini .trip-leader-copy h3{margin:2px 0 0;color:#fff;font-size:18px}
@@ -509,7 +509,7 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
     if(oldLeader&&!document.querySelector('.trip-leaders-mini')){
       var leaders=document.createElement('div');
       leaders.className='trip-leaders-mini';
-      leaders.innerHTML='<article class="trip-leader-mini"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article><article class="trip-leader-mini"><div class="trip-leader-photo ali"><img src="ali-portrait.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p></div></article>';
+      leaders.innerHTML='<article class="trip-leader-mini"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article><article class="trip-leader-mini"><div class="trip-leader-photo ali-photo"><img src="ali-portrait.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p></div></article>';
       oldLeader.replaceWith(leaders);
     }
 
