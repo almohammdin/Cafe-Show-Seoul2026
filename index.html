@@ -2,7 +2,7 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% capture head_injection %}
-<style id="participation-layout-v384">
+<style id="participation-layout-v385">
 .offer-shell{
   grid-template-columns:minmax(0,1fr) minmax(248px,288px) !important;
   gap:22px !important;
@@ -238,11 +238,41 @@
   .price-soon-icon .hourglass-stream{animation:none !important}
 }
 </style>
+<style id="trip-identity-v385">
+.hero .trip-name-main{display:block}
+.hero .trip-name-sub{display:block;margin-top:8px;color:#e8eef5;font-size:.52em;font-weight:700;line-height:1.55}
+.hero .trip-name-place{display:block;color:#f2d88f;font-size:.34em;font-weight:700;line-height:1.8}
+.trip-leaders-mini{display:grid;gap:12px;align-self:stretch}
+.trip-leader-mini{display:grid;grid-template-columns:112px minmax(0,1fr);min-height:146px;overflow:hidden;border:1px solid rgba(255,255,255,.2);border-radius:20px;background:rgba(255,255,255,.1);box-shadow:0 14px 34px rgba(0,0,0,.14);backdrop-filter:blur(9px)}
+.trip-leader-mini .trip-leader-photo{overflow:hidden;background:linear-gradient(145deg,#edf2f6,#dce7ed)}
+.trip-leader-mini .trip-leader-photo img{width:100%;height:100%;display:block;object-fit:cover}
+.trip-leader-mini .trip-leader-photo.naif img{object-position:center top}
+.trip-leader-mini .trip-leader-photo.ali img{object-position:60% center}
+.trip-leader-mini .trip-leader-copy{padding:15px 14px;color:#fff}
+.trip-leader-mini .trip-leader-copy small{display:block;color:#f2d88f;font-size:10px;font-weight:800}
+.trip-leader-mini .trip-leader-copy h3{margin:2px 0 0;color:#fff;font-size:18px}
+.trip-leader-mini .trip-leader-copy strong{display:block;margin-top:2px;color:#dbe7f1;font-size:10px;line-height:1.55}
+.trip-leader-mini .trip-leader-copy p{margin:7px 0 0;color:#dbe4ec;font-size:10.5px;line-height:1.65}
+.trip-leader-mini .photo-credit{display:block;margin-top:5px;color:#aebdcc;font-size:7.5px}
+.public-language-switcher{position:fixed;top:15px;inset-inline-end:15px;z-index:99990;display:flex;align-items:center;gap:4px;padding:6px;border:1px solid rgba(255,255,255,.45);border-radius:999px;background:rgba(7,29,56,.94);box-shadow:0 12px 28px rgba(0,0,0,.2);backdrop-filter:blur(12px)}
+.public-language-switcher .language-globe{display:grid;place-items:center;width:28px;height:28px;color:#f2d88f;font-size:17px}
+.public-language-switcher button{border:0;border-radius:999px;padding:6px 9px;background:transparent;color:#d9e4ef;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.public-language-switcher button.active{background:#fff;color:#071d38}
+body.admin-mode .public-language-switcher{display:none!important}
+body[data-public-lang="en"],body[data-public-lang="ko"]{direction:ltr}
+body[data-public-lang="ko"]{font-family:"IBM Plex Sans","Noto Sans KR",system-ui,sans-serif}
+body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter-spacing:-.025em}
+@media(max-width:900px){.trip-leaders-mini{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.public-language-switcher{top:9px;inset-inline-end:9px}.public-language-switcher .language-globe{display:none}.trip-leaders-mini{grid-template-columns:1fr}.trip-leader-mini{grid-template-columns:96px minmax(0,1fr);min-height:138px}.trip-leader-mini .trip-leader-copy{padding:13px 12px}.trip-leader-mini .trip-leader-copy h3{font-size:16px}}
+</style>
 </head>
 {% endcapture %}
 {% assign page_source = page_source | replace: '</head>', head_injection %}
+{% assign page_source = page_source | replace: 'رحلة سيئول المعرفية 2026', 'رحلة كوريا بالتزامن مع معرض كوفي شو 2026' %}
+{% assign page_source = page_source | replace: 'رحلة سيئول المعرفية', 'رحلة كوريا بالتزامن مع معرض كوفي شو 2026' %}
 {% capture body_injection %}
-<script id="participation-layout-script-v384">
+<div class="public-language-switcher" aria-label="Language"><span class="language-globe" aria-hidden="true">◎</span><button type="button" data-public-language="ar" class="active">العربية</button><button type="button" data-public-language="en">EN</button><button type="button" data-public-language="ko">한국어</button></div>
+<script id="participation-layout-script-v385">
 (function(){
   var riyalSymbolUrl='https://www.sama.gov.sa/ar-sa/Currency/Documents/Saudi_Riyal_Symbol-1.png';
 
@@ -321,13 +351,13 @@
   function addVersionTag(){
     var version=document.querySelector('.private-version-tag');
     if(version){
-      version.textContent='v38.4';
+      version.textContent='v38.5';
       return;
     }
     var footer=document.querySelector('footer')||document.body;
     version=document.createElement('small');
     version.className='private-version-tag';
-    version.textContent='v38.4';
+    version.textContent='v38.5';
     version.title='الإصدار الداخلي';
     footer.appendChild(version);
   }
@@ -433,6 +463,162 @@
   }else{
     startParticipationEnhancements();
   }
+})();
+</script>
+<script id="trip-identity-script-v385">
+(function(){
+  var replacements=[
+    ['رحلة سيئول المعرفية 2026','رحلة كوريا بالتزامن مع معرض كوفي شو 2026'],
+    ['رحلة سيئول المعرفية','رحلة كوريا بالتزامن مع معرض كوفي شو 2026']
+  ];
+
+  function replaceTripName(root){
+    var walker=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,{
+      acceptNode:function(node){
+        var parent=node.parentElement;
+        if(!parent||parent.closest('script,style,textarea,input'))return NodeFilter.FILTER_REJECT;
+        return replacements.some(function(pair){return node.nodeValue.includes(pair[0]);})?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes=[];
+    while(walker.nextNode())nodes.push(walker.currentNode);
+    nodes.forEach(function(node){
+      replacements.forEach(function(pair){node.nodeValue=node.nodeValue.split(pair[0]).join(pair[1]);});
+    });
+  }
+
+  function updateMetadata(){
+    var title='رحلة كوريا بالتزامن مع معرض كوفي شو 2026 | جمعية ملاك المطاعم والمقاهي';
+    document.title=title;
+    var values={
+      'meta[property="og:title"]':'رحلة كوريا بالتزامن مع معرض كوفي شو 2026',
+      'meta[name="twitter:title"]':'رحلة كوريا بالتزامن مع معرض كوفي شو 2026',
+      'meta[property="og:image:alt"]':'رحلة كوريا بالتزامن مع معرض كوفي شو 2026 | سيئول - كوريا الجنوبية'
+    };
+    Object.keys(values).forEach(function(selector){var meta=document.querySelector(selector);if(meta)meta.content=values[selector];});
+  }
+
+  function renderTripIdentity(){
+    var heroTitle=document.querySelector('.hero h1');
+    if(heroTitle&&!heroTitle.dataset.tripIdentity){
+      heroTitle.dataset.tripIdentity='1';
+      heroTitle.innerHTML='<span class="trip-name-main">رحلة كوريا</span><span class="trip-name-sub">بالتزامن مع معرض كوفي شو 2026</span><span class="trip-name-place">سيئول - كوريا الجنوبية</span>';
+    }
+
+    var oldLeader=document.querySelector('.hero .ali');
+    if(oldLeader&&!document.querySelector('.trip-leaders-mini')){
+      var leaders=document.createElement('div');
+      leaders.className='trip-leaders-mini';
+      leaders.innerHTML='<article class="trip-leader-mini"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article><article class="trip-leader-mini"><div class="trip-leader-photo ali"><img src="ali.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p><span class="photo-credit">الصورة: Arab News / Huda Bashatah</span></div></article>';
+      oldLeader.replaceWith(leaders);
+    }
+
+    var offerKicker=document.querySelector('.offer-kicker');
+    if(offerKicker)offerKicker.textContent='باقة رحلة كوريا بالتزامن مع معرض كوفي شو 2026';
+    replaceTripName(document.body);
+    updateMetadata();
+  }
+
+  function start(){
+    renderTripIdentity();
+    var timer=null;
+    new MutationObserver(function(mutations){
+      if(!mutations.some(function(m){return m.addedNodes.length||m.type==='characterData';}))return;
+      clearTimeout(timer);timer=setTimeout(renderTripIdentity,60);
+    }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+<script id="public-localization-script-v385">
+(function(){
+  var PUBLIC_ROOTS='.topbar,header.hero,#participation-offer,#knowledge-program,#show2026,#trip-highlights,#public-program,#information,footer';
+  var EXCLUDED='.admin-section,.admin-only-nav,.admin-inline-control,.admin-tool-section,#program-admin,#suggestions,#flights,#lodging,#sponsors,#followups,#finance,script,style,textarea';
+  var DICTIONARY={
+    en:{
+      'رحلة كوريا':'Korea Trip','بالتزامن مع معرض كوفي شو 2026':'Alongside Cafe Show Seoul 2026','سيئول - كوريا الجنوبية':'Seoul - South Korea',
+      'برنامج معرفي يجمع المعرض، لقاء الزملاء، تبادل الخبرات، الشركات والجهات، وتجربة الثقافة الكورية.':'A professional learning program combining the exhibition, peer exchange, company and institutional visits, and Korean culture.',
+      '10–15 نوفمبر 2026':'10-15 November 2026','البرنامج من 10 إلى 14 نوفمبر':'Program activities: 10-14 November','15 مشاركًا + ضيف الشرف + ممثل الجمعية':'15 participants + guest of honor + Association representative','الاستقبال في مطار إنشيون':'Reception at Incheon Airport',
+      'ممثل الجمعية وقائد التنسيق':'Association representative and coordination lead','نايف المحمدي':'Naif Al-Mohammdi','مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية':'Governance & Business Development Advisor | Association Board Member','يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.':'Leads trip design and coordination with institutions and partners, linking the program to practical outcomes for restaurant and cafe owners.',
+      'ضيف الشرف':'Guest of Honor','علي الديواني':'Ali Al-Diwani','خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا':'Coffee, Roasting & Sensory Expert | Internationally Licensed Coffee Evaluator','من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.':'A Saudi specialty-coffee pioneer who leads the roasting and cupping session and helps interpret exhibition trends.','الصورة: Arab News / Huda Bashatah':'Photo: Arab News / Huda Bashatah',
+      '5 أيام':'5 days','برنامج الفعاليات':'Activity program','17 شخصًا':'17 people','إجمالي الوفد':'Total delegation','مركز سيئول للمعارض والمؤتمرات':'Seoul Convention & Exhibition Center',
+      'باقة رحلة كوريا بالتزامن مع معرض كوفي شو 2026':'Korea Trip Package alongside Cafe Show Seoul 2026','قيمة المشاركة وما تشمله الرحلة':'Participation fee and inclusions','باقة مهنية ومعرفية متكاملة صممت لتمنح المشارك تجربة منظمة في سيئول، تجمع بين المعرض والزيارات واللقاءات والتجارب التطبيقية.':'An integrated professional package built around the exhibition, business visits, meetings and applied experiences in Seoul.',
+      'الإقامة طوال مدة البرنامج':'Accommodation throughout the program','التنقلات الداخلية في سيئول':'Local transportation in Seoul','الاستقبال من المطار عند الوصول':'Airport reception on arrival','البرنامج المهني والمعرفي':'Professional and learning program','الزيارات والأنشطة ورسوم الدخول المدرجة':'Included visits, activities and entry fees','الوجبات وتجارب المطاعم والمقاهي المدرجة':'Included meals and restaurant and cafe experiences','الترجمة والتنسيق الميداني':'Interpretation and on-ground coordination','لقاءات الوفد وورشة العمل التفاعلية':'Delegation meetings and interactive workshop',
+      'التسجيل والتواصل':'Registration and contact','سجل بياناتك الأساسية، ثم أرسل طلب المشاركة مباشرة عبر واتساب.':'Enter your basic details, then send the participation request through WhatsApp.','اهتمام مبدئي':'Initial interest','الاسم':'Name','المنشأة أو الشركة':'Business or company','المدينة':'City','رقم الجوال':'Mobile number','التسجيل والتواصل عبر واتساب':'Register and contact via WhatsApp','قيمة المشاركة الأساسية':'Base participation fee','سيُعلن قريبًا':'Coming soon','التفاصيل قيد الاعتماد':'Details pending approval','عرض التسجيل المبكر':'Early registration offer','حتى 15 أغسطس 2026':'Until 15 August 2026',
+      'الرحلات المعرفية ضمن برامج الجمعية':'Learning trips within the Association programs','فكرة البرنامج':'Program concept','تمنح الرحلات المعرفية أعضاء الجمعية فرصة مشاهدة الممارسات في أسواق مختلفة، والالتقاء بزملاء القطاع، ومناقشة التحديات والفرص في بيئة تجمع الخبرة بالتجربة. وتأتي رحلة سيئول ضمن هذا التوجه، عبر برنامج يربط المعرض بالزيارات المهنية والثقافية واللقاءات المشتركة.':'The Association learning trips let members observe practices in different markets, meet industry peers and discuss challenges and opportunities. The Korea trip connects the exhibition with business and cultural visits and shared meetings.','ترتكز الرحلة على خمسة محاور:':'The trip is built around five themes:','المعرفة':'Knowledge','العلاقات':'Relationships','الثقافة':'Culture','التجربة':'Experience','فرص التطبيق':'Application opportunities','أهداف الرحلة':'Trip objectives',
+      'جمع ملاك ومشغلي المطاعم والمقاهي في تجربة معرفية مشتركة.':'Bring restaurant and cafe owners and operators together in a shared learning experience.','تبادل الخبرات والتجارب بين المشاركين وبناء روابط مهنية مستمرة.':'Exchange experience and build lasting professional relationships.','الاطلاع على اتجاهات القهوة والمقاهي والمعدات والحلول التشغيلية.':'Explore coffee, cafe, equipment and operating trends.','فهم ثقافة الضيافة الكورية وسلوك المستهلك وتجارب التجزئة.':'Understand Korean hospitality culture, consumer behavior and retail experiences.','زيارة شركات تقنية وذكاء اصطناعي وروبوتات وامتياز.':'Visit technology, AI, robotics and franchise companies.','بناء قنوات تواصل مع الجهات الرسمية والتجارية السعودية والكورية.':'Build connections with Saudi and Korean institutional and business stakeholders.','تحويل المشاهدات إلى أفكار وفرص قابلة للتطبيق في السوق السعودي.':'Turn observations into ideas and opportunities applicable in the Saudi market.',
+      'معرض Cafe Show Seoul 2026':'Cafe Show Seoul 2026','الدورة 25':'25th edition','أربعة أيام في مركز COEX بمدينة سيئول':'Four days at COEX in Seoul','إضافة إلى التقويم':'Add to calendar','شركة عارضة':'exhibiting companies','علامة تجارية':'brands','دولة مشاركة':'participating countries','مساحة القاعات A–D في مركز COEX':'Area of halls A-D at COEX','عن المعرض':'About the exhibition','منصة دولية تجمع القهوة والشاي والمخبوزات والحلويات والمعدات والخامات والامتياز والتقنيات والخدمات المرتبطة بقطاع الأغذية والمشروبات، وتمنح الوفد فرصة مقابلة الشركات ومتابعة الاتجاهات والمنتجات والحلول التشغيلية.':'An international platform spanning coffee, tea, bakery, equipment, ingredients, franchising, technology and foodservice solutions, giving the delegation direct access to companies, products and operating trends.','مجالات ومنتجات المعرض':'Exhibition sectors and products','القهوة':'Coffee','الشاي والمشروبات':'Tea and beverages','المخابز والحلويات':'Bakery and confectionery','الآيس كريم والجيلاتو':'Ice cream and gelato','المواد الخام':'Ingredients','المكائن والمعدات':'Machines and equipment','الديكور والتجهيز':'Design and fit-out','الامتياز والمشاريع الناشئة':'Franchise and startups','خدمات الأغذية':'Foodservice','أجهزة المطبخ':'Kitchen equipment','التغليف والعرض':'Packaging and display','التقنية والحلول':'Technology and solutions','ملخص المعرض 2026':'2026 exhibition overview','دليل الزائر':'Visitor guide','موقع المعرض':'Exhibition website','قائمة العارضين':'Exhibitor list','البحث في الشركات والعلامات والمنتجات والفئات وأرقام الأجنحة عبر الموقع الرسمي للمعرض.':'Search companies, brands, products, categories and booth numbers on the exhibition website.','عن نسخة Cafe Show Seoul 2025':'About Cafe Show Seoul 2025','أرقام وهوية النسخة السابقة':'Previous edition at a glance','نتائج نسخة 2025':'2025 results','تقرير النسخة PDF':'Edition report PDF',
+      'أبرز أنشطة وبرامج الرحلة':'Key trip activities and experiences','نماذج مختارة من التجارب المهنية والمعرفية والثقافية التي يجري تنسيقها ضمن الرحلة.':'Selected professional, learning and cultural experiences being coordinated for the trip.','برنامج الرحلة':'Trip program','الجدول التفصيلي المعتمد والمنشور من إدارة البرنامج.':'The detailed itinerary published by the program team.','برنامج معتمد':'Published program','المعرض':'Exhibition','ورش عمل':'Workshop','زيارة شركة':'Company visit','مقهى':'Cafe','ثقافي':'Culture','تجربة':'Experience','نشاط معرفي':'Knowledge activity','مواصلات':'Transport','زيارة رسمية':'Official visit','معرض سيئول للقهوة':'Cafe Show Seoul 2026','أكاديمية فيرست باريستا':'First Barista Academy','بير روبوتكس':'Bear Robotics','مقهى رين ريبورت':'Rain Report Cafe','قصر غيونغبوك':'Gyeongbokgung Palace','شركة سترونغهولد روبوتكس':'Stronghold Robotics','إيديا كوفي':'EDIYA Coffee','مكتبة ستارفيلد':'Starfield Library COEX','تجربة| حي سيونغسو-دونغ':'Seongsu-dong Experience','إس بي سي سكوير (مجمع SPC)':'SPC Square','لقاء الضيافة في سيئول':'Seoul Hospitality Gathering','ورشة تفاعلية: هندسة الشراكات التجارية':'Interactive Workshop: Structuring Business Partnerships','تجربة تصميم عطر شخصي':'Personal Perfume Design Experience','الوصول والاستقبال':'Arrival and airport reception','تصميم عطر شخصي في GRANHAND Seochon':'Personal perfume design at GRANHAND Seochon','جلسة المخرجات':'Outcomes session','السفارة السعودية في سيئول':'Embassy of Saudi Arabia in Seoul',
+      'معلومات عامة':'General information','من 2°م إلى 12°م':'2°C to 12°C','درجة الحرارة المتوقعة في منتصف نوفمبر':'Expected temperature in mid-November','نحو 70%':'Around 70%','رطوبة متوسطة خلال الشهر':'Average monthly humidity','أمطار خفيفة متفرقة':'Occasional light rain','احتمال قائم مع أجواء باردة وغائمة جزئيًا':'Possible with cool, partly cloudy weather','المظهر والملابس المقترحة':'Suggested attire','اختيارات عملية تناسب برودة سيئول والتنقل بين الأماكن الخارجية والمواقع المغلقة.':'Practical choices for Seoul weather and moving between outdoor and indoor venues.','المعرض والزيارات اليومية':'Exhibition and daily visits','عملي أنيق (Smart Casual) مع طبقات دافئة وحذاء مريح.':'Smart casual with warm layers and comfortable shoes.','المقاهي والمطاعم':'Cafes and restaurants','مظهر يومي مرتب (Casual) مع جاكيت خفيف أو متوسط.':'Neat casual attire with a light or medium jacket.','الزيارات الرسمية':'Official visits','عمل رسمي (Business Formal) بحسب مستوى الجهة والاجتماع.':'Business formal depending on the host and meeting level.','توقعات الطقس خلال الرحلة':'Weather forecast during the trip','محول الريال والوون الكوري':'SAR/KRW converter','الريال السعودي (SAR)':'Saudi riyal (SAR)','الوون الكوري (KRW)':'Korean won (KRW)','جاري تحديث سعر الصرف…':'Updating the exchange rate...','مترجم عربي وكوري':'Arabic-Korean translator','العربية':'Arabic','الكورية':'Korean','ترجمة فورية':'Translate','عكس اللغتين':'Swap languages','نسخ الترجمة':'Copy translation',
+      'إعداد: نايف المحمدي':'Prepared by: Naif Al-Mohammdi','عضو مجلس إدارة جمعية ملاك المطاعم والمقاهي':'Board Member, Restaurant & Cafe Owners Association','مستشار الحوكمة وتطوير الأعمال':'Governance & Business Development Advisor','إدارة البرنامج':'Program administration'
+    },
+    ko:{
+      'رحلة كوريا':'한국 방문 프로그램','بالتزامن مع معرض كوفي شو 2026':'Cafe Show Seoul 2026 연계','سيئول - كوريا الجنوبية':'서울 - 대한민국',
+      'برنامج معرفي يجمع المعرض، لقاء الزملاء، تبادل الخبرات، الشركات والجهات، وتجربة الثقافة الكورية.':'전시회, 동료 교류, 기업·기관 방문과 한국 문화 체험을 결합한 전문 학습 프로그램입니다.','10–15 نوفمبر 2026':'2026년 11월 10-15일','البرنامج من 10 إلى 14 نوفمبر':'프로그램 일정: 11월 10-14일','15 مشاركًا + ضيف الشرف + ممثل الجمعية':'참가자 15명 + 특별 초청 인사 + 협회 대표','الاستقبال في مطار إنشيون':'인천공항 영접',
+      'ممثل الجمعية وقائد التنسيق':'협회 대표 및 총괄 코디네이터','نايف المحمدي':'나이프 알모함마디','مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية':'거버넌스·사업개발 자문 | 협회 이사회 위원','يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.':'기관 및 파트너와 프로그램을 설계·조율하고 레스토랑·카페 소유주에게 실질적인 성과를 연결합니다.','ضيف الشرف':'특별 초청 인사','علي الديواني':'알리 알디와니','خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا':'커피·로스팅·센서리 전문가 | 국제 공인 커피 평가사','من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.':'사우디 스페셜티 커피 분야의 선구자로 로스팅·커핑 세션과 전시 트렌드 분석을 이끕니다.','الصورة: Arab News / Huda Bashatah':'사진: Arab News / Huda Bashatah',
+      '5 أيام':'5일','برنامج الفعاليات':'활동 프로그램','17 شخصًا':'17명','إجمالي الوفد':'대표단 전체','مركز سيئول للمعارض والمؤتمرات':'서울 코엑스',
+      'باقة رحلة كوريا بالتزامن مع معرض كوفي شو 2026':'Cafe Show Seoul 2026 연계 한국 방문 패키지','قيمة المشاركة وما تشمله الرحلة':'참가비 및 포함 사항','باقة مهنية ومعرفية متكاملة صممت لتمنح المشارك تجربة منظمة في سيئول، تجمع بين المعرض والزيارات واللقاءات والتجارب التطبيقية.':'전시회, 기업 방문, 미팅과 실무 체험을 하나로 구성한 서울 전문 프로그램입니다.','الإقامة طوال مدة البرنامج':'프로그램 기간 숙박','التنقلات الداخلية في سيئول':'서울 내 교통','الاستقبال من المطار عند الوصول':'도착 시 공항 영접','البرنامج المهني والمعرفي':'전문 학습 프로그램','الزيارات والأنشطة ورسوم الدخول المدرجة':'방문, 활동 및 입장료 포함','الوجبات وتجارب المطاعم والمقاهي المدرجة':'포함된 식사와 레스토랑·카페 체험','الترجمة والتنسيق الميداني':'통역 및 현장 운영','لقاءات الوفد وورشة العمل التفاعلية':'대표단 미팅 및 인터랙티브 워크숍','التسجيل والتواصل':'참가 등록 및 문의','سجل بياناتك الأساسية، ثم أرسل طلب المشاركة مباشرة عبر واتساب.':'기본 정보를 입력한 뒤 WhatsApp으로 참가 요청을 보내십시오.','اهتمام مبدئي':'사전 관심 등록','الاسم':'이름','المنشأة أو الشركة':'사업체 또는 회사','المدينة':'도시','رقم الجوال':'휴대전화','التسجيل والتواصل عبر واتساب':'WhatsApp 참가 문의','قيمة المشاركة الأساسية':'기본 참가비','سيُعلن قريبًا':'곧 공개','التفاصيل قيد الاعتماد':'세부 사항 승인 중','عرض التسجيل المبكر':'얼리버드 혜택','حتى 15 أغسطس 2026':'2026년 8월 15일까지',
+      'الرحلات المعرفية ضمن برامج الجمعية':'협회 전문 학습 방문 프로그램','فكرة البرنامج':'프로그램 소개','تمنح الرحلات المعرفية أعضاء الجمعية فرصة مشاهدة الممارسات في أسواق مختلفة، والالتقاء بزملاء القطاع، ومناقشة التحديات والفرص في بيئة تجمع الخبرة بالتجربة. وتأتي رحلة سيئول ضمن هذا التوجه، عبر برنامج يربط المعرض بالزيارات المهنية والثقافية واللقاءات المشتركة.':'협회 회원이 다른 시장의 운영 사례를 살펴보고 업계 동료와 기회와 과제를 논의하는 프로그램입니다. 한국 방문은 전시회, 기업·문화 방문과 공동 미팅을 연결합니다.','ترتكز الرحلة على خمسة محاور:':'프로그램의 5가지 축:','المعرفة':'지식','العلاقات':'관계','الثقافة':'문화','التجربة':'체험','فرص التطبيق':'적용 기회','أهداف الرحلة':'프로그램 목표','جمع ملاك ومشغلي المطاعم والمقاهي في تجربة معرفية مشتركة.':'레스토랑·카페 소유주와 운영자를 공동 학습 경험으로 연결합니다.','تبادل الخبرات والتجارب بين المشاركين وبناء روابط مهنية مستمرة.':'경험을 교류하고 지속 가능한 전문 관계를 만듭니다.','الاطلاع على اتجاهات القهوة والمقاهي والمعدات والحلول التشغيلية.':'커피, 카페, 장비와 운영 솔루션의 트렌드를 살펴봅니다.','فهم ثقافة الضيافة الكورية وسلوك المستهلك وتجارب التجزئة.':'한국의 호스피탈리티 문화, 소비자 행동과 리테일 경험을 이해합니다.','زيارة شركات تقنية وذكاء اصطناعي وروبوتات وامتياز.':'기술, AI, 로봇 및 프랜차이즈 기업을 방문합니다.','بناء قنوات تواصل مع الجهات الرسمية والتجارية السعودية والكورية.':'사우디와 한국의 기관 및 기업과 연결합니다.','تحويل المشاهدات إلى أفكار وفرص قابلة للتطبيق في السوق السعودي.':'현장 관찰을 사우디 시장에 적용할 아이디어와 기회로 전환합니다.',
+      'معرض Cafe Show Seoul 2026':'Cafe Show Seoul 2026','الدورة 25':'제25회','أربعة أيام في مركز COEX بمدينة سيئول':'서울 COEX에서 4일간 개최','إضافة إلى التقويم':'캘린더에 추가','شركة عارضة':'참가 기업','علامة تجارية':'브랜드','دولة مشاركة':'참가 국가','مساحة القاعات A–D في مركز COEX':'COEX A-D홀 면적','عن المعرض':'전시회 소개','منصة دولية تجمع القهوة والشاي والمخبوزات والحلويات والمعدات والخامات والامتياز والتقنيات والخدمات المرتبطة بقطاع الأغذية والمشروبات، وتمنح الوفد فرصة مقابلة الشركات ومتابعة الاتجاهات والمنتجات والحلول التشغيلية.':'커피, 차, 베이커리, 장비, 원재료, 프랜차이즈, 기술과 푸드서비스 솔루션을 아우르는 국제 플랫폼으로 대표단이 기업과 제품, 운영 트렌드를 직접 만납니다.','مجالات ومنتجات المعرض':'전시 분야 및 제품','القهوة':'커피','الشاي والمشروبات':'차 및 음료','المخابز والحلويات':'베이커리 및 디저트','الآيس كريم والجيلاتو':'아이스크림 및 젤라토','المواد الخام':'원재료','المكائن والمعدات':'기계 및 장비','الديكور والتجهيز':'인테리어 및 설비','الامتياز والمشاريع الناشئة':'프랜차이즈 및 스타트업','خدمات الأغذية':'푸드서비스','أجهزة المطبخ':'주방 장비','التغليف والعرض':'포장 및 디스플레이','التقنية والحلول':'기술 및 솔루션','ملخص المعرض 2026':'2026 전시 개요','دليل الزائر':'방문객 안내','موقع المعرض':'전시회 웹사이트','قائمة العارضين':'참가업체 목록','البحث في الشركات والعلامات والمنتجات والفئات وأرقام الأجنحة عبر الموقع الرسمي للمعرض.':'공식 웹사이트에서 기업, 브랜드, 제품, 카테고리와 부스 번호를 검색할 수 있습니다.','عن نسخة Cafe Show Seoul 2025':'Cafe Show Seoul 2025 소개','أرقام وهوية النسخة السابقة':'이전 회차 주요 수치','نتائج نسخة 2025':'2025 결과','تقرير النسخة PDF':'전시 보고서 PDF',
+      'أبرز أنشطة وبرامج الرحلة':'주요 활동과 체험','نماذج مختارة من التجارب المهنية والمعرفية والثقافية التي يجري تنسيقها ضمن الرحلة.':'현재 조율 중인 전문, 학습 및 문화 체험입니다.','برنامج الرحلة':'방문 프로그램','الجدول التفصيلي المعتمد والمنشور من إدارة البرنامج.':'운영팀이 공개한 세부 일정입니다.','برنامج معتمد':'공개 프로그램','المعرض':'전시회','ورش عمل':'워크숍','زيارة شركة':'기업 방문','مقهى':'카페','ثقافي':'문화','تجربة':'체험','نشاط معرفي':'지식 프로그램','مواصلات':'이동','زيارة رسمية':'공식 방문','معرض سيئول للقهوة':'카페쇼 서울 2026','أكاديمية فيرست باريستا':'퍼스트 바리스타 아카데미','بير روبوتكس':'베어 로보틱스','مقهى رين ريبورت':'레인 리포트 카페','قصر غيونغبوك':'경복궁','شركة سترونغهولد روبوتكس':'스트롱홀드 로보틱스','إيديا كوفي':'이디야 커피','مكتبة ستارفيلد':'별마당 도서관 COEX','تجربة| حي سيونغسو-دونغ':'성수동 체험','إس بي سي سكوير (مجمع SPC)':'SPC 스퀘어','لقاء الضيافة في سيئول':'서울 호스피탈리티 모임','ورشة تفاعلية: هندسة الشراكات التجارية':'인터랙티브 워크숍: 비즈니스 파트너십 설계','تجربة تصميم عطر شخصي':'개인 향수 제작 체험','الوصول والاستقبال':'도착 및 공항 영접','تصميم عطر شخصي في GRANHAND Seochon':'그랑핸드 서촌 개인 향수 제작','جلسة المخرجات':'성과 정리 세션','السفارة السعودية في سيئول':'주한 사우디아라비아 대사관','معلومات عامة':'일반 안내','من 2°م إلى 12°م':'2°C-12°C','درجة الحرارة المتوقعة في منتصف نوفمبر':'11월 중순 예상 기온','نحو 70%':'약 70%','رطوبة متوسطة خلال الشهر':'월평균 습도','أمطار خفيفة متفرقة':'간헐적 약한 비','احتمال قائم مع أجواء باردة وغائمة جزئيًا':'쌀쌀하고 구름이 많은 날씨에 비가 올 수 있습니다.','المظهر والملابس المقترحة':'권장 복장','اختيارات عملية تناسب برودة سيئول والتنقل بين الأماكن الخارجية والمواقع المغلقة.':'서울의 쌀쌀한 날씨와 실내외 이동에 맞는 실용적인 복장입니다.','المعرض والزيارات اليومية':'전시회 및 일일 방문','عملي أنيق (Smart Casual) مع طبقات دافئة وحذاء مريح.':'따뜻한 레이어와 편한 신발을 갖춘 스마트 캐주얼.','المقاهي والمطاعم':'카페 및 레스토랑','مظهر يومي مرتب (Casual) مع جاكيت خفيف أو متوسط.':'가벼운 또는 중간 두께 재킷의 단정한 캐주얼.','الزيارات الرسمية':'공식 방문','عمل رسمي (Business Formal) بحسب مستوى الجهة والاجتماع.':'방문 기관과 미팅 수준에 맞는 비즈니스 포멀.','توقعات الطقس خلال الرحلة':'방문 기간 날씨','محول الريال والوون الكوري':'사우디 리얄·원 환율 계산기','الريال السعودي (SAR)':'사우디 리얄 (SAR)','الوون الكوري (KRW)':'대한민국 원 (KRW)','جاري تحديث سعر الصرف…':'환율 업데이트 중...','مترجم عربي وكوري':'아랍어·한국어 번역기','العربية':'아랍어','الكورية':'한국어','ترجمة فورية':'번역','عكس اللغتين':'언어 전환','نسخ الترجمة':'번역 복사','إعداد: نايف المحمدي':'작성: 나이프 알모함마디','عضو مجلس إدارة جمعية ملاك المطاعم والمقاهي':'레스토랑·카페 소유주 협회 이사회 위원','مستشار الحوكمة وتطوير الأعمال':'거버넌스·사업개발 자문','إدارة البرنامج':'프로그램 관리'
+    }
+  };
+  var currentLanguage='ar';
+  var localizationApplying=false;
+
+  function rememberAndTranslate(root){
+    if(!root||localizationApplying)return;
+    localizationApplying=true;
+    try{
+      var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(node){
+        var parent=node.parentElement,text=(node.nodeValue||'').replace(/\s+/g,' ').trim();
+        if(!parent||!text||parent.closest(EXCLUDED))return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }});
+      var nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+      nodes.forEach(function(node){
+        if(node.__publicArabic===undefined)node.__publicArabic=node.nodeValue;
+        var source=node.__publicArabic.replace(/\s+/g,' ').trim();
+        var translated=currentLanguage==='ar'?node.__publicArabic:(DICTIONARY[currentLanguage][source]||source);
+        if(node.nodeValue!==translated)node.nodeValue=translated;
+      });
+    }finally{localizationApplying=false;}
+  }
+
+  function applyLanguage(){
+    document.querySelectorAll(PUBLIC_ROOTS).forEach(rememberAndTranslate);
+    document.querySelectorAll('[data-public-language]').forEach(function(button){button.classList.toggle('active',button.dataset.publicLanguage===currentLanguage);});
+    document.body.dataset.publicLang=currentLanguage;
+    document.documentElement.lang=currentLanguage;
+    document.documentElement.dir=currentLanguage==='ar'?'rtl':'ltr';
+    if(currentLanguage==='en')document.title='Korea Trip alongside Cafe Show Seoul 2026 | Restaurant & Cafe Owners Association';
+    else if(currentLanguage==='ko')document.title='Cafe Show Seoul 2026 연계 한국 방문 | 레스토랑·카페 소유주 협회';
+    else document.title='رحلة كوريا بالتزامن مع معرض كوفي شو 2026 | جمعية ملاك المطاعم والمقاهي';
+  }
+
+  function setLanguage(language){
+    currentLanguage=['ar','en','ko'].includes(language)?language:'ar';
+    try{sessionStorage.setItem('tripPublicLanguage',currentLanguage);}catch(_e){}
+    applyLanguage();
+  }
+
+  function startLocalization(){
+    try{currentLanguage=sessionStorage.getItem('tripPublicLanguage')||'ar';}catch(_e){}
+    document.querySelectorAll('[data-public-language]').forEach(function(button){button.addEventListener('click',function(){setLanguage(button.dataset.publicLanguage);});});
+    applyLanguage();
+    var scheduled=false;
+    new MutationObserver(function(mutations){
+      if(localizationApplying)return;
+      if(document.body.classList.contains('admin-mode')){
+        if(currentLanguage!=='ar')setLanguage('ar');
+        return;
+      }
+      if(!mutations.some(function(m){return m.addedNodes.length||m.type==='characterData';}))return;
+      if(scheduled)return;scheduled=true;
+      requestAnimationFrame(function(){scheduled=false;applyLanguage();});
+    }).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startLocalization,{once:true});else startLocalization();
 })();
 </script>
 </body>
