@@ -1,6 +1,7 @@
 ---
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
+{% assign page_source = page_source | replace: 'seoul-trip-preview.png', 'seoul-trip-preview.png?v=20260805-1' %}
 {% capture head_injection %}
 <style id="participation-layout-v385">
 .offer-shell{
