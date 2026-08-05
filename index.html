@@ -2,6 +2,34 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% assign page_source = page_source | replace: 'seoul-trip-preview.png', 'seoul-trip-preview-v2.png' %}
+{% capture static_trip_leaders %}<div class="trip-leaders-mini"><article class="trip-leader-mini"><div class="trip-leader-photo ali-photo"><img src="ali-portrait.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p></div></article><article class="trip-leader-mini"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article></div><div class="ali legacy-trip-leader" hidden aria-hidden="true">{% endcapture %}
+{% assign page_source = page_source | replace: '<div class="ali">', static_trip_leaders %}
+{% capture early_deadline_text_old %}<small>حتى 15 أغسطس 2026</small>{% endcapture %}
+{% capture early_deadline_text_new %}<small id="earlyDeadlineText">حتى 15 أغسطس 2026</small>{% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_text_old, early_deadline_text_new %}
+{% capture early_deadline_input_old %}<label>التسجيل المبكر<input id="adminEarlyPrice" type="number" min="0" step="100" lang="en-US" dir="ltr"></label>{% endcapture %}
+{% capture early_deadline_input_new %}<label>التسجيل المبكر<input id="adminEarlyPrice" type="number" min="0" step="100" lang="en-US" dir="ltr"></label><label>تاريخ انتهاء التسجيل المبكر<input id="adminEarlyDeadline" type="date" lang="en-US" dir="ltr"></label>{% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_input_old, early_deadline_input_new %}
+{% capture early_deadline_default_old %}earlyPrice:9900,flightsVisible:false{% endcapture %}
+{% capture early_deadline_default_new %}earlyPrice:9900,earlyDeadline:'2026-08-15',flightsVisible:false{% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_default_old, early_deadline_default_new %}
+{% capture early_deadline_formatter_old %}function renderPublicSettings(){% endcapture %}
+{% capture early_deadline_formatter_new %}function formatEarlyDeadline(value){const match=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!match)return'';const date=new Date(Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]))),lang=document.body.dataset.publicLang||'ar';if(lang==='en')return`Until ${new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date)}`;if(lang==='ko')return`${new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}).format(date)}까지`;return`حتى ${new Intl.DateTimeFormat('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date)}`}
+function renderPublicSettings(){% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_formatter_old, early_deadline_formatter_new %}
+{% capture early_deadline_refs_old %}const base=document.getElementById('adminBasePrice'),early=document.getElementById('adminEarlyPrice');{% endcapture %}
+{% capture early_deadline_refs_new %}const base=document.getElementById('adminBasePrice'),early=document.getElementById('adminEarlyPrice'),deadline=document.getElementById('adminEarlyDeadline'),deadlineText=document.getElementById('earlyDeadlineText');{% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_refs_old, early_deadline_refs_new %}
+{% capture early_deadline_values_old %}if(early&&document.activeElement!==early)early.value=settings.earlyPrice;const controls={% endcapture %}
+{% capture early_deadline_values_new %}if(early&&document.activeElement!==early)early.value=settings.earlyPrice;if(deadline&&document.activeElement!==deadline)deadline.value=settings.earlyDeadline||'';if(deadlineText)deadlineText.textContent=formatEarlyDeadline(settings.earlyDeadline);const controls={% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_values_old, early_deadline_values_new %}
+{% capture early_deadline_binding_old %}function bindPublicSettingsControls(){[['prices','pricesVisible'],['flights','flightsVisible'],['lodging','lodgingVisible']].forEach(([id,key])=>{const button=document.getElementById(`${id}VisibilityToggle`);if(!button||button.dataset.bound==='1')return;button.dataset.bound='1';button.addEventListener('click',()=>{if(!isAdmin)return;state.publicSettings[key]=!Boolean(state.publicSettings[key]);save();renderAll();toast(state.publicSettings[key]?'تم الإظهار في الصفحة العامة':'تم الإخفاء من الصفحة العامة')})});[['adminBasePrice','basePrice'],['adminEarlyPrice','earlyPrice']].forEach(([id,key])=>{const input=document.getElementById(id);if(!input||input.dataset.bound==='1')return;input.dataset.bound='1';input.addEventListener('change',()=>{if(!isAdmin)return;state.publicSettings[key]=Math.max(0,Number(input.value||0));save();renderPublicSettings()})})}{% endcapture %}
+{% capture early_deadline_binding_new %}function bindPublicSettingsControls(){[['prices','pricesVisible'],['flights','flightsVisible'],['lodging','lodgingVisible']].forEach(([id,key])=>{const button=document.getElementById(`${id}VisibilityToggle`);if(!button||button.dataset.bound==='1')return;button.dataset.bound='1';button.addEventListener('click',()=>{if(!isAdmin)return;state.publicSettings[key]=!Boolean(state.publicSettings[key]);save();renderAll();toast(state.publicSettings[key]?'تم الإظهار في الصفحة العامة':'تم الإخفاء من الصفحة العامة')})});[['adminBasePrice','basePrice'],['adminEarlyPrice','earlyPrice']].forEach(([id,key])=>{const input=document.getElementById(id);if(!input||input.dataset.bound==='1')return;input.dataset.bound='1';input.addEventListener('change',()=>{if(!isAdmin)return;state.publicSettings[key]=Math.max(0,Number(input.value||0));save();renderPublicSettings()})});const deadline=document.getElementById('adminEarlyDeadline');if(deadline&&deadline.dataset.bound!=='1'){deadline.dataset.bound='1';deadline.addEventListener('change',()=>{if(!isAdmin)return;state.publicSettings.earlyDeadline=/^\d{4}-\d{2}-\d{2}$/.test(deadline.value)?deadline.value:'';save();renderPublicSettings()})}}{% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_binding_old, early_deadline_binding_new %}
+{% capture early_deadline_language_old %}function renderAll(){% endcapture %}
+{% capture early_deadline_language_new %}document.addEventListener('trip:language-change',renderPublicSettings);
+function renderAll(){% endcapture %}
+{% assign page_source = page_source | replace: early_deadline_language_old, early_deadline_language_new %}
 {% capture head_injection %}
 <style id="participation-layout-v385">
 .offer-shell{
@@ -365,13 +393,13 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
   function addVersionTag(){
     var version=document.querySelector('.private-version-tag');
     if(version){
-      version.textContent='v39.0';
+      version.textContent='v39.1';
       return;
     }
     var footer=document.querySelector('footer')||document.body;
     version=document.createElement('small');
     version.className='private-version-tag';
-    version.textContent='v39.0';
+    version.textContent='v39.1';
     version.title='الإصدار الداخلي';
     footer.appendChild(version);
   }
@@ -520,14 +548,6 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
       heroTitle.innerHTML='<span class="trip-name-main">رحلة كوريا</span><span class="trip-name-sub">بالتزامن مع معرض كوفي شو 2026</span><span class="trip-name-place">سيئول - كوريا الجنوبية</span>';
     }
 
-    var oldLeader=document.querySelector('.hero .ali');
-    if(oldLeader&&!document.querySelector('.trip-leaders-mini')){
-      var leaders=document.createElement('div');
-      leaders.className='trip-leaders-mini';
-      leaders.innerHTML='<article class="trip-leader-mini"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article><article class="trip-leader-mini"><div class="trip-leader-photo ali-photo"><img src="ali-portrait.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p></div></article>';
-      oldLeader.replaceWith(leaders);
-    }
-
     var offerKicker=document.querySelector('.offer-kicker');
     if(offerKicker)offerKicker.textContent='باقة رحلة كوريا بالتزامن مع معرض كوفي شو 2026';
     replaceTripName(document.body);
@@ -548,7 +568,7 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
 <script id="public-localization-script-v385">
 (function(){
   var PUBLIC_ROOTS='.topbar,header.hero,#participation-offer,#knowledge-program,#show2026,#trip-highlights,#public-program,#information,#flights,#lodging,footer';
-  var EXCLUDED='.admin-section,.admin-only-nav,.admin-inline-control,.admin-tool-section,#program-admin,#suggestions,#sponsors,#followups,#registrations,#finance,script,style,textarea';
+  var EXCLUDED='.admin-section,.admin-only-nav,.admin-inline-control,.admin-tool-section,#program-admin,#suggestions,#sponsors,#followups,#registrations,#finance,#earlyDeadlineText,script,style,textarea';
   var DICTIONARY={
     en:{
       'رحلة كوريا':'Korea Trip','بالتزامن مع معرض كوفي شو 2026':'Alongside Cafe Show Seoul 2026','سيئول - كوريا الجنوبية':'Seoul - South Korea',
@@ -608,6 +628,7 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
     document.body.dataset.publicLang=currentLanguage;
     document.documentElement.lang=currentLanguage;
     document.documentElement.dir=currentLanguage==='ar'?'rtl':'ltr';
+    document.dispatchEvent(new CustomEvent('trip:language-change',{detail:{language:currentLanguage}}));
     if(currentLanguage==='en')document.title='Korea Trip alongside Cafe Show Seoul 2026 | Restaurant & Cafe Owners Association';
     else if(currentLanguage==='ko')document.title='Cafe Show Seoul 2026 연계 한국 방문 | 레스토랑·카페 소유주 협회';
     else document.title='رحلة كوريا بالتزامن مع معرض كوفي شو 2026 | جمعية ملاك المطاعم والمقاهي';
