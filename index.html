@@ -29,8 +29,8 @@
   margin-top:0 !important;
   box-sizing:border-box !important;
 }
-.offer-price-value,
-.price-masked{
+body:not(.admin-mode).prices-public-hidden .offer-price-value,
+body:not(.admin-mode).prices-public-hidden .price-masked{
   filter:blur(3.25px) contrast(.82) !important;
   opacity:.76 !important;
   letter-spacing:.55px !important;
@@ -216,8 +216,8 @@
 }
 @media(max-width:640px){
   .offer-price-panel{padding:22px 17px 19px !important}
-  .offer-price-value,
-  .price-masked{
+  body:not(.admin-mode).prices-public-hidden .offer-price-value,
+  body:not(.admin-mode).prices-public-hidden .price-masked{
     filter:blur(2.85px) contrast(.84) !important;
     opacity:.79 !important;
   }
@@ -264,6 +264,19 @@ body[data-public-lang="ko"]{font-family:"IBM Plex Sans","Noto Sans KR",system-ui
 body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter-spacing:-.025em}
 @media(max-width:900px){.trip-leaders-mini{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.public-language-switcher{top:9px;inset-inline:9px;width:calc(100% - 18px);justify-content:center;border-radius:15px}.public-language-switcher button{flex:1;padding:7px 5px}.trip-leaders-mini{grid-template-columns:1fr;grid-auto-rows:138px}.trip-leader-mini{grid-template-columns:96px minmax(0,1fr);height:138px}.trip-leader-mini .trip-leader-copy{padding:13px 12px}.trip-leader-mini .trip-leader-copy h3{font-size:16px}}
+</style>
+<style id="admin-public-controls-v390">
+.show-archive .ref-2025-visual{display:none!important}
+.show-archive .ref-2025-modern{display:block!important;padding:16px!important}
+.show-archive .section-head{margin-bottom:9px!important}.show-archive .section-head h3{font-size:18px!important}.show-archive .section-subtitle{font-size:11px!important}
+.show-archive .ref-2025-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}.show-archive .ref-2025-stat{padding:10px!important;min-height:0!important}.show-archive .ref-2025-stat strong{font-size:20px!important}.show-archive .ref-2025-theme{margin-top:9px!important}.show-archive .ref-2025-links{margin-top:9px!important}
+.admin-public-settings{display:none;margin-top:18px;padding:14px;border:1px solid #d3dee6;border-radius:16px;background:#f8fafc;color:#173f56;text-align:right}.admin-mode .admin-public-settings{display:grid;gap:10px}.admin-public-settings-title{font-size:12px;font-weight:900}.admin-public-settings label{display:grid;gap:5px;font-size:11px;font-weight:800}.admin-public-settings input,.finance-field input[readonly]{width:100%;box-sizing:border-box;border:1px solid #cbd8e1;border-radius:9px;background:#fff;padding:9px 10px;color:#102f52;font:inherit;font-variant-numeric:tabular-nums}
+.public-visibility-toggle,.public-visibility-status{display:none}.admin-mode .public-visibility-toggle,.admin-mode .public-visibility-status{display:inline-flex}.public-visibility-toggle{align-items:center;justify-content:center;min-height:34px;padding:7px 11px;border:1px solid #21785f;border-radius:10px;background:#e7f5ef;color:#126047;font:inherit;font-size:11px;font-weight:900;cursor:pointer}.public-visibility-toggle.is-visible{border-color:#9a3348;background:#fff0f3;color:#82233a}.public-visibility-status{align-items:center;min-height:28px;padding:4px 8px;border-radius:999px;background:#eef2f5;color:#687783;font-size:10px;font-weight:900}.public-visibility-status.is-visible{background:#e4f4ed;color:#17664f}
+body:not(.admin-mode).prices-public-visible .price-soon-badge,body.prices-public-visible .offer-price-mask,body.admin-mode .price-soon-badge,body.admin-mode .offer-price-mask{display:none!important}body.admin-mode .offer-price-value{filter:none!important;opacity:1!important;transform:none!important;pointer-events:auto!important;user-select:text!important}
+.lodging-public-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.admin-mode .lodging-public-grid{display:none}body:not(.admin-mode) .lodging-admin-table{display:none}.lodging-public-card{overflow:hidden;border:1px solid #d9e4ec;border-radius:22px;background:#fff;box-shadow:0 12px 28px rgba(7,29,56,.08)}.lodging-gallery{display:grid;grid-template-columns:1fr;height:260px;background:#edf2f5}.lodging-gallery.multiple{grid-template-columns:2fr 1fr}.lodging-gallery.multiple img:first-child{grid-row:1/3}.lodging-gallery img{width:100%;height:100%;min-height:0;display:block;object-fit:cover}.lodging-placeholder{display:grid;place-items:center;height:210px;background:linear-gradient(135deg,#edf3f7,#dbe6ed);font-size:54px}.lodging-public-copy{padding:18px}.lodging-public-copy h3{margin:0;color:#102f52;font-size:21px}.lodging-public-copy p{margin:8px 0 13px;color:#5c6d7b;line-height:1.75}.lodging-public-copy a{display:inline-flex;padding:8px 12px;border-radius:10px;background:#e9f2f7;color:#155a79;text-decoration:none;font-size:12px;font-weight:900}
+[data-lodging-lang]{display:none!important}body:not([data-public-lang]) [data-lodging-lang="ar"],body[data-public-lang="ar"] [data-lodging-lang="ar"],body[data-public-lang="en"] [data-lodging-lang="en"],body[data-public-lang="ko"] [data-lodging-lang="ko"]{display:block!important}
+body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:last-child{display:none}.finance-params input,.admin-form-grid input[type="number"],.finance-summary strong,.finance-break-even .value,.finance-table td{font-variant-numeric:tabular-nums}.finance-params input[dir="ltr"],.admin-form-grid input[type="number"]{text-align:left}.registrations-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:560px}
+@media(max-width:760px){.show-archive .ref-2025-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.lodging-public-grid{grid-template-columns:1fr}.lodging-gallery{height:220px}.section-head .section-actions{flex-wrap:wrap}}
 </style>
 </head>
 {% endcapture %}
@@ -351,13 +364,13 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
   function addVersionTag(){
     var version=document.querySelector('.private-version-tag');
     if(version){
-      version.textContent='v38.5';
+      version.textContent='v39.0';
       return;
     }
     var footer=document.querySelector('footer')||document.body;
     version=document.createElement('small');
     version.className='private-version-tag';
-    version.textContent='v38.5';
+    version.textContent='v39.0';
     version.title='الإصدار الداخلي';
     footer.appendChild(version);
   }
@@ -414,10 +427,11 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
       }
 
       if(panel){
-        ensureHourglassBadge(panel);
-        panel.querySelectorAll('.offer-price-value').forEach(function(node){
-          node.classList.add('price-masked');
-        });
+        var pricesHidden=!document.body.classList.contains('admin-mode')&&document.body.classList.contains('prices-public-hidden');
+        var badge=panel.querySelector('.price-soon-badge');
+        if(pricesHidden)ensureHourglassBadge(panel);
+        else if(badge)badge.remove();
+        panel.querySelectorAll('.offer-price-value').forEach(function(node){node.classList.toggle('price-masked',pricesHidden);});
         replaceRiyalWords(panel);
         removeFinalPriceNote(panel);
       }
@@ -453,7 +467,7 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
       if(relevant) scheduleParticipationLayout();
     });
 
-    observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+    observer.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
     window.setTimeout(applyParticipationLayout,350);
     window.setTimeout(applyParticipationLayout,1200);
   }
@@ -532,8 +546,8 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
 </script>
 <script id="public-localization-script-v385">
 (function(){
-  var PUBLIC_ROOTS='.topbar,header.hero,#participation-offer,#knowledge-program,#show2026,#trip-highlights,#public-program,#information,footer';
-  var EXCLUDED='.admin-section,.admin-only-nav,.admin-inline-control,.admin-tool-section,#program-admin,#suggestions,#flights,#lodging,#sponsors,#followups,#finance,script,style,textarea';
+  var PUBLIC_ROOTS='.topbar,header.hero,#participation-offer,#knowledge-program,#show2026,#trip-highlights,#public-program,#information,#flights,#lodging,footer';
+  var EXCLUDED='.admin-section,.admin-only-nav,.admin-inline-control,.admin-tool-section,#program-admin,#suggestions,#sponsors,#followups,#registrations,#finance,script,style,textarea';
   var DICTIONARY={
     en:{
       'رحلة كوريا':'Korea Trip','بالتزامن مع معرض كوفي شو 2026':'Alongside Cafe Show Seoul 2026','سيئول - كوريا الجنوبية':'Seoul - South Korea',
@@ -563,6 +577,8 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
       'أبرز أنشطة وبرامج الرحلة':'주요 활동과 체험','نماذج مختارة من التجارب المهنية والمعرفية والثقافية التي يجري تنسيقها ضمن الرحلة.':'현재 조율 중인 전문, 학습 및 문화 체험입니다.','برنامج الرحلة':'방문 프로그램','الجدول التفصيلي المعتمد والمنشور من إدارة البرنامج.':'운영팀이 공개한 세부 일정입니다.','برنامج معتمد':'공개 프로그램','المعرض':'전시회','ورش عمل':'워크숍','زيارة شركة':'기업 방문','مقهى':'카페','ثقافي':'문화','تجربة':'체험','نشاط معرفي':'지식 프로그램','مواصلات':'이동','زيارة رسمية':'공식 방문','معرض سيئول للقهوة':'카페쇼 서울 2026','أكاديمية فيرست باريستا':'퍼스트 바리스타 아카데미','بير روبوتكس':'베어 로보틱스','مقهى رين ريبورت':'레인 리포트 카페','قصر غيونغبوك':'경복궁','شركة سترونغهولد روبوتكس':'스트롱홀드 로보틱스','إيديا كوفي':'이디야 커피','مكتبة ستارفيلد':'별마당 도서관 COEX','تجربة| حي سيونغسو-دونغ':'성수동 체험','إس بي سي سكوير (مجمع SPC)':'SPC 스퀘어','لقاء الضيافة في سيئول':'서울 호스피탈리티 모임','ورشة تفاعلية: هندسة الشراكات التجارية':'인터랙티브 워크숍: 비즈니스 파트너십 설계','تجربة تصميم عطر شخصي':'개인 향수 제작 체험','الوصول والاستقبال':'도착 및 공항 영접','تصميم عطر شخصي في GRANHAND Seochon':'그랑핸드 서촌 개인 향수 제작','جلسة المخرجات':'성과 정리 세션','السفارة السعودية في سيئول':'주한 사우디아라비아 대사관','معلومات عامة':'일반 안내','من 2°م إلى 12°م':'2°C-12°C','درجة الحرارة المتوقعة في منتصف نوفمبر':'11월 중순 예상 기온','نحو 70%':'약 70%','رطوبة متوسطة خلال الشهر':'월평균 습도','أمطار خفيفة متفرقة':'간헐적 약한 비','احتمال قائم مع أجواء باردة وغائمة جزئيًا':'쌀쌀하고 구름이 많은 날씨에 비가 올 수 있습니다.','المظهر والملابس المقترحة':'권장 복장','اختيارات عملية تناسب برودة سيئول والتنقل بين الأماكن الخارجية والمواقع المغلقة.':'서울의 쌀쌀한 날씨와 실내외 이동에 맞는 실용적인 복장입니다.','المعرض والزيارات اليومية':'전시회 및 일일 방문','عملي أنيق (Smart Casual) مع طبقات دافئة وحذاء مريح.':'따뜻한 레이어와 편한 신발을 갖춘 스마트 캐주얼.','المقاهي والمطاعم':'카페 및 레스토랑','مظهر يومي مرتب (Casual) مع جاكيت خفيف أو متوسط.':'가벼운 또는 중간 두께 재킷의 단정한 캐주얼.','الزيارات الرسمية':'공식 방문','عمل رسمي (Business Formal) بحسب مستوى الجهة والاجتماع.':'방문 기관과 미팅 수준에 맞는 비즈니스 포멀.','توقعات الطقس خلال الرحلة':'방문 기간 날씨','محول الريال والوون الكوري':'사우디 리얄·원 환율 계산기','الريال السعودي (SAR)':'사우디 리얄 (SAR)','الوون الكوري (KRW)':'대한민국 원 (KRW)','جاري تحديث سعر الصرف…':'환율 업데이트 중...','مترجم عربي وكوري':'아랍어·한국어 번역기','العربية':'아랍어','الكورية':'한국어','ترجمة فورية':'번역','عكس اللغتين':'언어 전환','نسخ الترجمة':'번역 복사','إعداد: نايف المحمدي':'작성: 나이프 알모함마디','عضو مجلس إدارة جمعية ملاك المطاعم والمقاهي':'레스토랑·카페 소유주 협회 이사회 위원','مستشار الحوكمة وتطوير الأعمال':'거버넌스·사업개발 자문','إدارة البرنامج':'프로그램 관리'
     }
   };
+  Object.assign(DICTIONARY.en,{'الطيران المقترح':'Suggested flights','البحث عن الرحلات والأسعار':'Search flights and fares','حدد مدينة المغادرة والتواريخ، ثم افتح نتائج البحث لدى المزود.':'Choose the departure city and dates, then open results from the selected provider.','مسارات الذهاب المقترحة من جدة والرياض':'Suggested outbound routes from Jeddah and Riyadh','الفندق المقترح':'Suggested hotel','فتح موقع الفندق':'Open hotel location'});
+  Object.assign(DICTIONARY.ko,{'الطيران المقترح':'추천 항공편','البحث عن الرحلات والأسعار':'항공편 및 요금 검색','حدد مدينة المغادرة والتواريخ، ثم افتح نتائج البحث لدى المزود.':'출발 도시와 날짜를 선택한 뒤 검색 결과를 확인하십시오.','مسارات الذهاب المقترحة من جدة والرياض':'제다 및 리야드 출발 추천 노선','الفندق المقترح':'추천 호텔','فتح موقع الفندق':'호텔 위치 보기'});
   var currentLanguage='ar';
   var localizationApplying=false;
 
