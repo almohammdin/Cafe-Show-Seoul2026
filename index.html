@@ -637,6 +637,23 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startLocalization,{once:true});else startLocalization();
 })();
 </script>
+<script id="public-optional-nav-v390">
+(function(){
+  function syncOptionalNavigation(){
+    var admin=document.body.classList.contains('admin-mode');
+    [['flights','#flights'],['lodging','#lodging']].forEach(function(item){
+      var section=document.getElementById(item[0]);
+      var link=document.querySelector('.topbar a[href="'+item[1]+'"]');
+      if(link)link.hidden=!admin&&!(section&&section.classList.contains('is-public-visible'));
+    });
+  }
+  function start(){
+    syncOptionalNavigation();
+    new MutationObserver(syncOptionalNavigation).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
 </body>
 {% endcapture %}
 {{ page_source | replace: '</body>', body_injection }}
