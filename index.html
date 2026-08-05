@@ -2,8 +2,11 @@
 ---
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
 {% assign page_source = page_source | replace: 'seoul-trip-preview.png', 'seoul-trip-preview-v2.png' %}
-{% capture static_trip_leaders %}<div class="trip-leaders-mini"><article class="trip-leader-mini"><div class="trip-leader-photo ali-photo"><img src="ali-portrait.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p></div></article><article class="trip-leader-mini"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article></div><div class="ali legacy-trip-leader" hidden aria-hidden="true">{% endcapture %}
+{% capture static_trip_leaders %}<div class="trip-leaders-mini"><article class="trip-leader-mini ali-leader"><div class="trip-leader-photo ali-photo"><img src="ali-portrait.webp" alt="علي الديواني"></div><div class="trip-leader-copy"><small>ضيف الشرف</small><h3>علي الديواني</h3><strong>خبير القهوة والتحميص والتذوق | مقيم قهوة مرخص دوليا</strong><p>من رواد القهوة المختصة في السعودية، ويقود جلسة التحميص والكبنق وقراءة اتجاهات المعرض.</p></div></article><article class="trip-leader-mini naif-leader"><div class="trip-leader-photo naif"><img src="naif.webp" alt="نايف المحمدي"></div><div class="trip-leader-copy"><small>ممثل الجمعية وقائد التنسيق</small><h3>نايف المحمدي</h3><strong>مستشار الحوكمة وتطوير الأعمال | عضو مجلس إدارة الجمعية</strong><p>يقود تصميم الرحلة والتنسيق مع الجهات والشركاء، ويربط البرنامج بأهداف عملية تخدم ملاك المطاعم والمقاهي.</p></div></article></div><!-- legacy-trip-leader-removed{% endcapture %}
 {% assign page_source = page_source | replace: '<div class="ali">', static_trip_leaders %}
+{% capture legacy_trip_leader_end %}<div class="ali-info"><h3>علي الديواني</h3><strong>ضيف الشرف | خبير القهوة والتحميص والتذوق</strong><p>يقود جلسة التحميص والكبنق ويشارك في قراءة اتجاهات المعرض وتقييم التجارب المهنية.</p></div></div></div>{% endcapture %}
+{% capture legacy_trip_leader_end_commented %}<div class="ali-info"><h3>علي الديواني</h3><strong>ضيف الشرف | خبير القهوة والتحميص والتذوق</strong><p>يقود جلسة التحميص والكبنق ويشارك في قراءة اتجاهات المعرض وتقييم التجارب المهنية.</p></div></div></div>-->{% endcapture %}
+{% assign page_source = page_source | replace: legacy_trip_leader_end, legacy_trip_leader_end_commented %}
 {% capture early_deadline_text_old %}<small>حتى 15 أغسطس 2026</small>{% endcapture %}
 {% capture early_deadline_text_new %}<small id="earlyDeadlineText">حتى 15 أغسطس 2026</small>{% endcapture %}
 {% assign page_source = page_source | replace: early_deadline_text_old, early_deadline_text_new %}
@@ -271,17 +274,19 @@ body:not(.admin-mode).prices-public-hidden .price-masked{
 .hero .trip-name-main{display:block}
 .hero .trip-name-sub{display:block;margin-top:8px;color:#e8eef5;font-size:.52em;font-weight:700;line-height:1.55}
 .hero .trip-name-place{display:block;color:#f2d88f;font-size:.34em;font-weight:700;line-height:1.8}
-.trip-leaders-mini{display:grid;gap:12px;align-self:start;grid-auto-rows:146px}
-.trip-leader-mini{display:grid;grid-template-columns:112px minmax(0,1fr);height:146px;overflow:hidden;border:1px solid rgba(255,255,255,.2);border-radius:20px;background:rgba(255,255,255,.1);box-shadow:0 14px 34px rgba(0,0,0,.14);backdrop-filter:blur(9px)}
+.trip-leaders-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-self:start;grid-auto-rows:168px}
+.trip-leader-mini{display:grid;grid-template-columns:84px minmax(0,1fr);height:168px;overflow:hidden;border:1px solid rgba(255,255,255,.2);border-radius:20px;background:rgba(255,255,255,.1);box-shadow:0 14px 34px rgba(0,0,0,.14);backdrop-filter:blur(9px)}
+.trip-leader-mini.ali-leader{order:1}
+.trip-leader-mini.naif-leader{order:2}
 .trip-leader-mini .trip-leader-photo{overflow:hidden;background:#fff}
 .trip-leader-mini .trip-leader-photo img{width:100%;height:100%;display:block;object-fit:cover}
 .trip-leader-mini .trip-leader-photo.naif img{object-position:center top}
 .trip-leader-mini .trip-leader-photo.ali-photo img{object-fit:cover;object-position:center top;transform:scale(1.35);transform-origin:center top}
-.trip-leader-mini .trip-leader-copy{padding:15px 14px;color:#fff}
+.trip-leader-mini .trip-leader-copy{padding:12px 10px;color:#fff}
 .trip-leader-mini .trip-leader-copy small{display:block;color:#f2d88f;font-size:10px;font-weight:800}
-.trip-leader-mini .trip-leader-copy h3{margin:2px 0 0;color:#fff;font-size:18px}
-.trip-leader-mini .trip-leader-copy strong{display:block;margin-top:2px;color:#dbe7f1;font-size:10px;line-height:1.55}
-.trip-leader-mini .trip-leader-copy p{margin:7px 0 0;color:#dbe4ec;font-size:10.5px;line-height:1.65}
+.trip-leader-mini .trip-leader-copy h3{margin:2px 0 0;color:#fff;font-size:16px}
+.trip-leader-mini .trip-leader-copy strong{display:block;margin-top:2px;color:#dbe7f1;font-size:9px;line-height:1.5}
+.trip-leader-mini .trip-leader-copy p{margin:5px 0 0;color:#dbe4ec;font-size:9px;line-height:1.55}
 .trip-leader-mini .photo-credit{display:block;margin-top:5px;color:#aebdcc;font-size:7.5px}
 .public-language-switcher{position:fixed;top:15px;inset-inline-end:15px;z-index:99990;display:flex;align-items:center;gap:4px;padding:6px;border:1px solid rgba(255,255,255,.45);border-radius:999px;background:rgba(7,29,56,.94);box-shadow:0 12px 28px rgba(0,0,0,.2);backdrop-filter:blur(12px)}
 .public-language-switcher button{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:999px;padding:7px 10px;background:transparent;color:#d9e4ef;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
@@ -291,7 +296,6 @@ body.admin-mode .public-language-switcher{display:none!important}
 body[data-public-lang="en"],body[data-public-lang="ko"]{direction:ltr}
 body[data-public-lang="ko"]{font-family:"IBM Plex Sans","Noto Sans KR",system-ui,sans-serif}
 body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter-spacing:-.025em}
-@media(max-width:900px){.trip-leaders-mini{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.public-language-switcher{top:9px;inset-inline:9px;width:calc(100% - 18px);justify-content:center;border-radius:15px}.public-language-switcher button{flex:1;padding:7px 5px}.trip-leaders-mini{grid-template-columns:1fr;grid-auto-rows:138px}.trip-leader-mini{grid-template-columns:96px minmax(0,1fr);height:138px}.trip-leader-mini .trip-leader-copy{padding:13px 12px}.trip-leader-mini .trip-leader-copy h3{font-size:16px}}
 </style>
 <style id="admin-public-controls-v390">
@@ -301,7 +305,7 @@ body[data-public-lang="en"] .hero h1,body[data-public-lang="ko"] .hero h1{letter
 .show-archive .ref-2025-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}.show-archive .ref-2025-stat{padding:10px!important;min-height:0!important}.show-archive .ref-2025-stat strong{font-size:20px!important}.show-archive .ref-2025-theme{margin-top:9px!important}.show-archive .ref-2025-links{margin-top:9px!important}
 .admin-public-settings{display:none;margin-top:18px;padding:14px;border:1px solid #d3dee6;border-radius:16px;background:#f8fafc;color:#173f56;text-align:right}.admin-mode .admin-public-settings{display:grid;gap:10px}.admin-public-settings-title{font-size:12px;font-weight:900}.admin-public-settings label{display:grid;gap:5px;font-size:11px;font-weight:800}.admin-public-settings input,.finance-field input[readonly]{width:100%;box-sizing:border-box;border:1px solid #cbd8e1;border-radius:9px;background:#fff;padding:9px 10px;color:#102f52;font:inherit;font-variant-numeric:tabular-nums}
 .public-visibility-toggle,.public-visibility-status{display:none}.admin-mode .public-visibility-toggle,.admin-mode .public-visibility-status{display:inline-flex}.public-visibility-toggle{align-items:center;justify-content:center;min-height:34px;padding:7px 11px;border:1px solid #21785f;border-radius:10px;background:#e7f5ef;color:#126047;font:inherit;font-size:11px;font-weight:900;cursor:pointer}.public-visibility-toggle.is-visible{border-color:#9a3348;background:#fff0f3;color:#82233a}.public-visibility-status{align-items:center;min-height:28px;padding:4px 8px;border-radius:999px;background:#eef2f5;color:#687783;font-size:10px;font-weight:900}.public-visibility-status.is-visible{background:#e4f4ed;color:#17664f}
-body:not(.admin-mode).prices-public-visible .price-soon-badge,body.prices-public-visible .offer-price-mask,body.admin-mode .price-soon-badge,body.admin-mode .offer-price-mask{display:none!important}body.admin-mode .offer-price-value{filter:none!important;opacity:1!important;transform:none!important;pointer-events:auto!important;user-select:text!important}
+body:not(.admin-mode).prices-public-visible .price-soon-badge,body.prices-public-visible .offer-price-mask,body.admin-mode .price-soon-badge,body.admin-mode .offer-price-mask{display:none!important}body.prices-public-visible .offer-price-value,body.admin-mode .offer-price-value{filter:none!important;opacity:1!important;transform:none!important;pointer-events:auto!important;user-select:text!important}
 .lodging-public-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.admin-mode .lodging-public-grid{display:none}body:not(.admin-mode) .lodging-admin-table{display:none}.lodging-public-card{overflow:hidden;border:1px solid #d9e4ec;border-radius:22px;background:#fff;box-shadow:0 12px 28px rgba(7,29,56,.08)}.lodging-gallery{display:grid;grid-template-columns:1fr;height:260px;background:#edf2f5}.lodging-gallery.multiple{grid-template-columns:2fr 1fr}.lodging-gallery.multiple img:first-child{grid-row:1/3}.lodging-gallery img{width:100%;height:100%;min-height:0;display:block;object-fit:cover}.lodging-placeholder{display:grid;place-items:center;height:210px;background:linear-gradient(135deg,#edf3f7,#dbe6ed);font-size:54px}.lodging-public-copy{padding:18px}.lodging-public-copy h3{margin:0;color:#102f52;font-size:21px}.lodging-public-copy p{margin:8px 0 13px;color:#5c6d7b;line-height:1.75}.lodging-public-copy a{display:inline-flex;padding:8px 12px;border-radius:10px;background:#e9f2f7;color:#155a79;text-decoration:none;font-size:12px;font-weight:900}
 [data-lodging-lang]{display:none!important}body:not([data-public-lang]) [data-lodging-lang="ar"],body[data-public-lang="ar"] [data-lodging-lang="ar"],body[data-public-lang="en"] [data-lodging-lang="en"],body[data-public-lang="ko"] [data-lodging-lang="ko"]{display:block!important}
 body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:last-child{display:none}.finance-params input,.admin-form-grid input[type="number"],.finance-summary strong,.finance-break-even .value,.finance-table td{font-variant-numeric:tabular-nums}.finance-params input[dir="ltr"],.admin-form-grid input[type="number"]{text-align:left}.registrations-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:560px}
@@ -393,13 +397,13 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
   function addVersionTag(){
     var version=document.querySelector('.private-version-tag');
     if(version){
-      version.textContent='v39.1';
+      version.textContent='v39.2';
       return;
     }
     var footer=document.querySelector('footer')||document.body;
     version=document.createElement('small');
     version.className='private-version-tag';
-    version.textContent='v39.1';
+    version.textContent='v39.2';
     version.title='الإصدار الداخلي';
     footer.appendChild(version);
   }
