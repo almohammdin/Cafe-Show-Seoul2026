@@ -691,19 +691,43 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
-<style id="registration-marketing-v395">
+<style id="registration-marketing-v396">
 .offer-registration-head>span{
+  position:relative!important;
+  overflow:hidden!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
   padding:7px 11px!important;
   border:1px solid rgba(190,139,36,.34)!important;
   border-radius:999px!important;
-  background:linear-gradient(135deg,rgba(255,251,235,.98),rgba(241,224,169,.88))!important;
+  background:
+    linear-gradient(105deg,transparent 0 35%,rgba(255,255,255,.94) 48%,transparent 61% 100%) -140% 0/55% 100% no-repeat,
+    linear-gradient(135deg,rgba(255,251,235,.98),rgba(241,224,169,.88));
   color:#7b4d08!important;
-  box-shadow:0 4px 12px rgba(122,77,8,.09)!important;
+  box-shadow:0 4px 12px rgba(122,77,8,.09);
   font-size:11px!important;
   font-weight:900!important;
   line-height:1!important;
   white-space:nowrap!important;
-  transform:none!important;
+  transform-origin:center!important;
+  animation:
+    limitedSeatsPulse 4.2s cubic-bezier(.22,.8,.3,1) infinite,
+    limitedSeatsShine 4.2s ease-in-out infinite!important;
+  will-change:transform,box-shadow,background-position;
+}
+@keyframes limitedSeatsPulse{
+  0%,18%,100%{transform:scale(1);box-shadow:0 4px 12px rgba(122,77,8,.09)}
+  5%{transform:scale(1.06);box-shadow:0 7px 21px rgba(191,139,36,.3),0 0 0 4px rgba(222,189,102,.12)}
+  10%{transform:scale(.99);box-shadow:0 4px 12px rgba(122,77,8,.11)}
+  14%{transform:scale(1.025);box-shadow:0 6px 17px rgba(191,139,36,.2)}
+}
+@keyframes limitedSeatsShine{
+  0%,2%{background-position:-140% 0,0 0}
+  18%,100%{background-position:260% 0,0 0}
+}
+@media(prefers-reduced-motion:reduce){
+  .offer-registration-head>span{animation:none!important}
 }
 </style>
 <style id="price-riyal-symbol-v393">
