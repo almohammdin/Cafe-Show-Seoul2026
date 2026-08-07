@@ -776,6 +776,207 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<style id="conversion-micro-motions-v397">
+.offer-inclusion.marketing-reveal-item{
+  opacity:0;
+  transform:translateY(8px) scale(.985);
+}
+.offer-inclusions.marketing-in-view .offer-inclusion.marketing-reveal-item{
+  animation:marketingInclusionReveal .52s cubic-bezier(.22,.8,.3,1) both;
+  animation-delay:calc(var(--marketing-order,0) * 70ms);
+}
+.registration-submit{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+}
+.registration-submit>svg,
+.registration-submit>span{position:relative;z-index:1}
+.registration-submit.marketing-attention::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:-45%;
+  bottom:-45%;
+  left:-34%;
+  width:23%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.68),transparent);
+  transform:skewX(-20deg);
+  pointer-events:none;
+  animation:marketingButtonShine 1.15s .18s ease-out 1 both;
+}
+.registration-submit.marketing-attention>svg{
+  transform-origin:center;
+  animation:marketingWhatsappPulse .9s .2s cubic-bezier(.22,.8,.3,1) 1 both;
+}
+.registration-submit.is-marketing-ready{
+  animation:marketingReadyGlow .9s cubic-bezier(.22,.8,.3,1) 1 both;
+}
+.registration-submit.is-marketing-ready>svg{
+  transform-origin:center;
+  animation:marketingReadyIcon .72s cubic-bezier(.22,.8,.3,1) 1 both;
+}
+.offer-price-value.marketing-counting{font-variant-numeric:tabular-nums}
+@keyframes marketingInclusionReveal{
+  from{opacity:0;transform:translateY(8px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes marketingButtonShine{
+  0%{left:-34%;opacity:0}
+  18%{opacity:.9}
+  100%{left:128%;opacity:0}
+}
+@keyframes marketingWhatsappPulse{
+  0%,100%{transform:scale(1)}
+  32%{transform:scale(1.18)}
+  58%{transform:scale(.96)}
+  78%{transform:scale(1.08)}
+}
+@keyframes marketingReadyGlow{
+  0%,100%{box-shadow:0 8px 18px rgba(20,126,94,.18)}
+  42%{box-shadow:0 10px 26px rgba(20,126,94,.38),0 0 0 5px rgba(62,190,145,.14)}
+}
+@keyframes marketingReadyIcon{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.22)}
+  70%{transform:scale(.97)}
+}
+@media(prefers-reduced-motion:reduce){
+  .offer-inclusion.marketing-reveal-item{opacity:1!important;transform:none!important}
+  .offer-inclusions.marketing-in-view .offer-inclusion.marketing-reveal-item,
+  .registration-submit.marketing-attention::after,
+  .registration-submit.marketing-attention>svg,
+  .registration-submit.is-marketing-ready,
+  .registration-submit.is-marketing-ready>svg{animation:none!important}
+}
+</style>
+<script id="conversion-micro-motions-v397">
+(function(){
+  var reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var priceScanTimer=0;
+
+  function revealOnce(target,className){
+    if(!target)return;
+    if(reduceMotion||!('IntersectionObserver' in window)){
+      target.classList.add(className);
+      return;
+    }
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(!entry.isIntersecting)return;
+        target.classList.add(className);
+        observer.unobserve(target);
+      });
+    },{threshold:.28});
+    observer.observe(target);
+  }
+
+  function prepareInclusions(){
+    var list=document.querySelector('.offer-inclusions');
+    if(!list)return;
+    Array.prototype.forEach.call(list.querySelectorAll('.offer-inclusion'),function(item,index){
+      item.classList.add('marketing-reveal-item');
+      item.style.setProperty('--marketing-order',String(index));
+    });
+    revealOnce(list,'marketing-in-view');
+  }
+
+  function prepareRegistration(){
+    var section=document.querySelector('.offer-registration');
+    var form=document.getElementById('tripRegistrationForm');
+    var button=form&&form.querySelector('.registration-submit');
+    if(section&&button){
+      if(reduceMotion||!('IntersectionObserver' in window)){
+        button.classList.add('marketing-attention');
+      }else{
+        var observer=new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){
+            if(!entry.isIntersecting)return;
+            button.classList.add('marketing-attention');
+            observer.unobserve(section);
+          });
+        },{threshold:.32});
+        observer.observe(section);
+      }
+    }
+    if(!form||!button)return;
+    function updateReadyState(){
+      var required=Array.prototype.slice.call(form.querySelectorAll('[required]'));
+      var ready=required.length>0&&required.every(function(field){
+        return String(field.value||'').trim()!==''&&field.validity.valid;
+      });
+      button.classList.toggle('is-marketing-ready',ready);
+    }
+    form.addEventListener('input',updateReadyState);
+    form.addEventListener('change',updateReadyState);
+    updateReadyState();
+  }
+
+  function parsePrice(node){
+    var match=String(node.textContent||'').match(/[0-9][0-9,]*/);
+    if(!match)return 0;
+    return Number(match[0].replace(/,/g,''));
+  }
+
+  function animatePrice(node){
+    if(!node||reduceMotion||document.body.classList.contains('admin-mode')||!document.body.classList.contains('prices-public-visible'))return;
+    if(node.dataset.marketingCounting==='1'||!node.querySelector('.sar-price-symbol'))return;
+    var target=parsePrice(node);
+    if(!target||node.dataset.marketingCountedValue===String(target))return;
+    var textNode=Array.prototype.find.call(node.childNodes,function(child){
+      return child.nodeType===Node.TEXT_NODE&&/[0-9]/.test(child.nodeValue||'');
+    });
+    if(!textNode)return;
+    node.dataset.marketingCounting='1';
+    node.classList.add('marketing-counting');
+    var started=performance.now();
+    var duration=760;
+    var formatter=new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+    function frame(now){
+      var progress=Math.min(1,(now-started)/duration);
+      var eased=1-Math.pow(1-progress,3);
+      textNode.nodeValue=formatter.format(Math.round(target*eased))+' ';
+      if(progress<1){
+        requestAnimationFrame(frame);
+      }else{
+        textNode.nodeValue=formatter.format(target)+' ';
+        node.dataset.marketingCounting='0';
+        node.dataset.marketingCountedValue=String(target);
+        node.classList.remove('marketing-counting');
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function scanPrices(){
+    window.clearTimeout(priceScanTimer);
+    priceScanTimer=window.setTimeout(function(){
+      document.querySelectorAll('.offer-price-value').forEach(animatePrice);
+    },80);
+  }
+
+  function preparePrices(){
+    document.querySelectorAll('.offer-price-value').forEach(function(node){
+      new MutationObserver(function(){
+        if(node.dataset.marketingCounting==='1')return;
+        scanPrices();
+      }).observe(node,{childList:true,subtree:true,characterData:true});
+    });
+    new MutationObserver(scanPrices).observe(document.body,{attributes:true,attributeFilter:['class']});
+    scanPrices();
+    window.setTimeout(scanPrices,600);
+    window.setTimeout(scanPrices,1600);
+  }
+
+  function start(){
+    prepareInclusions();
+    prepareRegistration();
+    preparePrices();
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
 </body>
 {% endcapture %}
 {{ page_source | replace: '</body>', body_injection }}
