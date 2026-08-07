@@ -689,6 +689,52 @@ body:not(.admin-mode) #flights th:last-child,body:not(.admin-mode) #flights td:l
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<style id="price-riyal-symbol-v393">
+.sar-price-symbol{display:inline-block!important;margin-inline-start:.1em;font-size:.9em!important;line-height:1!important;vertical-align:-.06em;color:inherit!important}
+</style>
+<script id="price-riyal-symbol-v393">
+(function(){
+  var applying=false,scheduled=false;
+  function renderPriceRiyalSymbols(){
+    if(applying)return;
+    applying=true;
+    try{
+      document.querySelectorAll('.offer-price-value').forEach(function(node){
+        if(node.querySelector('.sar-price-symbol'))return;
+        var text=(node.textContent||'').replace(/\s+/g,' ').trim();
+        var match=text.match(/^(.+?)\s+ريال(?:\s+سعودي)?$/);
+        if(!match)return;
+        node.textContent='';
+        node.appendChild(document.createTextNode(match[1]+' '));
+        var symbol=document.createElement('span');
+        symbol.className='sar-price-symbol sar-currency-symbol';
+        symbol.setAttribute('role','img');
+        symbol.setAttribute('aria-label','ريال سعودي');
+        symbol.textContent='\uF0EA';
+        node.appendChild(symbol);
+      });
+    }finally{applying=false;}
+  }
+  function schedule(){
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(function(){scheduled=false;renderPriceRiyalSymbols();});
+  }
+  function start(){
+    renderPriceRiyalSymbols();
+    new MutationObserver(function(mutations){
+      if(applying)return;
+      if(mutations.some(function(mutation){
+        var target=mutation.target.nodeType===1?mutation.target:mutation.target.parentElement;
+        return target&&target.closest&&target.closest('.offer-price-value');
+      }))schedule();
+    }).observe(document.body,{childList:true,subtree:true,characterData:true});
+    window.setTimeout(renderPriceRiyalSymbols,500);
+    window.setTimeout(renderPriceRiyalSymbols,1600);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
 </body>
 {% endcapture %}
 {{ page_source | replace: '</body>', body_injection }}
