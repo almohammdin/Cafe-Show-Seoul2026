@@ -1,0 +1,132 @@
+from pathlib import Path
+import re
+
+path = Path("index.html")
+source = path.read_text(encoding="utf-8")
+
+# 1) Keep the limited-seats badge itself, but remove its perpetual pulse/shine loop.
+source, n = re.subn(
+    r"\n\s*animation:\s*\n\s*limitedSeatsPulse[^;]+;\n\s*will-change:transform,box-shadow,background-position;",
+    "\n  animation:none!important;\n  will-change:auto;",
+    source,
+    count=1,
+    flags=re.S,
+)
+if n != 1:
+    raise SystemExit(f"Expected one limited-seats animation block, found {n}")
+
+source, n1 = re.subn(r"\n@keyframes limitedSeatsPulse\{.*?\n\}", "", source, count=1, flags=re.S)
+source, n2 = re.subn(r"\n@keyframes limitedSeatsShine\{.*?\n\}", "", source, count=1, flags=re.S)
+if n1 != 1 or n2 != 1:
+    raise SystemExit(f"Expected limited-seats keyframes once each, found {n1}/{n2}")
+
+# 2) Gate Snapchat hover motion to real hover-capable pointers and add press feedback.
+old_snap = '.trip-leader-snap{position:absolute;left:50%;bottom:14px;display:inline-flex;align-items:center;gap:7px;margin:0;padding:5px 9px 5px 6px;border:1px solid rgba(240,223,98,.38);border-radius:999px;background:rgba(3,20,40,.58);color:#fff;text-decoration:none;direction:ltr;white-space:nowrap;transform:translateX(-50%);transition:transform .18s ease,background-color .18s ease,border-color .18s ease}\n.trip-leader-snap:hover{transform:translate(-50%,-1px);background:rgba(3,20,40,.78);border-color:#f0df62}'
+new_snap = '.trip-leader-snap{position:absolute;left:50%;bottom:14px;display:inline-flex;align-items:center;gap:7px;margin:0;padding:5px 9px 5px 6px;border:1px solid rgba(240,223,98,.38);border-radius:999px;background:rgba(3,20,40,.58);color:#fff;text-decoration:none;direction:ltr;white-space:nowrap;transform:translateX(-50%);transition:transform 160ms cubic-bezier(.23,1,.32,1),background-color 160ms ease,border-color 160ms ease}\n.trip-leader-snap:active{transform:translateX(-50%) scale(.97)}\n@media (hover:hover) and (pointer:fine){.trip-leader-snap:hover{transform:translate(-50%,-1px);background:rgba(3,20,40,.78);border-color:#f0df62}}'
+if old_snap not in source:
+    raise SystemExit("Snapchat interaction block not found")
+source = source.replace(old_snap, new_snap, 1)
+
+# 3) Improve text readability instead of shrinking it on mobile.
+replacements = {
+    '.trip-leader-mini .trip-leader-copy small{display:block;color:#f2d88f;font-size:11px;font-weight:800}':
+    '.trip-leader-mini .trip-leader-copy small{display:block;color:#f2d88f;font-size:12px;font-weight:800;line-height:1.5}',
+    '.trip-leader-mini .trip-leader-copy strong{display:block;margin-top:3px;color:#dbe7f1;font-size:11px;line-height:1.55}':
+    '.trip-leader-mini .trip-leader-copy strong{display:block;margin-top:3px;color:#dbe7f1;font-size:12.5px;line-height:1.6}',
+    '.trip-leader-mini .trip-leader-copy p{margin:7px 0 0;color:#dbe4ec;font-size:11.5px;line-height:1.65}':
+    '.trip-leader-mini .trip-leader-copy p{margin:7px 0 0;color:#dbe4ec;font-size:13px;line-height:1.65}',
+    '.trip-leader-snap-handle{font-family:"IBM Plex Sans Arabic","IBM Plex Sans",sans-serif;font-size:10.5px;font-weight:700;line-height:1}':
+    '.trip-leader-snap-handle{font-family:"IBM Plex Sans Arabic","IBM Plex Sans",sans-serif;font-size:12px;font-weight:700;line-height:1}',
+    '.trip-leader-mini .photo-credit{display:block;margin-top:5px;color:#aebdcc;font-size:7.5px}':
+    '.trip-leader-mini .photo-credit{display:block;margin-top:5px;color:#aebdcc;font-size:10px;line-height:1.4}',
+    '.public-language-switcher button{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:999px;padding:7px 10px;background:transparent;color:#d9e4ef;font:inherit;font-size:10px;font-weight:800;cursor:pointer}':
+    '.public-language-switcher button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:36px;border:0;border-radius:999px;padding:7px 10px;background:transparent;color:#d9e4ef;font:inherit;font-size:12px;font-weight:800;cursor:pointer;transition:background-color 160ms ease,color 160ms ease,transform 140ms cubic-bezier(.23,1,.32,1)}',
+    '@media(max-width:760px){.trip-leaders-mini{grid-template-columns:1fr}.trip-leader-mini{grid-template-columns:112px minmax(0,1fr);min-height:156px}.trip-leader-mini .trip-leader-copy{padding:14px 13px 56px}.trip-leader-mini .trip-leader-copy h3{font-size:17px}.trip-leader-mini .trip-leader-copy strong{font-size:10px}.trip-leader-mini .trip-leader-copy p{font-size:10.5px}.trip-leader-snap{bottom:12px}}':
+    '@media(max-width:760px){.trip-leaders-mini{grid-template-columns:1fr}.trip-leader-mini{grid-template-columns:116px minmax(0,1fr);min-height:178px}.trip-leader-mini .trip-leader-copy{padding:15px 14px 58px}.trip-leader-mini .trip-leader-copy h3{font-size:18px}.trip-leader-mini .trip-leader-copy strong{font-size:12px;line-height:1.6}.trip-leader-mini .trip-leader-copy p{font-size:12.5px;line-height:1.65}.trip-leader-snap{bottom:12px}}',
+}
+for old, new in replacements.items():
+    if old not in source:
+        raise SystemExit(f"Readability target not found: {old[:70]}")
+    source = source.replace(old, new, 1)
+
+# 4) Replace the larger marketing-motion bundle with a smaller purpose-driven interaction layer.
+replacement_block = r'''<style id="emil-ui-polish-v398">
+:root{--ui-ease-out:cubic-bezier(.23,1,.32,1)}
+.offer-inclusion.ui-reveal-item{opacity:0;transform:translateY(6px)}
+.offer-inclusions.ui-in-view .offer-inclusion.ui-reveal-item{animation:uiInclusionReveal 320ms var(--ui-ease-out) both;animation-delay:calc(var(--ui-order,0)*50ms)}
+.registration-submit{transition:transform 140ms var(--ui-ease-out),box-shadow 180ms ease,background-color 180ms ease!important}
+.registration-submit:active{transform:scale(.97)!important}
+.public-language-switcher button:active{transform:scale(.97)}
+.trip-leaders-stage{width:min(1180px,calc(100% - 40px));margin:26px auto 0}
+.trip-leaders-stage .trip-leaders-mini{margin:0}
+.hero-grid>.public-language-switcher{position:static!important;top:auto!important;left:auto!important;right:auto!important;z-index:2!important;width:max-content!important;max-width:100%!important;margin:0 0 6px!important;justify-self:start!important;box-shadow:0 8px 22px rgba(0,0,0,.14)!important}
+.trip-leader-mini{box-shadow:0 10px 26px rgba(0,0,0,.12)}
+@keyframes uiInclusionReveal{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:680px){.hero-grid>.public-language-switcher{width:100%!important;margin-bottom:4px!important}.hero-grid>.public-language-switcher button{flex:1}.trip-leaders-stage{width:min(100% - 24px,680px);margin-top:20px}}
+@media(prefers-reduced-motion:reduce){.offer-inclusion.ui-reveal-item{opacity:1!important;transform:none!important}.offer-inclusions.ui-in-view .offer-inclusion.ui-reveal-item{animation:none!important}.registration-submit,.public-language-switcher button{transition:opacity 160ms ease,background-color 160ms ease!important}.registration-submit:active,.public-language-switcher button:active{transform:none!important}}
+</style>
+<script id="emil-ui-polish-v398">
+(function(){
+  var reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function revealInclusions(){
+    var list=document.querySelector('.offer-inclusions');
+    if(!list)return;
+    Array.prototype.forEach.call(list.querySelectorAll('.offer-inclusion'),function(item,index){
+      item.classList.add('ui-reveal-item');
+      item.style.setProperty('--ui-order',String(index));
+    });
+    if(reduceMotion||!('IntersectionObserver' in window)){
+      list.classList.add('ui-in-view');
+      return;
+    }
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(!entry.isIntersecting)return;
+        list.classList.add('ui-in-view');
+        observer.unobserve(list);
+      });
+    },{threshold:.28});
+    observer.observe(list);
+  }
+
+  function refineLayout(){
+    var hero=document.querySelector('header.hero');
+    var grid=hero&&hero.querySelector('.hero-grid');
+    var switcher=document.querySelector('.public-language-switcher');
+    if(grid&&switcher&&switcher.parentElement!==grid){
+      grid.insertBefore(switcher,grid.firstChild);
+    }
+
+    var leaders=document.querySelector('.trip-leaders-mini');
+    if(hero&&leaders&&!leaders.closest('.trip-leaders-stage')){
+      var stage=document.createElement('div');
+      stage.className='trip-leaders-stage';
+      leaders.parentNode.insertBefore(stage,leaders);
+      stage.appendChild(leaders);
+      hero.appendChild(stage);
+    }
+
+    var version=document.querySelector('.private-version-tag');
+    if(version)version.textContent='v39.3';
+  }
+
+  function start(){
+    if(!document.body.classList.contains('admin-mode')&&!document.body.classList.contains('admin-route'))revealInclusions();
+    refineLayout();
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>'''
+
+pattern = re.compile(
+    r'<style id="conversion-micro-motions-v397">.*?</style>\n<script id="conversion-micro-motions-v397">.*?</script>',
+    re.S,
+)
+source, n = pattern.subn(replacement_block, source, count=1)
+if n != 1:
+    raise SystemExit(f"Expected one conversion motion bundle, found {n}")
+
+path.write_text(source, encoding="utf-8")
+print("Patched index.html successfully")
