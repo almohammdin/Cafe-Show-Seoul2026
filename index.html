@@ -363,6 +363,7 @@ body:not(.admin-mode):not(.admin-route) .topbar .nav{
   -webkit-overflow-scrolling:touch;
 }
 body:not(.admin-mode):not(.admin-route) .topbar .nav::-webkit-scrollbar{display:none}
+body:not(.admin-mode):not(.admin-route) .topbar .nav a[hidden]{display:none!important}
 body:not(.admin-mode):not(.admin-route) .topbar .nav a{
   flex:0 0 auto;
   position:relative;
@@ -1492,8 +1493,17 @@ body:not(.admin-mode):not(.admin-route) :is(
     setupActivities();
     setupSectionReveals();
     setupWhatsapp();
-    var version=document.querySelector('.private-version-tag');
-    if(version)version.textContent='v40.0';
+    function stampVersion(){
+      var version=document.querySelector('.private-version-tag');
+      if(version&&version.textContent!=='v40.0')version.textContent='v40.0';
+    }
+    stampVersion();
+    window.setTimeout(stampVersion,700);
+    window.setTimeout(stampVersion,2000);
+    var versionNode=document.querySelector('.private-version-tag');
+    if(versionNode&&'MutationObserver' in window){
+      new MutationObserver(stampVersion).observe(versionNode,{childList:true,subtree:true,characterData:true});
+    }
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
