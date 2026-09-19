@@ -767,6 +767,62 @@ body:not(.admin-mode):not(.admin-route) :is(
     transition:opacity 150ms ease,background-color 150ms ease!important;
   }
 }
+
+body:not(.admin-mode):not(.admin-route) .hero .stat{
+  --stat-accent:#d3a536;
+  --stat-glow:rgba(211,165,54,.18);
+  --stat-mark:rgba(211,165,54,.16);
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 0%,var(--stat-glow),transparent 46%),
+    linear-gradient(145deg,rgba(255,255,255,.99),rgba(237,244,249,.95))!important;
+  box-shadow:
+    0 10px 26px rgba(7,29,56,.085),
+    inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+body:not(.admin-mode):not(.admin-route) .hero .stat:nth-child(2){
+  --stat-accent:#2e9aa0;
+  --stat-glow:rgba(46,154,160,.17);
+  --stat-mark:rgba(46,154,160,.15);
+}
+body:not(.admin-mode):not(.admin-route) .hero .stat:nth-child(3){
+  --stat-accent:#c51b43;
+  --stat-glow:rgba(197,27,67,.14);
+  --stat-mark:rgba(197,27,67,.13);
+}
+body:not(.admin-mode):not(.admin-route) .hero .stat::before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  top:0;
+  right:0;
+  left:0;
+  height:4px;
+  background:linear-gradient(90deg,transparent,var(--stat-accent) 22%,var(--stat-accent) 78%,transparent);
+  opacity:.92;
+  pointer-events:none;
+}
+body:not(.admin-mode):not(.admin-route) .hero .stat::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset-inline-end:-42px;
+  bottom:-48px;
+  width:132px;
+  height:132px;
+  border:2px solid var(--stat-mark);
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 37px 37px,transparent 0 25px,var(--stat-mark) 26px 28px,transparent 29px);
+  transform:rotate(14deg);
+  pointer-events:none;
+}
+body:not(.admin-mode):not(.admin-route) .hero .stat>*{
+  position:relative;
+  z-index:1;
+}
 </style>
 </head>
 {% endcapture %}
@@ -1495,7 +1551,7 @@ body:not(.admin-mode):not(.admin-route) :is(
     setupWhatsapp();
     function stampVersion(){
       var version=document.querySelector('.private-version-tag');
-      if(version&&version.textContent!=='v40.0')version.textContent='v40.0';
+      if(version&&version.textContent!=='v40.1')version.textContent='v40.1';
     }
     stampVersion();
     window.setTimeout(stampVersion,700);
