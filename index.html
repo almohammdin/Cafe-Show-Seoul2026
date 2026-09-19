@@ -1846,6 +1846,213 @@ body:not(.admin-mode):not(.admin-route) footer.author-light-footer .private-vers
   else start();
 })();
 </script>
+<style id="robotics-visits-v405">
+.robotics-visit-status{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:9px;padding:5px 9px;
+  border-radius:999px;background:#eef6f2;color:#17664f;font-size:10.5px;font-weight:900;line-height:1
+}
+.robotics-visit-status.operational{background:#fff4dc;color:#805613}
+.robotics-visit-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.robotics-visit-meta span{display:inline-flex;padding:5px 8px;border-radius:8px;background:#f3f6f8;color:#516575;font-size:10.5px;font-weight:800}
+#robotics-outreach-log{margin-top:18px;padding:16px;border:1px solid #d8e2e9;border-radius:18px;background:#fff}
+#robotics-outreach-log h3{margin:0 0 5px;color:#102f52;font-size:17px}
+#robotics-outreach-log .robotics-admin-lead{margin:0 0 13px;color:#667785;font-size:12px;line-height:1.7}
+.robotics-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.robotics-admin-card{padding:12px;border:1px solid #dce5eb;border-radius:13px;background:#f8fafb}
+.robotics-admin-card strong{display:block;color:#123d59;font-size:13px;margin-bottom:6px}
+.robotics-admin-row{display:grid;grid-template-columns:82px 1fr;gap:8px;padding:3px 0;color:#526675;font-size:11px;line-height:1.55}
+.robotics-admin-row b{color:#173f56}
+.robotics-admin-status{display:inline-flex;width:max-content;margin-top:7px;padding:5px 8px;border-radius:999px;background:#fff0d7;color:#815611;font-size:10.5px;font-weight:900}
+.robotics-admin-status.site{background:#e7f5ef;color:#17664f}
+@media(max-width:760px){.robotics-admin-grid{grid-template-columns:1fr}.robotics-admin-row{grid-template-columns:74px 1fr}}
+</style>
+<script id="robotics-visits-v405">
+(function(){
+  'use strict';
+
+  var visits=[
+    {
+      id:'xyz',
+      arTitle:'شركة XYZ — روبوت القهوة BarisBrew',
+      enTitle:'XYZ — BarisBrew Coffee Robot',
+      koTitle:'XYZ — BarisBrew 커피 로봇',
+      arText:'زيارة مقترحة لفريق XYZ في سيئول لمشاهدة روبوت القهوة ونموذج التشغيل ومناقشة تطبيقاته التجارية وفرص السوق السعودي.',
+      enText:'Proposed visit to XYZ in Seoul to see the coffee robot, operating model and discuss commercial applications and opportunities in Saudi Arabia.',
+      koText:'서울 XYZ 방문을 통해 커피 로봇과 운영 모델을 살펴보고 사우디 시장 적용 가능성을 논의하는 일정입니다.',
+      link:'https://xyzcorp.ai/brew_x',
+      kind:'company',
+      metaAr:['تم التواصل: 19 سبتمبر 2026','قيد التنسيق'],
+      metaEn:['Contacted: 19 Sep 2026','Under coordination'],
+      metaKo:['연락: 2026년 9월 19일','조율 중']
+    },
+    {
+      id:'jm',
+      arTitle:'JM Robotics — مقهى الباريستا بالذكاء الاصطناعي',
+      enTitle:'JM Robotics — AI Barista Cafe',
+      koTitle:'JM Robotics — AI 바리스타 카페',
+      arText:'زيارة مقترحة لمشاهدة نظام الباريستا KNOW وحلول الأتمتة والذكاء الاصطناعي المستخدمة في تحضير القهوة وتشغيل نقاط البيع.',
+      enText:'Proposed visit to see the KNOW barista system and automation and AI solutions used in coffee preparation and retail operations.',
+      koText:'KNOW 바리스타 시스템과 커피 제조 및 리테일 운영에 적용되는 자동화·AI 솔루션을 살펴보는 방문입니다.',
+      link:'https://www.jmrobotics.co.kr/service_design/barista_cafe.html',
+      kind:'company',
+      metaAr:['تم التواصل: 19 سبتمبر 2026','قيد التنسيق'],
+      metaEn:['Contacted: 19 Sep 2026','Under coordination'],
+      metaKo:['연락: 2026년 9월 19일','조율 중']
+    },
+    {
+      id:'sangwha',
+      arTitle:'Sangwha — روبوت الباريستا Billie',
+      enTitle:'Sangwha — Billie Robot Barista',
+      koTitle:'Sangwha — Billie 로봇 바리스타',
+      arText:'زيارة مقترحة للتعرف على روبوت الباريستا Billie وتقنيات الروبوتات التجريبية وتطبيقاتها في المقاهي وتجربة العميل.',
+      enText:'Proposed visit to explore the Billie robot barista and experiential robotics applications for cafes and customer experience.',
+      koText:'Billie 로봇 바리스타와 카페 및 고객 경험에 적용되는 체험형 로보틱스 기술을 살펴보는 방문입니다.',
+      link:'https://www.sangwha.com/tech-lab/',
+      kind:'company',
+      metaAr:['تم التواصل: 19 سبتمبر 2026','قيد التنسيق'],
+      metaEn:['Contacted: 19 Sep 2026','Under coordination'],
+      metaKo:['연락: 2026년 9월 19일','조율 중']
+    },
+    {
+      id:'gs25',
+      arTitle:'مختبر التجزئة الذكية GS25 Ground Blue 49',
+      enTitle:'GS25 Ground Blue 49 — Smart Retail Lab',
+      koTitle:'GS25 Ground Blue 49 — 스마트 리테일 랩',
+      arText:'تجربة تشغيلية في إنسادون تجمع روبوت الباريستا وحلول القهوة والبيتزا والآيس كريم والأتمتة داخل متجر فعلي، مع قراءة تطبيقاتها في المطاعم والمقاهي.',
+      enText:'An operating smart-retail experience in Insadong combining robotic coffee, pizza, ice cream and automation in a live store environment.',
+      koText:'인사동의 실제 매장에서 로봇 커피, 피자, 아이스크림과 자동화 솔루션을 함께 경험하는 스마트 리테일 방문입니다.',
+      link:'https://www.google.com/maps/search/?api=1&query=GS25+GroundBlue+49+Insadong+Seoul',
+      kind:'site',
+      metaAr:['إنسادون — سيئول','مقترح للبرنامج'],
+      metaEn:['Insadong — Seoul','Proposed for program'],
+      metaKo:['인사동 — 서울','프로그램 제안']
+    }
+  ];
+
+  function langSpan(ar,en,ko){
+    return '<span data-ui-lang="ar" lang="ar">'+ar+'</span>'+
+      '<span data-ui-lang="en" lang="en">'+en+'</span>'+
+      '<span data-ui-lang="ko" lang="ko">'+ko+'</span>';
+  }
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+
+  function addPublicCards(){
+    var grid=document.getElementById('highlightGrid');
+    if(!grid)return;
+    visits.forEach(function(item){
+      if(grid.querySelector('[data-robotics-visit="'+item.id+'"]'))return;
+      var card=document.createElement('article');
+      card.className='experience-card';
+      card.setAttribute('data-robotics-visit',item.id);
+      var statusClass=item.kind==='site'?'robotics-visit-status operational':'robotics-visit-status';
+      var status=item.kind==='site'
+        ?langSpan('تجربة تشغيلية','Operating site','운영 사이트')
+        :langSpan('قيد التنسيق','Under coordination','조율 중');
+      var meta='';
+      for(var i=0;i<2;i++){
+        meta+='<span>'+langSpan(
+          escapeHtml(item.metaAr[i]),
+          escapeHtml(item.metaEn[i]),
+          escapeHtml(item.metaKo[i])
+        )+'</span>';
+      }
+      card.innerHTML=
+        '<div class="'+statusClass+'">'+status+'</div>'+
+        '<h3>'+langSpan(escapeHtml(item.arTitle),escapeHtml(item.enTitle),escapeHtml(item.koTitle))+'</h3>'+
+        '<p>'+langSpan(escapeHtml(item.arText),escapeHtml(item.enText),escapeHtml(item.koText))+'</p>'+
+        '<div class="robotics-visit-meta">'+meta+'</div>'+
+        '<a class="experience-link" href="'+item.link+'" target="_blank" rel="noopener noreferrer">'+
+          langSpan('فتح الموقع','Open website','웹사이트 열기')+
+        '</a>';
+      grid.appendChild(card);
+    });
+    document.dispatchEvent(new CustomEvent('trip:language-change',{detail:{language:document.body.dataset.publicLang||'ar'}}));
+  }
+
+  function adminCard(title,email,status,followup,note,isSite){
+    return '<article class="robotics-admin-card">'+
+      '<strong>'+escapeHtml(title)+'</strong>'+
+      '<div class="robotics-admin-row"><b>التواصل</b><span>'+escapeHtml(email)+'</span></div>'+
+      '<div class="robotics-admin-row"><b>ما حصل</b><span>'+escapeHtml(status)+'</span></div>'+
+      '<div class="robotics-admin-row"><b>المتابعة</b><span>'+escapeHtml(followup)+'</span></div>'+
+      '<div class="robotics-admin-row"><b>ملاحظة</b><span>'+escapeHtml(note)+'</span></div>'+
+      '<span class="robotics-admin-status'+(isSite?' site':'')+'">'+(isSite?'موقع تشغيلي مقترح':'بانتظار الرد')+'</span>'+
+    '</article>';
+  }
+
+  function addAdminLog(){
+    if(!(document.body.classList.contains('admin-mode')||/[?&]admin=1(?:&|$)/.test(location.search)))return;
+    if(document.getElementById('robotics-outreach-log'))return;
+
+    var host=document.getElementById('followups')||
+      document.getElementById('suggestions')||
+      document.querySelector('.admin-section:last-of-type');
+    if(!host)return;
+
+    var log=document.createElement('div');
+    log.id='robotics-outreach-log';
+    log.innerHTML=
+      '<h3>متابعة شركات روبوتات القهوة والتجزئة الذكية</h3>'+
+      '<p class="robotics-admin-lead">آخر تحديث: 19 سبتمبر 2026. المتابعة المقترحة بعد عطلة تشوسوك: 29 سبتمبر 2026.</p>'+
+      '<div class="robotics-admin-grid">'+
+        adminCard(
+          'XYZ — BarisBrew',
+          'contact@xyzcorp.ai',
+          'أرسل طلب زيارة لوفد من 17 مشارك بتاريخ 19 سبتمبر 2026، لعرض النظام ومناقشة نموذج التشغيل وفرص السوق السعودي.',
+          '29 سبتمبر 2026',
+          'الأولوية: لقاء الفريق + تجربة تشغيل فعلية في سيئول.',
+          false
+        )+
+        adminCard(
+          'JM Robotics — AI Barista Cafe / KNOW',
+          'webmaster@jmrobotics.co.kr',
+          'أرسل طلب زيارة لوفد من 17 مشارك بتاريخ 19 سبتمبر 2026، لعرض روبوت الباريستا وحلول الأتمتة والذكاء الاصطناعي.',
+          '29 سبتمبر 2026',
+          'يرتبط بالموقع التشغيلي GS25 Ground Blue 49 في إنسادون.',
+          false
+        )+
+        adminCard(
+          'Sangwha — Billie Robot Barista',
+          'contact@sangwha.com',
+          'أرسل طلب زيارة لوفد من 17 مشارك بتاريخ 19 سبتمبر 2026، للتعرف على روبوت Billie وتطبيقاته التجارية.',
+          '29 سبتمبر 2026',
+          'الطلب يشمل عرض مباشر للروبوت إذا كان متاحا.',
+          false
+        )+
+        adminCard(
+          'GS25 Ground Blue 49 — Smart Retail Lab',
+          'زيارة تشغيلية مباشرة',
+          'أضيف كموقع مقترح مستقل في البرنامج داخل إنسادون؛ الزيارة لا تعتمد على رد JM Robotics.',
+          '29 سبتمبر 2026',
+          'التحقق من ساعات التشغيل ودمجه مع مسار إنسادون / قصر غيونغبوك.',
+          true
+        )+
+      '</div>';
+    host.appendChild(log);
+  }
+
+  function start(){
+    addPublicCards();
+    addAdminLog();
+    var tries=0;
+    var timer=setInterval(function(){
+      tries++;
+      addPublicCards();
+      addAdminLog();
+      if(tries>=12||document.getElementById('robotics-outreach-log'))clearInterval(timer);
+    },500);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
+</script>
+
 </body>
 {% endcapture %}
 {{ page_source | replace: '</body>', body_injection }}
