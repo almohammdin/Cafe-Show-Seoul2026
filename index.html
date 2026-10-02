@@ -38,6 +38,25 @@ function renderPublicSettings(){% endcapture %}
 function renderAll(){% endcapture %}
 {% assign page_source = page_source | replace: early_deadline_language_old, early_deadline_language_new %}
 {% assign page_source = page_source | replace: 'width=device-width,initial-scale=1', 'width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content' %}
+
+{% comment %}schedule-coordination-v406{% endcomment %}
+{% capture schedule_normalize_old %}function normalizePublic(remote){const base=clone(DEFAULT_STATE);return {programPublished:Boolean(remote?.programPublished),program:Array.isArray(remote?.program)?remote.program:base.program,{% endcapture %}
+{% capture schedule_normalize_new %}const RCOA_SCHEDULE_ANCHORS=[
+  {_planKey:'coffeebuy-2026-11-11',category:'ورش عمل',date:'11 نوفمبر',time:'15:00',title:'جلسة التحميص والكبنق | CoffeeBuy Academia',details:'جلسة خاصة لمدة 2–3 ساعات يقودها علي الديواني. المعمل يستوعب 17 مشاركا ويضم 3 طاولات كبنق ومحمصة عينات ROEST وتجهيزات كاملة. التوقيت مقترح بعد فترة المعرض الصباحية، وبانتظار تثبيت الموعد والسعر الخاص للوفد.',place:'CoffeeBuy Academia - Songpa, Seoul',maps:'https://www.google.com/maps/search/?api=1&query=CoffeeBuy+Academia+Jamsil+Seoul',owner:'علي الديواني / نايف المحمدي',status:'قيد التواصل'},
+  {_planKey:'xyz-2026-11-12',category:'زيارة شركة',date:'12 نوفمبر',time:'15:30',title:'زيارة XYZ | BarisBrew',details:'زيارة لمدة ساعتين تقريبا تشمل عرضا حيا لنموذجين من BarisBrew ثم عرض التقنية ونموذج التشغيل ومناقشة فرص السوق السعودي. الشركة أكدت أن 10 أو 11 أو 12 نوفمبر مناسبة، والزيارة دون رسوم. التوقيت المقترح يحافظ على فترة صباحية داخل Cafe Show.',place:'XYZ Headquarters - Seongsu, Seoul',maps:'https://maps.app.goo.gl/hV7EvZj1HJ82oRaaA',owner:'نايف المحمدي',status:'قيد التواصل'},
+  {_planKey:'naver-2026-11-13',category:'زيارة شركة',date:'13 نوفمبر',time:'10:00',title:'زيارة NAVER Innovation',details:'13 نوفمبر هو التاريخ المفضل الذي اقترحه أحمد في المراسلات مع ركان. الساعة 10:00 وضعت كتوقيت تخطيطي مبدئي فقط، وبانتظار تأكيد فريق NAVER والموقع النهائي. يشمل الهدف الاطلاع على تقنيات NAVER ومناقشة خطوات التعاون، مع إمكانية إضافة GrillX أو جهة يقترحها فريقهم.',place:'NAVER - الموقع النهائي بانتظار التأكيد',maps:'',owner:'أحمد الكاشغري / نايف المحمدي',status:'قيد التواصل'}
+];
+function mergeRcoaScheduleAnchors(value){
+  const rows=safeArray(value).map(row=>({...row}));
+  RCOA_SCHEDULE_ANCHORS.forEach(anchor=>{
+    const exists=rows.some(row=>row?._planKey===anchor._planKey||(String(row?.title||'').trim()===anchor.title&&String(row?.date||'')===anchor.date));
+    if(!exists)rows.push(clone(anchor));
+  });
+  return rows;
+}
+function normalizePublic(remote){const base=clone(DEFAULT_STATE);return {programPublished:Boolean(remote?.programPublished),program:mergeRcoaScheduleAnchors(Array.isArray(remote?.program)?remote.program:base.program),{% endcapture %}
+{% assign page_source = page_source | replace: schedule_normalize_old, schedule_normalize_new %}
+
 {% capture head_injection %}
 <style id="participation-layout-v385">
 .offer-shell{
@@ -2084,14 +2103,22 @@ body.admin-route .hero .stat{animation:none!important;transition:none!important}
     log.id='robotics-outreach-log';
     log.innerHTML=
       '<h3>متابعة شركات روبوتات القهوة والتجزئة الذكية</h3>'+
-      '<p class="robotics-admin-lead">آخر تحديث: 19 سبتمبر 2026. المتابعة المقترحة بعد عطلة تشوسوك: 22 سبتمبر 2026.</p>'+
+      '<p class="robotics-admin-lead">آخر تحديث: 2 أكتوبر 2026. تم تحديث حالة XYZ وStronghold وفق آخر الردود الواردة.</p>'+
       '<div class="robotics-admin-grid">'+
         adminCard(
           'XYZ — BarisBrew',
-          'contact@xyzcorp.ai',
-          'أرسل طلب زيارة لوفد من 17 مشارك بتاريخ 19 سبتمبر 2026، لعرض النظام ومناقشة نموذج التشغيل وفرص السوق السعودي.',
-          '22 سبتمبر 2026',
-          'الأولوية: لقاء الفريق + تجربة تشغيل فعلية في سيئول.',
+          'steve@xyzcorp.ai',
+          'رد هوجين سونغ وأكد استعدادهم لاستضافة الوفد. الأيام المتاحة 10 أو 11 أو 12 نوفمبر، ومدة الزيارة نحو ساعتين دون رسوم.',
+          'اقتراح 12 نوفمبر الساعة 15:30 وإرساله للتأكيد',
+          'المقر في Seongsu؛ البرنامج يشمل عرضا حيا لنموذجين ثم نقاش التقنية وفرص السوق السعودي.',
+          false
+        )+
+        adminCard(
+          'Stronghold Robotics',
+          'inae@stronghold.coffee',
+          'ردت الشركة وأكدت أن الشوروم أنسب من جناح المعرض للعرض الحي والشرح باللغة الإنجليزية.',
+          'بانتظار الشركة لتحديد اليوم والوقت المناسبين',
+          'يوجد خيار احتياطي لزيارة جناح Stronghold داخل Cafe Show إذا لم يتناسب موعد الشوروم.',
           false
         )+
         adminCard(
