@@ -1352,6 +1352,15 @@ body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
 {% assign page_source = page_source | replace: '</head>', head_injection %}
 {% assign page_source = page_source | replace: 'رحلة سيئول المعرفية 2026', 'رحلة كوريا بالتزامن مع معرض كوفي شو 2026' %}
 {% assign page_source = page_source | replace: 'رحلة سيئول المعرفية', 'رحلة كوريا بالتزامن مع معرض كوفي شو 2026' %}
+{% comment %}program-share-header-v411{% endcomment %}
+{% capture program_share_header_v411_old %}ctx.fillStyle='#fff';ctx.font=`900 42px ${font}`;ctx.fillText('برنامج رحلة كوريا بالتزامن مع معرض كوفي شو 2026',W-pad,100);
+ ctx.fillStyle='#dce9f4';ctx.font=`600 20px ${font}`;ctx.fillText('10–14 نوفمبر 2026',W-pad,139);{% endcapture %}
+{% capture program_share_header_v411_new %}ctx.fillStyle='#fff';ctx.font=`900 40px ${font}`;ctx.fillText('برنامج رحلة كوريا',W-pad,91);
+ ctx.fillStyle='#e5edf5';ctx.font=`700 17px ${font}`;ctx.fillText('بالتزامن مع Cafe Show Seoul 2026',W-pad,121);
+ ctx.fillStyle='#dce9f4';ctx.font=`600 18px ${font}`;ctx.fillText('10–14 نوفمبر 2026',W-pad,151);{% endcapture %}
+{% assign page_source = page_source | replace: program_share_header_v411_old, program_share_header_v411_new %}
+{% assign page_source = page_source | replace: "navigator.share({title:'برنامج رحلة كوريا بالتزامن مع معرض كوفي شو 2026'", "navigator.share({title:'برنامج رحلة كوريا'" %}
+
 {% capture body_injection %}
 <div class="public-language-switcher" aria-label="Language"><button type="button" data-public-language="ar" class="active"><span class="flag" aria-hidden="true">🇸🇦</span><span>العربية</span></button><button type="button" data-public-language="en"><span class="flag" aria-hidden="true">🇬🇧</span><span>English</span></button><button type="button" data-public-language="ko"><span class="flag" aria-hidden="true">🇰🇷</span><span>한국어</span></button></div>
 <script id="participation-layout-script-v385">
