@@ -1442,6 +1442,7 @@ body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
   align-items:center;
   gap:9px;
   min-width:0;
+  direction:rtl;
 }
 .korea-foot-brand img{
   display:block;
@@ -1525,6 +1526,8 @@ body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
 .author-light-footer .admin-mode-badge,
 .author-light-footer .footer-identity,
 .author-light-footer .footer-link{display:none!important}
+#floatingWhatsappBtn,
+.whatsapp-float-btn{display:none!important}
 body.admin-mode #adminAccessBtn{
   position:static!important;
   left:auto!important;
@@ -2297,7 +2300,7 @@ body.admin-mode #adminAccessBtn{
     setupWhatsapp();
     function stampVersion(){
       var version=document.querySelector('.private-version-tag');
-      if(version&&version.textContent!=='v40.4')version.textContent='v40.4';
+      if(version&&version.textContent!=='v40.5')version.textContent='v40.5';
     }
     stampVersion();
     window.setTimeout(stampVersion,700);
@@ -2727,7 +2730,7 @@ body.admin-mode #adminAccessBtn{
 
   const brand=document.createElement('div');
   brand.className='korea-foot-brand';
-  brand.innerHTML='<img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo-gold.png" alt="شعار نايف المحمدي"><div class="korea-made-by"><span>تصميم وتنفيذ</span><strong>نايف المحمدي</strong></div>';
+  brand.innerHTML='<div class="korea-made-by"><span>تصميم وتنفيذ</span></div><img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo-gold.png" alt="شعار نايف المحمدي">';
 
   const right=document.createElement('div');
   right.className='korea-footer-right';
