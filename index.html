@@ -112,16 +112,79 @@ function renderProgram(){const host=document.getElementById('programDays');if(!h
 }
 {% endcapture %}
 {% capture program_public_render_v409_new %}function renderPublicProgram(){
-  const section=document.getElementById('public-program'),host=document.getElementById('publicProgramDays');
-  if(!section||!host)return;
+  const section=document.getElementById('public-program'),
+        host=document.getElementById('publicProgramDays'),
+        source=document.getElementById('programDays'),
+        publicLegend=document.getElementById('publicProgramLegend'),
+        sourceLegend=document.getElementById('programLegend');
+  if(!section||!host||!source)return;
+
   const visibleRows=safeArray(state.program).filter(programItemIsPublic);
   const published=Boolean(state.programPublished)&&visibleRows.length>0;
-  section.hidden=!published;section.setAttribute('aria-hidden',published?'false':'true');
-  if(!published){host.innerHTML='';return}
-  host.innerHTML=DAYS.map(day=>{const rows=getOrderedProgramRows(day).filter(({r})=>programItemIsPublic(r));if(!rows.length)return'';return `<div class="day-card public-program-day"><div class="day-head"><h3>${esc(day)}</h3></div><div class="events">${rows.map(({r})=>`<div class="event-row ${catClass(r.category)}"><span class="cat-chip">${esc(r.category)}</span><span class="event-time">${esc(r.time||'—')}</span><span class="event-title">${esc(r.title||'')}</span><span class="event-details">${esc(r.details||'')}</span><span class="event-place">${r.maps?`<a href="${esc(r.maps)}" target="_blank" rel="noopener">${esc(r.place||'الموقع')}</a>`:esc(r.place||'')}</span></div>`).join('')}</div></div>`}).join('');
+  section.hidden=!published;
+  section.setAttribute('aria-hidden',published?'false':'true');
+
+  if(!published){
+    host.innerHTML='';
+    if(publicLegend)publicLegend.innerHTML='';
+    return;
+  }
+
+  if(publicLegend&&sourceLegend)publicLegend.innerHTML=sourceLegend.innerHTML;
+
+  /* نفس جدول برنامج الرحلة الحالي حرفيا، ثم نخفي البنود غير المناسبة للنشر */
+  host.innerHTML=source.innerHTML;
+
+  host.querySelectorAll('.day-card').forEach(card=>{
+    card.querySelectorAll('.event-row').forEach(row=>{
+      const index=Number(row.dataset.index);
+      const item=Number.isInteger(index)?state.program[index]:null;
+      if(!item||!programItemIsPublic(item))row.remove();
+    });
+
+    /* عناصر الإدارة فقط لا تظهر في النسخة المنشورة */
+    card.querySelectorAll('.program-admin-status-badge,.program-row-actions,.row-drag-handle,.add-btn').forEach(node=>node.remove());
+
+    if(!card.querySelector('.event-row'))card.remove();
+  });
+
+  host.querySelectorAll('[data-share-day]').forEach(btn=>{
+    btn.addEventListener('click',()=>shareProgramImage(
+      [btn.dataset.shareDay],
+      'جمعية-ملاك-المطاعم-والمقاهي-برنامج-'+btn.dataset.shareDay+'-سيئول-2026.png',
+      ''
+    ));
+  });
 }
 {% endcapture %}
 {% assign page_source = page_source | replace: program_public_render_v409_old, program_public_render_v409_new %}
+{% assign page_source = page_source | replace: '<section id="public-program" class="published-program-section"', '<section id="public-program" class="program-featured published-program-section"' %}
+{% assign page_source = page_source | replace: '<div class="public-program-published-grid" id="publicProgramDays"></div>', '<div class="legend" id="publicProgramLegend"></div><div class="day-grid" id="publicProgramDays"></div>' %}
+{% assign page_source = page_source | replace: '<div><h2>برنامج الرحلة</h2><p>الجدول التفصيلي المعتمد والمنشور من إدارة البرنامج.</p></div><span class="published-program-badge">برنامج معتمد</span>', '<div><h2>برنامج الرحلة</h2><p>آخر نسخة من جدول الرحلة.</p></div>' %}
+{% capture program_publish_ui_old %}function updateProgramPublishUI(){
+  const btn=document.getElementById('programPublishToggle'),status=document.getElementById('programPublishStatus');
+  const published=Boolean(state.programPublished);
+  if(btn){btn.textContent=published?'إخفاء من الصفحة العامة':'نشر في الصفحة العامة';btn.classList.toggle('is-published',published);btn.disabled=!isAdmin}
+  if(status){status.textContent=published?'منشور في الصفحة العامة':'غير منشور';status.classList.toggle('is-published',published)}
+}
+function bindProgramPublishControl(){
+  const btn=document.getElementById('programPublishToggle');if(!btn||btn.dataset.bound==='1')return;btn.dataset.bound='1';
+  btn.addEventListener('click',()=>{if(!isAdmin)return;state.programPublished=!Boolean(state.programPublished);save();renderPublicProgram();updateProgramPublishUI();toast(state.programPublished?'تم نشر برنامج الرحلة في الصفحة العامة':'تم إخفاء برنامج الرحلة من الصفحة العامة')});
+}{% endcapture %}
+{% capture program_publish_ui_new %}function updateProgramPublishUI(){
+  const btn=document.getElementById('programPublishToggle'),status=document.getElementById('programPublishStatus');
+  const published=Boolean(state.programPublished);
+  if(btn){btn.textContent=published?'إلغاء النشر':'نشر البرنامج';btn.classList.toggle('is-published',published);btn.disabled=!isAdmin}
+  if(status){status.textContent=published?'منشور':'مسودة';status.classList.toggle('is-published',published)}
+}
+function bindProgramPublishControl(){
+  const btn=document.getElementById('programPublishToggle');if(!btn||btn.dataset.bound==='1')return;btn.dataset.bound='1';
+  btn.addEventListener('click',()=>{if(!isAdmin)return;state.programPublished=!Boolean(state.programPublished);save();renderPublicProgram();updateProgramPublishUI();toast(state.programPublished?'تم نشر برنامج الرحلة':'تم إلغاء نشر برنامج الرحلة')});
+}{% endcapture %}
+{% assign page_source = page_source | replace: program_publish_ui_old, program_publish_ui_new %}
+{% assign page_source = page_source | replace: '<span class="program-publish-status" id="programPublishStatus">غير منشور</span><button class="program-publish-toggle" id="programPublishToggle" type="button">نشر في الصفحة العامة</button>', '<span class="program-publish-status" id="programPublishStatus">مسودة</span><button class="program-publish-toggle" id="programPublishToggle" type="button">نشر البرنامج</button>' %}
+
+
 {% capture program_transfer_v409_old %}state.program.push({category:r.category,date,time,title:r.title,details:r.description,place:r.place||r.title,maps:r.maps||'',owner:r.owner||'',status});{% endcapture %}
 {% capture program_transfer_v409_new %}state.program.push({category:r.category,date,time,title:r.title,details:r.description,place:r.place||r.title,maps:r.maps||'',owner:r.owner||'',status});{% endcapture %}
 {% assign page_source = page_source | replace: program_transfer_v409_old, program_transfer_v409_new %}
@@ -2047,7 +2110,13 @@ body.admin-route .hero .stat{animation:none!important;transition:none!important}
 .robotics-admin-row{display:grid;grid-template-columns:82px 1fr;gap:8px;padding:3px 0;color:#526675;font-size:11px;line-height:1.55}
 .robotics-admin-row b{color:#173f56}
 .robotics-admin-status{display:inline-flex;width:max-content;margin-top:7px;padding:5px 8px;border-radius:999px;background:#fff0d7;color:#815611;font-size:10.5px;font-weight:900}
-.robotics-admin-status.site{background:#e7f5ef;color:#17664f}
+.robotics-admin-status.site,.robotics-admin-status.ready{background:#e7f5ef;color:#17664f}
+.robotics-admin-status.action{background:#e8f1fb;color:#245a86}
+.robotics-admin-status.review{background:#f0ecfb;color:#624b8c}
+.robotics-admin-status.waiting{background:#fff0d7;color:#815611}
+.robotics-admin-status.no-reply{background:#fbe9e9;color:#913b3b}
+.followup-summary-group{margin-top:18px}
+.followup-summary-group h4{margin:0 0 9px;padding:0 2px;color:#173f56;font-size:14px}
 @media(max-width:760px){.robotics-admin-grid{grid-template-columns:1fr}.robotics-admin-row{grid-template-columns:74px 1fr}}
 </style>
 <script id="robotics-visits-v405">
@@ -2166,8 +2235,12 @@ body.admin-route .hero .stat{animation:none!important;transition:none!important}
       '<div class="robotics-admin-row"><b>الحالة</b><span>'+escapeHtml(current)+'</span></div>'+
       '<div class="robotics-admin-row"><b>الخطوة التالية</b><span>'+escapeHtml(nextStep)+'</span></div>'+
       '<div class="robotics-admin-row"><b>معلومة</b><span>'+escapeHtml(note)+'</span></div>'+
-      '<span class="robotics-admin-status '+escapeHtml(tone||'')+'">'+escapeHtml(badge)+'</span>'+
+      '<span class="robotics-admin-status '+escapeHtml(tone||'waiting')+'">'+escapeHtml(badge)+'</span>'+
     '</article>';
+  }
+
+  function adminGroup(title,cards){
+    return '<section class="followup-summary-group"><h4>'+escapeHtml(title)+'</h4><div class="robotics-admin-grid">'+cards+'</div></section>';
   }
 
   function addAdminLog(){
@@ -2179,83 +2252,191 @@ body.admin-route .hero .stat{animation:none!important;transition:none!important}
       document.querySelector('.admin-section:last-of-type');
     if(!host)return;
 
-    var log=document.createElement('div');
-    log.id='robotics-outreach-log';
-    log.innerHTML=
-      '<h3>آخر حالة التنسيق</h3>'+
-      '<p class="robotics-admin-lead">آخر تحديث: 3 أكتوبر 2026. الحالات أدناه مبنية على آخر المراسلات الموجودة في البريد.</p>'+
-      '<div class="robotics-admin-grid">'+
+    var visits=
         adminCard(
           'CoffeeBuy Academia',
           'coffeebuyseoul@gmail.com',
           '20 سبتمبر 2026',
-          'وافقوا على استقبال 17 مشاركا. المعمل متاح خلال 10–15 نوفمبر عدا 13 نوفمبر، والجلسة 2–3 ساعات. أرسلوا صورا وفيديو، وقدموا سعرا خاصا للوفد قدره 900,000 KRW.',
+          'وافقوا على استقبال 17 مشاركا. المعمل متاح خلال 10–15 نوفمبر عدا 13 نوفمبر، والجلسة 2–3 ساعات. أرسلوا صورا وفيديو، والسعر الخاص للوفد 900,000 KRW.',
           'اختيار اليوم والوقت وإرسال التأكيد النهائي.',
-          'المعمل فيه 3 طاولات كبنق وتجهيزات كاملة ومحمصة عينات ROEST، ويسمح بإحضار عينات القهوة الخاصة بنا.',
+          '3 طاولات كبنق، تجهيزات كاملة، محمصة عينات ROEST، ودعم باللغة الإنجليزية.',
           'ينتظر قرارنا',
-          'site'
+          'action'
         )+
         adminCard(
           'XYZ — BarisBrew',
           'steve@xyzcorp.ai',
           '30 سبتمبر 2026',
-          'هوجين سونغ أكد استعدادهم لاستضافة الوفد. الأيام المتاحة 10 أو 11 أو 12 نوفمبر، والوقت مرن. الزيارة نحو ساعتين وتشمل عرضا حيا لنموذجين ثم نقاش التقنية وفرص السوق السعودي.',
-          'تثبيت 12 نوفمبر الساعة 15:30 أو اختيار موعد آخر من 10–12 نوفمبر ثم إرساله لهم.',
-          'المقر في Seongsu، نحو 30 دقيقة من COEX، واستضافة الوفد بدون رسوم.',
+          'أكدوا استقبال الوفد. الأيام 10 أو 11 أو 12 نوفمبر مناسبة، والوقت مرن. الزيارة نحو ساعتين وبدون رسوم.',
+          'تثبيت 12 نوفمبر الساعة 15:30 أو اختيار موعد آخر ثم إرساله لهم.',
+          'المقر في Seongsu، ويشمل اللقاء عرضا حيا لنموذجين ثم نقاش التقنية وفرص السوق السعودي.',
           'ينتظر موعدنا',
-          'site'
+          'action'
         )+
         adminCard(
           'NAVER Innovation',
           'rakan.cha@navercorp.com',
           '2 أكتوبر 2026',
-          'المراجعة الداخلية الأولى لدى NAVER إيجابية، وما زالوا بانتظار مراجعة وموافقات إضافية. أحمد رد باقتراح 13 نوفمبر للزيارة وطلب إضافة GrillX وأي جهات تقنية أخرى يقترحها فريقهم.',
+          'المراجعة الداخلية الأولى إيجابية، وما زالت هناك مراجعات وموافقات داخلية. أحمد اقترح 13 نوفمبر للزيارة.',
           'انتظار تأكيد NAVER لليوم والوقت والموقع وبرنامج الزيارة.',
-          '13 نوفمبر ما زال مقترحا من طرفنا وليس موعدا مؤكدا من NAVER.',
+          'تم طلب إضافة GrillX وأي جهات تقنية أخرى يقترحها فريق NAVER.',
           'بانتظار NAVER',
-          ''
+          'waiting'
         )+
         adminCard(
           'Stronghold Robotics',
           'inae@stronghold.coffee',
           '28 سبتمبر 2026',
-          'أكدوا أن الشوروم أنسب من جناح المعرض للعرض الحي والشرح باللغة الإنجليزية، وقالوا إنهم سيحددون الموعد الأنسب داخليا. تم الرد عليهم بأن الوفد مرن خلال 10–15 نوفمبر.',
-          'انتظار اليوم والوقت النهائيين من الشركة.',
-          '14 نوفمبر الساعة 11:00 ترتيب داخلي مقترح فقط. جناح Cafe Show خيار إضافي، لكن الشوروم أفضل للتجربة.',
+          'أكدوا أن الشوروم أنسب للعرض الحي والشرح باللغة الإنجليزية، وسيحددون الموعد الأنسب داخليا.',
+          'انتظار اليوم والوقت النهائيين من الشركة. إذا لم يصل رد، ترسل متابعة قصيرة.',
+          'الوفد أبلغهم أنه مرن بين 10 و15 نوفمبر.',
           'بانتظار الموعد',
-          ''
+          'waiting'
         )+
         adminCard(
           'JM Robotics — AI Barista / KNOW',
           'webmaster@jmrobotics.co.kr',
           '19 سبتمبر 2026',
-          'أرسل طلب زيارة لوفد من 17 مشاركا، ولم يظهر أي رد في البريد حتى 3 أكتوبر.',
-          'إرسال متابعة جديدة أو تجربة قناة تواصل أخرى.',
-          'الطلب يشمل عرض AI Barista وشرح التقنية ونموذج التشغيل وفرص التطبيق في السعودية.',
+          'تم إرسال طلب زيارة ولم يظهر رد حتى فحص البريد في 3 أكتوبر.',
+          'إرسال متابعة أخيرة. إذا استمر عدم الرد، يغلق الخيار وننتقل للبدائل.',
+          'الطلب يشمل عرض AI Barista وشرح التقنية ونموذج التشغيل.',
           'لم يردوا',
-          ''
+          'no-reply'
         )+
         adminCard(
           'Sangwha — Billie Robot Barista',
           'contact@sangwha.com',
           '19 سبتمبر 2026',
-          'أرسل طلب زيارة لوفد من 17 مشاركا، ولم يظهر أي رد في البريد حتى 3 أكتوبر.',
-          'إرسال متابعة جديدة أو تجربة قناة تواصل أخرى.',
-          'الطلب يشمل عرض Billie إن كان متاحا وشرح التقنية ونموذج التشغيل وفرص التطبيق في السعودية.',
+          'تم إرسال طلب زيارة ولم يظهر رد حتى فحص البريد في 3 أكتوبر.',
+          'إرسال متابعة أخيرة. إذا استمر عدم الرد، يغلق الخيار وننتقل للبدائل.',
+          'الطلب يشمل عرض Billie ومناقشة التطبيقات التجارية.',
           'لم يردوا',
-          ''
+          'no-reply'
         )+
         adminCard(
-          'GS25 Ground Blue 49 — Smart Retail Lab',
+          'GS25 Ground Blue 49',
           'زيارة تشغيلية مباشرة',
           '3 أكتوبر 2026',
-          'موقع تشغيلي يمكن زيارته مباشرة ولا يعتمد على رد شركة.',
-          'التحقق من ساعات التشغيل ووضعه ضمن مسار إنسادون إذا كان مناسبا للجدول.',
-          'يمكن دمجه مع جولة إنسادون بدل التعامل معه كموعد شركة مستقل.',
+          'موقع تشغيلي يمكن زيارته مباشرة ولا يعتمد على موعد شركة.',
+          'التحقق من ساعات التشغيل ثم دمجه مع مسار إنسادون إذا كان مناسبا.',
+          'يفضل اعتباره محطة ضمن المسار وليس زيارة شركة مستقلة.',
           'زيارة مباشرة',
-          'site'
+          'ready'
+        );
+
+    var transport=
+        adminCard(
+          'GroundK',
+          'ops@groundk.com',
+          '1 أكتوبر 2026',
+          'أرسلوا عرضا فعليا وصورا لخيارات النقل، ومنها 21 مقعد Premium Coach و28 مقعد Luxury Coach وSolati وStaria. ذكروا أن مركبة 21 مقعد محدودة التوفر، ويمكنهم أيضا توفير منسق عربي-كوري.',
+          'مراجعة العرض المالي، ثم طلب تأكيد توفر المركبة المختارة 11–14 نوفمبر وتثبيت السعر النهائي وما يشمله. بعد اختيار المورد النهائي نرسل قبول أو اعتذار واضح.',
+          'الشركة ذكرت خبرتها مع الوفود الرسمية وAPEC 2025. سعر وجبة المنسق منفصل إذا لم نتكفل بها.',
+          'عرض وصل',
+          'ready'
         )+
-      '</div>';
+        adminCard(
+          'YourBus',
+          'yourbus@naver.com | WhatsApp +82-10-8280-1114',
+          '1 أكتوبر 2026',
+          'ردوا وأرسلوا صور مركبات وبيانات التواصل والدفع، لكن نص الرسالة لا يحتوي تسعيرا مكتوبا واضحا.',
+          'طلب السعر التفصيلي كتابيا: 11–14 نوفمبر + نقل المطار + الإضافات. إذا لم يناسب، نرسل شكر واعتذار بعد المقارنة.',
+          'أرسلوا صورا لخيارات ليموزين/باصات، ومنها 16 مقعد.',
+          'ناقص السعر',
+          'review'
+        )+
+        adminCard(
+          'YallaKOREA',
+          'khalid@yallakorea.com',
+          '30 سبتمبر 2026',
+          'أكدوا استلام الطلب وقالوا إنهم سيجهزون عرضا مفصلا للنقل، نقل المطار، والمنسق العربي.',
+          'متابعة لطلب العرض التفصيلي الذي وعدوا به. بعد وصوله نقارن ثم نرد بالقبول أو الاعتذار.',
+          'الطلب يجمع النقل والمنسق في جهة واحدة، لذلك يجب فصل أسعار كل خدمة للمقارنة.',
+          'بانتظار العرض',
+          'waiting'
+        )+
+        adminCard(
+          'Hakeem Travel Korea',
+          'hakeem@hakeemtravel.com',
+          '30 سبتمبر 2026',
+          'أكدوا استلام الطلب وقالوا إنهم سيراجعونه ويعودون بعرض، ولم يظهر عرض جديد حتى فحص 3 أكتوبر.',
+          'إرسال متابعة مختصرة لطلب السعر والخيارات. إذا تم اختيار مورد آخر بعد وصول عرضهم، نرسل اعتذار وشكر.',
+          'الطلب يشمل النقل، نقل المطار، والمنسق العربي.',
+          'بانتظار العرض',
+          'waiting'
+        )+
+        adminCard(
+          'K-Limo Korea',
+          'klimo.korea@gmail.com',
+          '30 سبتمبر 2026',
+          'أرسل طلب تسعير للنقل ولم يظهر رد حتى فحص البريد في 3 أكتوبر.',
+          'إرسال متابعة واحدة. إذا لم يصل رد بعدها، إغلاق الخيار.',
+          'مطلوب مركبة Premium لـ15–17 شخصا مع سائق ونقل المطار بشكل منفصل.',
+          'لم يردوا',
+          'no-reply'
+        );
+
+    var coordinators=
+        adminCard(
+          'GroundK — منسق عربي-كوري',
+          'ops@groundk.com',
+          '1 أكتوبر 2026',
+          'GroundK أكدوا أنهم يستطيعون توفير منسق عربي-كوري يرافق الوفد ويساعد في التواصل.',
+          'طلب الملف المختصر للمنسق، مستوى العربية والكورية، السعر اليومي، وساعات العمل قبل الاعتماد.',
+          'خيار عملي لأنه مرتبط مباشرة بشركة النقل.',
+          'خيار متاح',
+          'ready'
+        )+
+        adminCard(
+          'YallaKOREA — منسق عربي',
+          'khalid@yallakorea.com',
+          '30 سبتمبر 2026',
+          'أكدوا أنهم سيضمنون المنسق العربي ضمن العرض التفصيلي القادم، لكن التفاصيل والسعر لم تصل بعد.',
+          'طلب اسم/ملف الشخص المقترح، مستوى العربية والكورية، الخبرة مع وفود الأعمال، والسعر اليومي.',
+          'لا نعتمد المنسق على اسم الشركة فقط؛ المطلوب معرفة الشخص الذي سيرافق الوفد فعليا.',
+          'بانتظار التفاصيل',
+          'waiting'
+        )+
+        adminCard(
+          'Korea-Arab Society',
+          'info@korea-arab.org',
+          '30 سبتمبر 2026',
+          'تم إرسال طلب ترشيح منسق محلي يتحدث العربية والكورية، ولم يظهر رد حتى فحص 3 أكتوبر.',
+          'إرسال متابعة قصيرة لطلب ترشيح شخص متاح 11–14 نوفمبر. إذا لم يردوا، إغلاق المسار.',
+          'المطلوب منسق ميداني عملي، وليس ترجمة مؤتمرات.',
+          'لم يردوا',
+          'no-reply'
+        )+
+        adminCard(
+          'HUFS — قسم العربية',
+          'hufsarab@hufs.ac.kr',
+          '30 سبتمبر 2026',
+          'تم إرسال طلب لترشيح منسق عربي-كوري ولم يظهر رد حتى فحص 3 أكتوبر.',
+          'إرسال متابعة وطلب إحالة الرسالة إلى خريج أو مترجم مناسب إذا لم تكن الجهة تقدم الخدمة مباشرة.',
+          'الأولوية لشخص قوي في العربية والكورية وقادر على إدارة يوم الوفد ميدانيا.',
+          'لم يردوا',
+          'no-reply'
+        )+
+        adminCard(
+          'HUFS CIT',
+          'cit@hufscit.com',
+          '30 سبتمبر 2026',
+          'تم إرسال طلب منسق عربي-كوري ولم يظهر رد حتى فحص 3 أكتوبر.',
+          'إرسال متابعة وطلب اسم شخص متاح وسعر يومي. إذا لم تتوفر خدمة مرافقة ميدانية، نعتذر ونغلق الخيار.',
+          'نحتاج مرافقة وتنظيم يومي مع ترجمة خفيفة، وليس مترجم مؤتمرات.',
+          'لم يردوا',
+          'no-reply'
+        );
+
+    var log=document.createElement('div');
+    log.id='robotics-outreach-log';
+    log.innerHTML=
+      '<h3>متابعة التواصل مع الجهات</h3>'+
+      '<p class="robotics-admin-lead">آخر فحص للبريد: 3 أكتوبر 2026. كل جهة لها خطوة تالية محددة، وعند استبعاد جهة بعد تواصل فعلي معها يرسل لها شكر واعتذار بدل ترك الموضوع معلقا.</p>'+
+      adminGroup('الزيارات والبرنامج',visits)+
+      adminGroup('النقل والسيارات',transport)+
+      adminGroup('المترجمون والمنسقون',coordinators);
+
     host.appendChild(log);
   }
 
