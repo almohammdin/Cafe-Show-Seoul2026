@@ -2590,7 +2590,7 @@ body.admin-mode #adminAccessBtn:hover{background:#095d48!important}
 })();
 </script>
 
-</body>
+
 
 <script id="satisfaction-style-footer-v412-script">
 (function(){
@@ -2637,6 +2637,7 @@ body.admin-mode #adminAccessBtn:hover{background:#095d48!important}
   new MutationObserver(syncAdminLock).observe(document.body,{attributes:true,attributeFilter:['class']});
 })();
 </script>
+</body>
 
 {% endcapture %}
 {{ page_source | replace: '</body>', body_injection }}
