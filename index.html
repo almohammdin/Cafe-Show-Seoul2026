@@ -1563,6 +1563,135 @@ body.admin-mode #adminAccessBtn{
   .korea-footer-right{width:100%;justify-content:center;gap:7px}
   .korea-handle{font-size:10.5px!important}
 }
+
+
+/* footer-refinement-v414 */
+.association-footer-meta{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+  min-width:0;
+}
+.association-social-row{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  direction:ltr;
+}
+.association-socials{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.association-socials a{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:10px;
+  background:rgba(255,255,255,.075);
+  color:#fff;
+  text-decoration:none;
+  transition:transform .15s cubic-bezier(.23,1,.32,1),background .15s ease,border-color .15s ease,color .15s ease;
+}
+.association-socials a:hover{
+  transform:translateY(-1px);
+  border-color:rgba(242,216,143,.5);
+  background:rgba(242,216,143,.12);
+  color:#f2d88f;
+}
+.association-socials a:active{transform:scale(.96)}
+.association-socials svg{
+  width:17px;
+  height:17px;
+  display:block;
+  fill:currentColor;
+}
+.association-socials .stroke-icon{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.association-handle{
+  color:#f2d88f;
+  font:800 11px Arial,sans-serif;
+  text-decoration:none;
+  direction:ltr;
+}
+.association-handle:hover{text-decoration:underline}
+
+.naif-footer-shell{
+  min-height:0!important;
+  padding:8px 0 9px!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:5px!important;
+}
+.korea-foot-brand{
+  justify-content:center!important;
+  gap:7px!important;
+}
+.korea-foot-brand img{
+  width:58px!important;
+  height:26px!important;
+}
+.korea-made-by span{
+  font-size:9.5px!important;
+}
+.korea-footer-right{
+  justify-content:center!important;
+  gap:7px!important;
+}
+.korea-socials a,
+#adminAccessBtn{
+  width:28px!important;
+  height:28px!important;
+  min-width:28px!important;
+  min-height:28px!important;
+  border-radius:8px!important;
+}
+.korea-socials svg{
+  width:13px!important;
+  height:13px!important;
+}
+.korea-handle{
+  font-size:10px!important;
+}
+@media(max-width:680px){
+  .association-footer-shell{
+    align-items:center!important;
+    text-align:center;
+  }
+  .association-footer-brand{
+    width:100%;
+    justify-content:center;
+  }
+  .association-footer-meta{
+    width:100%;
+    align-items:center;
+  }
+  .association-footer-trip{
+    text-align:center!important;
+  }
+  .association-social-row{
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .association-socials{
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .naif-footer-shell{
+    width:min(100% - 20px,1180px)!important;
+    padding:8px 0 10px!important;
+    gap:5px!important;
+  }
+}
 </style>
 </head>
 {% endcapture %}
@@ -2700,12 +2829,40 @@ body.admin-mode #adminAccessBtn{
   associationCopy.className='association-footer-copy';
   associationCopy.innerHTML='<strong>جمعية ملاك المطاعم والمقاهي</strong><span>Restaurant & Café Owners Association | المملكة العربية السعودية</span>';
 
+  const associationMeta=document.createElement('div');
+  associationMeta.className='association-footer-meta';
+
   const associationTrip=document.createElement('div');
   associationTrip.className='association-footer-trip';
   associationTrip.textContent='رحلة كوريا 2026 | Cafe Show Seoul';
 
+  const associationSocialRow=document.createElement('div');
+  associationSocialRow.className='association-social-row';
+
+  const associationSocials=document.createElement('div');
+  associationSocials.className='association-socials';
+  associationSocials.setAttribute('aria-label','حسابات جمعية ملاك المطاعم والمقاهي');
+  associationSocials.innerHTML=
+    '<a href="https://www.whatsapp.com/channel/0029VaJ37Zi4Crfi6oTmMl00" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 3.2a8.6 8.6 0 0 0-7.4 13l-1 3.7 3.8-1a8.6 8.6 0 1 0 4.6-15.7Zm0 15.5a6.9 6.9 0 0 1-3.5-.9l-.5-.3-2.3.6.6-2.2-.3-.5a6.9 6.9 0 1 1 6 3.3Zm3.8-5.1c-.2-.1-1.2-.6-1.4-.6-.2-.1-.4-.1-.5.1-.2.2-.5.6-.6.8-.1.1-.3.2-.5.1-1.3-.6-2.2-1.5-2.8-2.7-.2-.3.2-.5.5-.9.1-.1.1-.3.2-.4.1-.2 0-.3 0-.5l-.6-1.4c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.5 3.8.6.3 1.1.4 1.5.5.6.2 1.2.2 1.7.1.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.2.1-1.3-.1-.1-.2-.2-.4-.3Z"/></svg></a>'+
+    '<a href="https://x.com/RCOA_sa" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24"><path d="M4.4 3h4.8l3.8 5.1L17.5 3H20l-5.9 6.9L20.5 21h-4.8l-4.2-5.7L6.6 21H4l6.3-7.5L4.4 3Zm3.7 2 8.5 14h1.8L9.9 5H8.1Z"/></svg></a>'+
+    '<a href="https://www.snapchat.com/add/rcoa.sa" target="_blank" rel="noopener" aria-label="Snapchat"><svg viewBox="0 0 24 24"><path d="M8.2 16.9c.8.3 1.1.7 1.3 1.1.7-.1 1.5-.2 2.5-.2s1.8.1 2.5.2c.2-.4.5-.8 1.3-1.1 1.2-.4 2.1-1 2.5-1.6-1.9-.7-2.1-2.3-2.1-4.7 0-2.7-1.7-4.5-4.2-4.5s-4.2 1.8-4.2 4.5c0 2.4-.2 4-2.1 4.7.4.6 1.3 1.2 2.5 1.6Z"/></svg></a>'+
+    '<a href="https://www.instagram.com/rcoa.sa/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="stroke-icon" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r="1"/></svg></a>'+
+    '<a href="https://www.tiktok.com/@rcoa.sa" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M14.2 3h3c.3 1.8 1.4 3 3.1 3.6v3c-1.2 0-2.3-.3-3.3-.9v5.8a6.1 6.1 0 1 1-5.3-6V12a2.8 2.8 0 1 0 2.5 2.8V3Z"/></svg></a>'+
+    '<a href="mailto:info@rcoa.sa" aria-label="Email"><svg class="stroke-icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></a>'+
+    '<a href="https://www.linkedin.com/company/rcoa-sa/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M5.2 8.4h3.2V19H5.2V8.4Zm1.6-5.2a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8Zm3.8 5.2h3.1v1.5h.1c.5-.8 1.6-1.8 3.5-1.8 3.3 0 4 2.2 4 5.1V19H18v-5.2c0-1.2 0-2.8-1.8-2.8s-2 1.3-2 2.7V19h-3.3V8.4Z"/></svg></a>';
+
+  const associationHandle=document.createElement('a');
+  associationHandle.className='association-handle';
+  associationHandle.href='https://linktr.ee/rcoa.sa';
+  associationHandle.target='_blank';
+  associationHandle.rel='noopener';
+  associationHandle.textContent='@rcoa.sa';
+
+  associationSocialRow.append(associationSocials,associationHandle);
+  associationMeta.append(associationTrip,associationSocialRow);
+
   associationBrand.append(associationLogoBox,associationCopy);
-  associationShell.append(associationBrand,associationTrip);
+  associationShell.append(associationBrand,associationMeta);
   associationTier.appendChild(associationShell);
 
   const naifTier=document.createElement('div');
@@ -2735,7 +2892,7 @@ body.admin-mode #adminAccessBtn{
   handle.href='https://linktr.ee/almohammdin';
   handle.target='_blank';
   handle.rel='noopener';
-  handle.textContent='Almohammdin';
+  handle.textContent='@almohammdin';
 
   adminButton.classList.add('korea-admin-lock');
   right.append(socials,handle,adminButton);
