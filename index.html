@@ -1347,94 +1347,177 @@ body:not(.admin-mode) #program-admin .program-row-actions,
 body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
 
 
-/* satisfaction-style-footer-v412 */
+/* satisfaction-style-footer-v413 */
 .author-light-footer{
   margin-top:28px!important;
   padding:0!important;
-  border-top:3px solid #10b861!important;
-  background:linear-gradient(135deg,#031f45,#06346e)!important;
+  border:0!important;
+  background:#0b2948!important;
   color:#fff!important;
 }
+.author-light-footer>.footer-inner,
 .author-light-footer .footer-inner{
-  width:min(1180px,calc(100% - 34px))!important;
-  min-height:78px!important;
-  margin:auto!important;
-  padding:14px 0!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  gap:16px!important;
-}
-.author-light-footer .korea-foot-brand{
-  display:flex!important;
-  align-items:center!important;
-  gap:10px!important;
-  min-width:0!important;
-}
-.author-light-footer .korea-foot-brand img{
-  display:block!important;
-  width:82px!important;
-  height:38px!important;
-  object-fit:contain!important;
-  object-position:center!important;
-  background:transparent!important;
-  border:0!important;
-  padding:0!important;
-  filter:none!important;
-}
-.author-light-footer .korea-foot-brand p{
+  width:100%!important;
+  max-width:none!important;
   margin:0!important;
-  color:rgba(255,255,255,.72)!important;
-  font-size:12px!important;
-  font-weight:600!important;
-  line-height:1.5!important;
-}
-.author-light-footer .korea-footer-right{
-  display:flex!important;
-  align-items:center!important;
-  gap:9px!important;
-  direction:ltr!important;
-}
-.author-light-footer .korea-socials{
-  display:flex!important;
-  align-items:center!important;
-  gap:6px!important;
-}
-.author-light-footer .korea-socials a,
-.author-light-footer #adminAccessBtn{
-  width:36px!important;
-  height:36px!important;
-  min-width:36px!important;
-  min-height:36px!important;
   padding:0!important;
-  border-radius:10px!important;
+  display:block!important;
+}
+.association-footer-tier{
+  background:linear-gradient(135deg,#0b2948 0%,#123f62 70%,#7f572d 100%);
+  color:#fff;
+}
+.association-footer-shell{
+  width:min(1180px,calc(100% - 34px));
+  min-height:96px;
+  margin:auto;
+  padding:18px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.association-footer-brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
+.association-logo-box{
+  width:118px;
+  height:60px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:13px;
+  background:rgba(255,255,255,.96);
+}
+.association-logo-box img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.association-footer-copy strong{
+  display:block;
+  color:#fff;
+  font-size:17px;
+  font-weight:900;
+  line-height:1.45;
+}
+.association-footer-copy span{
+  display:block;
+  margin-top:2px;
+  color:#dce7f0;
+  font-size:11.5px;
+  font-weight:600;
+  line-height:1.55;
+}
+.association-footer-trip{
+  color:#f2d88f;
+  font-size:12px;
+  font-weight:800;
+  text-align:left;
+  white-space:nowrap;
+}
+.naif-footer-tier{
+  border-top:1px solid rgba(242,216,143,.18);
+  background:#071d38;
+  color:#fff;
+}
+.naif-footer-shell{
+  width:min(1180px,calc(100% - 34px));
+  min-height:58px;
+  margin:auto;
+  padding:10px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.korea-foot-brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.korea-foot-brand img{
+  display:block;
+  width:64px;
+  height:30px;
+  object-fit:contain;
+  object-position:center;
+}
+.korea-made-by{
+  display:flex;
+  align-items:baseline;
+  gap:5px;
+  white-space:nowrap;
+}
+.korea-made-by span{
+  color:#aebdcc;
+  font-size:10px;
+  font-weight:650;
+}
+.korea-made-by strong{
+  color:#f2d88f;
+  font-size:12px;
+  font-weight:850;
+}
+.korea-footer-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  direction:ltr;
+}
+.korea-socials{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.korea-socials a,
+#adminAccessBtn{
+  width:32px!important;
+  height:32px!important;
+  min-width:32px!important;
+  min-height:32px!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:9px!important;
   display:grid!important;
   place-items:center!important;
-  border:1px solid rgba(255,255,255,.13)!important;
-  background:rgba(255,255,255,.07)!important;
-  color:#2ed28a!important;
+  border:1px solid rgba(242,216,143,.18)!important;
+  background:rgba(255,255,255,.055)!important;
+  color:#f2d88f!important;
   box-shadow:none!important;
-  transition:transform .15s cubic-bezier(.23,1,.32,1),background .15s ease!important;
+  transition:transform .15s cubic-bezier(.23,1,.32,1),background .15s ease,border-color .15s ease!important;
 }
-.author-light-footer .korea-socials a:active,
-.author-light-footer #adminAccessBtn:active{transform:scale(.96)!important}
-.author-light-footer .korea-socials svg{
-  width:16px!important;
-  height:16px!important;
+.korea-socials a:hover,
+#adminAccessBtn:hover{
+  background:rgba(242,216,143,.11)!important;
+  border-color:rgba(242,216,143,.34)!important;
+}
+.korea-socials a:active,
+#adminAccessBtn:active{transform:scale(.96)!important}
+.korea-socials svg{
+  width:15px!important;
+  height:15px!important;
   fill:currentColor!important;
 }
-.author-light-footer #adminAccessBtn svg{
-  width:17px!important;
-  height:17px!important;
+#adminAccessBtn svg{
+  width:16px!important;
+  height:16px!important;
   fill:none!important;
   stroke:currentColor!important;
   stroke-width:1.8!important;
   stroke-linecap:round!important;
   stroke-linejoin:round!important;
 }
-.author-light-footer .korea-handle{
-  color:#2ed28a!important;
-  font:700 12px Arial,sans-serif!important;
+.korea-handle{
+  color:#d9e4ef!important;
+  font:700 11px Arial,sans-serif!important;
   text-decoration:none!important;
   direction:ltr!important;
 }
@@ -1443,37 +1526,40 @@ body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
 .author-light-footer .footer-identity,
 .author-light-footer .footer-link{display:none!important}
 body.admin-mode #adminAccessBtn{
-  position:fixed!important;
-  left:16px!important;
-  bottom:max(16px,env(safe-area-inset-bottom))!important;
-  z-index:99990!important;
-  background:#0b6f55!important;
-  border-color:rgba(255,255,255,.28)!important;
-  color:#fff!important;
-  box-shadow:0 10px 28px rgba(3,31,69,.26)!important;
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  z-index:auto!important;
+  background:rgba(242,216,143,.16)!important;
+  border-color:rgba(242,216,143,.4)!important;
+  color:#f2d88f!important;
+  box-shadow:none!important;
 }
-body.admin-mode #adminAccessBtn:hover{background:#095d48!important}
 @media(max-width:680px){
-  .author-light-footer .footer-inner{
-    width:min(100% - 20px,1180px)!important;
-    min-height:0!important;
-    padding:13px 0!important;
-    gap:12px!important;
-    flex-direction:column!important;
+  .association-footer-shell{
+    width:min(100% - 20px,1180px);
+    min-height:0;
+    padding:16px 0;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
   }
-  .author-light-footer .korea-foot-brand{
-    flex-direction:column!important;
-    gap:4px!important;
-    text-align:center!important;
+  .association-logo-box{width:105px;height:54px}
+  .association-footer-copy strong{font-size:15px}
+  .association-footer-trip{text-align:right;white-space:normal}
+  .naif-footer-shell{
+    width:min(100% - 20px,1180px);
+    min-height:0;
+    padding:10px 0 12px;
+    flex-direction:column;
+    gap:8px;
   }
-  .author-light-footer .korea-foot-brand p{font-size:11px!important}
-  .author-light-footer .korea-footer-right{gap:7px!important}
-  body.admin-mode #adminAccessBtn{
-    left:10px!important;
-    bottom:max(10px,env(safe-area-inset-bottom))!important;
-  }
+  .korea-foot-brand{width:100%;justify-content:center}
+  .korea-footer-right{width:100%;justify-content:center;gap:7px}
+  .korea-handle{font-size:10.5px!important}
 }
-
 </style>
 </head>
 {% endcapture %}
@@ -2592,23 +2678,63 @@ body.admin-mode #adminAccessBtn:hover{background:#095d48!important}
 
 
 
-<script id="satisfaction-style-footer-v412-script">
+<script id="satisfaction-style-footer-v413-script">
 (function(){
   const footer=document.querySelector('footer.author-light-footer');
   const inner=footer?.querySelector('.container');
   const adminButton=document.getElementById('adminAccessBtn');
   if(!footer||!inner||!adminButton)return;
 
+  const associationLogoSource=
+    document.querySelector('.topbar .mini img[alt*="شعار الجمعية"]')?.getAttribute('src')||
+    document.querySelector('img[alt*="شعار الجمعية"]')?.getAttribute('src')||'';
+
+  const associationTier=document.createElement('div');
+  associationTier.className='association-footer-tier';
+
+  const associationShell=document.createElement('div');
+  associationShell.className='association-footer-shell';
+
+  const associationBrand=document.createElement('div');
+  associationBrand.className='association-footer-brand';
+
+  const associationLogoBox=document.createElement('div');
+  associationLogoBox.className='association-logo-box';
+  if(associationLogoSource){
+    const logo=document.createElement('img');
+    logo.src=associationLogoSource;
+    logo.alt='شعار جمعية ملاك المطاعم والمقاهي';
+    associationLogoBox.appendChild(logo);
+  }
+
+  const associationCopy=document.createElement('div');
+  associationCopy.className='association-footer-copy';
+  associationCopy.innerHTML='<strong>جمعية ملاك المطاعم والمقاهي</strong><span>Restaurant & Café Owners Association | المملكة العربية السعودية</span>';
+
+  const associationTrip=document.createElement('div');
+  associationTrip.className='association-footer-trip';
+  associationTrip.textContent='رحلة كوريا 2026 | Cafe Show Seoul';
+
+  associationBrand.append(associationLogoBox,associationCopy);
+  associationShell.append(associationBrand,associationTrip);
+  associationTier.appendChild(associationShell);
+
+  const naifTier=document.createElement('div');
+  naifTier.className='naif-footer-tier';
+
+  const naifShell=document.createElement('div');
+  naifShell.className='naif-footer-shell';
+
   const brand=document.createElement('div');
   brand.className='korea-foot-brand';
-  brand.innerHTML='<img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo-gold.png" alt="شعار نايف المحمدي"><p>مستشار الحوكمة وتطوير الأعمال</p>';
+  brand.innerHTML='<img src="https://almohammdin.github.io/emtidad/assets/images/naif-logo-gold.png" alt="شعار نايف المحمدي"><div class="korea-made-by"><span>تصميم وتنفيذ</span><strong>نايف المحمدي</strong></div>';
 
   const right=document.createElement('div');
   right.className='korea-footer-right';
 
   const socials=document.createElement('div');
   socials.className='korea-socials';
-  socials.setAttribute('aria-label','حسابات التواصل');
+  socials.setAttribute('aria-label','حسابات نايف المحمدي');
   socials.innerHTML=
     '<a href="https://x.com/almohammdin" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24"><path d="M4.4 3h4.8l3.8 5.1L17.5 3H20l-5.9 6.9L20.5 21h-4.8l-4.2-5.7L6.6 21H4l6.3-7.5L4.4 3Zm3.7 2 8.5 14h1.8L9.9 5H8.1Z"/></svg></a>'+
     '<a href="https://www.linkedin.com/in/almohammdin/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M5.2 8.4h3.2V19H5.2V8.4Zm1.6-5.2a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8Zm3.8 5.2h3.1v1.5h.1c.5-.8 1.6-1.8 3.5-1.8 3.3 0 4 2.2 4 5.1V19H18v-5.2c0-1.2 0-2.8-1.8-2.8s-2 1.3-2 2.7V19h-3.3V8.4Z"/></svg></a>'+
@@ -2622,17 +2748,23 @@ body.admin-mode #adminAccessBtn:hover{background:#095d48!important}
   handle.rel='noopener';
   handle.textContent='Almohammdin';
 
+  adminButton.classList.add('korea-admin-lock');
   right.append(socials,handle,adminButton);
-  inner.replaceChildren(brand,right);
+  naifShell.append(brand,right);
+  naifTier.appendChild(naifShell);
+
+  inner.replaceChildren(associationTier,naifTier);
 
   const locked='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>';
   const unlocked='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M9 10V7a4 4 0 0 1 7.5-2M12 14v2"/></svg>';
+
   function syncAdminLock(){
     const active=document.body.classList.contains('admin-mode');
     adminButton.innerHTML=active?unlocked:locked;
     adminButton.setAttribute('aria-label',active?'الخروج من الإدارة':'دخول الإدارة');
     adminButton.setAttribute('title',active?'الخروج من الإدارة':'دخول الإدارة');
   }
+
   syncAdminLock();
   new MutationObserver(syncAdminLock).observe(document.body,{attributes:true,attributeFilter:['class']});
 })();
