@@ -127,14 +127,38 @@ function renderProgram(){
   host.innerHTML=DAYS.map(day=>{const rows=getOrderedProgramRows(day);if(!rows.length)return'';return `<article class="published-day-card"><h3>${esc(day)}</h3>${rows.map(({r})=>`<div class="published-event"><span class="published-event-time">${esc(r.time||'—')}</span><strong class="published-event-title">${esc(r.title||'')}</strong>${r.details?`<span class="published-event-details">${esc(r.details)}</span>`:''}${r.place?`<span class="published-event-place">${r.maps?`<a href="${esc(r.maps)}" target="_blank" rel="noopener">${esc(r.place)}</a>`:esc(r.place)}</span>`:''}</div>`).join('')}</article>`}).join('');
 }
 {% endcapture %}
-{% capture program_public_render_v409_new %}function renderPublicProgram(){
+{% capture program_public_render_v409_new %}let programAdminHomeParent=null,programAdminHomeNextSibling=null;
+function rememberProgramAdminHome(programSection){
+  if(programAdminHomeParent)return;
+  programAdminHomeParent=programSection.parentNode;
+  programAdminHomeNextSibling=programSection.nextSibling;
+}
+function restoreProgramAdminHome(programSection){
+  if(!programAdminHomeParent||programSection.parentNode===programAdminHomeParent)return;
+  if(programAdminHomeNextSibling&&programAdminHomeNextSibling.parentNode===programAdminHomeParent){
+    programAdminHomeParent.insertBefore(programSection,programAdminHomeNextSibling);
+  }else{
+    programAdminHomeParent.appendChild(programSection);
+  }
+}
+function renderPublicProgram(){
   const publicShell=document.getElementById('public-program'),programSection=document.getElementById('program-admin');
   if(!publicShell||!programSection)return;
-  if(isAdmin){publicShell.hidden=true;publicShell.setAttribute('aria-hidden','true');return}
+  rememberProgramAdminHome(programSection);
+  if(isAdmin){
+    restoreProgramAdminHome(programSection);
+    programSection.hidden=false;
+    publicShell.hidden=true;
+    publicShell.setAttribute('aria-hidden','true');
+    return;
+  }
   const published=Boolean(state.programPublished)&&safeArray(state.program).some(programItemIsPublic);
   publicShell.hidden=!published;
   publicShell.setAttribute('aria-hidden',published?'false':'true');
-  if(!published)return;
+  if(!published){
+    restoreProgramAdminHome(programSection);
+    return;
+  }
   if(programSection.parentNode!==publicShell)publicShell.replaceChildren(programSection);
   programSection.hidden=false;
 }
@@ -1522,23 +1546,68 @@ body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
   text-decoration:none!important;
   direction:ltr!important;
 }
-.author-light-footer .public-admin-link,
 .author-light-footer .admin-mode-badge,
 .author-light-footer .footer-identity,
 .author-light-footer .footer-link{display:none!important}
 #floatingWhatsappBtn,
 .whatsapp-float-btn{display:none!important}
-body.admin-mode #adminAccessBtn{
-  position:static!important;
-  left:auto!important;
-  right:auto!important;
-  top:auto!important;
-  bottom:auto!important;
-  z-index:auto!important;
-  background:rgba(242,216,143,.16)!important;
-  border-color:rgba(242,216,143,.4)!important;
+#publicAdminLink{
+  width:28px!important;
+  height:28px!important;
+  min-width:28px!important;
+  min-height:28px!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid rgba(242,216,143,.18)!important;
+  border-radius:8px!important;
+  display:grid!important;
+  place-items:center!important;
+  background:rgba(255,255,255,.055)!important;
   color:#f2d88f!important;
   box-shadow:none!important;
+  text-decoration:none!important;
+}
+#publicAdminLink svg{
+  width:14px!important;
+  height:14px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.8!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+body.admin-route #publicAdminLink{display:none!important}
+body.admin-mode #adminAccessBtn{
+  position:fixed!important;
+  left:16px!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:max(16px,env(safe-area-inset-bottom,0px))!important;
+  z-index:99990!important;
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+  border-radius:12px!important;
+  display:grid!important;
+  place-items:center!important;
+  background:#8f2135!important;
+  color:#fff!important;
+  box-shadow:0 10px 28px rgba(39,12,20,.28)!important;
+}
+body.admin-mode #adminAccessBtn:hover{background:#771a2b!important}
+@media(max-width:700px){
+  body.admin-mode #adminAccessBtn{
+    left:10px!important;
+    bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+  }
 }
 @media(max-width:680px){
   .association-footer-shell{
@@ -2415,7 +2484,7 @@ body.admin-mode #adminAccessBtn{
     removeFloatingWhatsapp();
     function stampVersion(){
       var version=document.querySelector('.private-version-tag');
-      if(version&&version.textContent!=='v40.5')version.textContent='v40.5';
+      if(version&&version.textContent!=='v40.6')version.textContent='v40.6';
     }
     stampVersion();
     window.setTimeout(stampVersion,700);
@@ -2801,6 +2870,7 @@ body.admin-mode #adminAccessBtn{
   const footer=document.querySelector('footer.author-light-footer');
   const inner=footer?.querySelector('.container');
   const adminButton=document.getElementById('adminAccessBtn');
+  const publicAdminLink=document.getElementById('publicAdminLink');
   if(!footer||!inner||!adminButton)return;
 
   const associationLogoSource=
@@ -2895,7 +2965,15 @@ body.admin-mode #adminAccessBtn{
   handle.textContent='@almohammdin';
 
   adminButton.classList.add('korea-admin-lock');
-  right.append(socials,handle,adminButton);
+  if(publicAdminLink){
+    publicAdminLink.classList.add('korea-admin-lock','korea-public-admin-lock');
+    publicAdminLink.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>';
+    publicAdminLink.setAttribute('aria-label','دخول الإدارة');
+    publicAdminLink.setAttribute('title','دخول الإدارة');
+  }
+  right.append(socials,handle);
+  if(publicAdminLink)right.appendChild(publicAdminLink);
+  right.appendChild(adminButton);
   naifShell.append(brand,right);
   naifTier.appendChild(naifShell);
 
