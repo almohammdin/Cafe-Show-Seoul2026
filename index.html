@@ -97,9 +97,25 @@ function normalizePublic(remote){const base=clone(DEFAULT_STATE);return {program
 {% assign page_source = page_source | replace: program_default_v409_old, program_default_v409_new %}
 {% capture program_render_v409_old %}function renderProgram(){const host=document.getElementById('programDays');if(!host)return;const dayCards=DAYS.map(day=>{const rows=getOrderedProgramRows(day).filter(x=>!activeProgramCategory||x.r.category===activeProgramCategory);if(activeProgramCategory&&!rows.length)return'';return `<div class="day-card"><div class="day-head"><h3>${day}</h3><div class="day-actions"><button type="button" class="day-share compact-service-btn" data-share-day="${day}" ${rows.length?'':'disabled'}>${actionIcon('share')}<span>مشاركة اليوم</span></button>${isAdmin?`<button class="add-btn compact-service-btn" data-add="program" data-date="${day}" type="button">${actionIcon('plus')}<span>إضافة بند</span></button>`:''}</div></div><div class="events" data-day="${esc(day)}">${rows.length?rows.map(({r,i})=>`<div class="event-row ${catClass(r.category)}" data-edit="program" data-index="${i}" data-program-day="${esc(day)}"><span class="cat-chip">${esc(r.category)}</span><span class="event-time">${esc(r.time||'—')}</span><span class="event-title">${esc(r.title)}</span><span class="event-details">${esc(r.details)}</span><span class="event-place">${r.maps?`<a href="${esc(r.maps)}" target="_blank">${esc(r.place||'الموقع')}</a>`:esc(r.place||'')}</span>${programRowActions(i)}${programDragHandle(i,day)}</div>`).join(''):`<div class="muted empty-day">لم يُعتمد أي نشاط لهذا اليوم بعد.<br><small>اختر من جدول الأنشطة والزيارات المقترحة أو أضف بندًا مباشرة.</small></div>`}</div></div>`}).join('');host.innerHTML=dayCards||`<div class="muted empty-day" style="background:#fff;padding:28px;text-align:center;border-radius:18px">لا توجد أنشطة ضمن تصنيف «${esc(activeProgramCategory)}» في برنامج الرحلة.</div>`;host.querySelectorAll('[data-share-day]').forEach(btn=>btn.addEventListener('click',()=>shareProgramImage([btn.dataset.shareDay],`جمعية-ملاك-المطاعم-والمقاهي-برنامج-${btn.dataset.shareDay}-سيئول-2026.png`,activeProgramCategory)));if(isAdmin)initProgramDragAndDrop(host)}
 {% endcapture %}
-{% capture program_render_v409_new %}function programItemIsPublic(r){return String(r?.status||'')==='معتمد'}
+{% capture program_render_v409_new %}function programItemIsPublic(r){const status=String(r?.status||'مقترح');return status!=='ملغي'&&status!=='مؤجل'}
 function programAdminBadge(r){const status=String(r?.status||'مقترح'),tone=status==='معتمد'?'is-approved':status==='قيد التواصل'?'is-working':status==='مؤجل'?'is-postponed':status==='ملغي'?'is-cancelled':'is-proposed';return `<span class="program-admin-status-badge ${tone}">${esc(status)}</span>`}
-function renderProgram(){const host=document.getElementById('programDays');if(!host)return;const dayCards=DAYS.map(day=>{const rows=getOrderedProgramRows(day).filter(x=>!activeProgramCategory||x.r.category===activeProgramCategory);if(activeProgramCategory&&!rows.length)return'';return `<div class="day-card"><div class="day-head"><h3>${day}</h3><div class="day-actions"><button type="button" class="day-share compact-service-btn" data-share-day="${day}" ${rows.length?'':'disabled'}>${actionIcon('share')}<span>مشاركة اليوم</span></button>${isAdmin?`<button class="add-btn compact-service-btn" data-add="program" data-date="${day}" type="button">${actionIcon('plus')}<span>إضافة بند</span></button>`:''}</div></div><div class="events" data-day="${esc(day)}">${rows.length?rows.map(({r,i})=>`<div class="event-row ${catClass(r.category)}" data-edit="program" data-index="${i}" data-program-day="${esc(day)}"><span class="cat-chip">${esc(r.category)}</span><span class="event-time">${esc(r.time||'—')}</span><span class="event-title">${esc(r.title)}${isAdmin?programAdminBadge(r):''}</span><span class="event-details">${esc(r.details)}</span><span class="event-place">${r.maps?`<a href="${esc(r.maps)}" target="_blank">${esc(r.place||'الموقع')}</a>`:esc(r.place||'')}</span>${programRowActions(i)}${programDragHandle(i,day)}</div>`).join(''):`<div class="muted empty-day">لم يُعتمد أي نشاط لهذا اليوم بعد.<br><small>اختر من جدول الأنشطة والزيارات المقترحة أو أضف بندًا مباشرة.</small></div>`}</div></div>`}).join('');host.innerHTML=dayCards||`<div class="muted empty-day" style="background:#fff;padding:28px;text-align:center;border-radius:18px">لا توجد أنشطة ضمن تصنيف «${esc(activeProgramCategory)}» في برنامج الرحلة.</div>`;host.querySelectorAll('[data-share-day]').forEach(btn=>btn.addEventListener('click',()=>shareProgramImage([btn.dataset.shareDay],`جمعية-ملاك-المطاعم-والمقاهي-برنامج-${btn.dataset.shareDay}-سيئول-2026.png`,activeProgramCategory)));if(isAdmin)initProgramDragAndDrop(host)}
+function renderProgram(){
+  const host=document.getElementById('programDays');
+  if(!host)return;
+  document.body.classList.toggle('program-table-live',!isAdmin&&Boolean(state.programPublished));
+  const dayCards=DAYS.map(day=>{
+    const rows=getOrderedProgramRows(day).filter(x=>(isAdmin||programItemIsPublic(x.r))&&(!activeProgramCategory||x.r.category===activeProgramCategory));
+    if(!rows.length){
+      if(!isAdmin)return '';
+      if(activeProgramCategory)return '';
+      return `<div class='day-card'><div class='day-head'><h3>${day}</h3><div class='day-actions'><button class='add-btn compact-service-btn' data-add='program' data-date='${day}' type='button'>${actionIcon('plus')}<span>إضافة بند</span></button></div></div><div class='events' data-day='${esc(day)}'><div class='muted empty-day'>لم يُعتمد أي نشاط لهذا اليوم بعد.<br><small>اختر من جدول الأنشطة والزيارات المقترحة أو أضف بندًا مباشرة.</small></div></div></div>`;
+    }
+    return `<div class='day-card'><div class='day-head'><h3>${day}</h3><div class='day-actions'><button type='button' class='day-share compact-service-btn' data-share-day='${day}'>${actionIcon('share')}<span>مشاركة اليوم</span></button>${isAdmin?`<button class='add-btn compact-service-btn' data-add='program' data-date='${day}' type='button'>${actionIcon('plus')}<span>إضافة بند</span></button>`:''}</div></div><div class='events' data-day='${esc(day)}'>${rows.map(({r,i})=>`<div class='event-row ${catClass(r.category)}' data-edit='program' data-index='${i}' data-program-day='${esc(day)}'><span class='cat-chip'>${esc(r.category)}</span><span class='event-time'>${esc(r.time||'—')}</span><span class='event-title'>${esc(r.title)}${isAdmin?programAdminBadge(r):''}</span><span class='event-details'>${esc(r.details)}</span><span class='event-place'>${r.maps?`<a href='${esc(r.maps)}' target='_blank'>${esc(r.place||'الموقع')}</a>`:esc(r.place||'')}</span>${programRowActions(i)}${programDragHandle(i,day)}</div>`).join('')}</div></div>`;
+  }).join('');
+  host.innerHTML=dayCards||`<div class='muted empty-day' style='background:#fff;padding:28px;text-align:center;border-radius:18px'>لا توجد أنشطة ضمن تصنيف «${esc(activeProgramCategory)}» في برنامج الرحلة.</div>`;
+  host.querySelectorAll('[data-share-day]').forEach(btn=>btn.addEventListener('click',()=>shareProgramImage([btn.dataset.shareDay],`جمعية-ملاك-المطاعم-والمقاهي-برنامج-${btn.dataset.shareDay}-سيئول-2026.png`,activeProgramCategory)));
+  if(isAdmin)initProgramDragAndDrop(host);
+}
 {% endcapture %}
 {% assign page_source = page_source | replace: program_render_v409_old, program_render_v409_new %}
 {% capture program_public_render_v409_old %}function renderPublicProgram(){
@@ -112,49 +128,15 @@ function renderProgram(){const host=document.getElementById('programDays');if(!h
 }
 {% endcapture %}
 {% capture program_public_render_v409_new %}function renderPublicProgram(){
-  const section=document.getElementById('public-program'),
-        host=document.getElementById('publicProgramDays'),
-        source=document.getElementById('programDays'),
-        publicLegend=document.getElementById('publicProgramLegend'),
-        sourceLegend=document.getElementById('programLegend');
-  if(!section||!host||!source)return;
-
-  const visibleRows=safeArray(state.program).filter(programItemIsPublic);
-  const published=Boolean(state.programPublished)&&visibleRows.length>0;
-  section.hidden=!published;
-  section.setAttribute('aria-hidden',published?'false':'true');
-
-  if(!published){
-    host.innerHTML='';
-    if(publicLegend)publicLegend.innerHTML='';
-    return;
-  }
-
-  if(publicLegend&&sourceLegend)publicLegend.innerHTML=sourceLegend.innerHTML;
-
-  /* نفس جدول برنامج الرحلة الحالي حرفيا، ثم نخفي البنود غير المناسبة للنشر */
-  host.innerHTML=source.innerHTML;
-
-  host.querySelectorAll('.day-card').forEach(card=>{
-    card.querySelectorAll('.event-row').forEach(row=>{
-      const index=Number(row.dataset.index);
-      const item=Number.isInteger(index)?state.program[index]:null;
-      if(!item||!programItemIsPublic(item))row.remove();
-    });
-
-    /* عناصر الإدارة فقط لا تظهر في النسخة المنشورة */
-    card.querySelectorAll('.program-admin-status-badge,.program-row-actions,.row-drag-handle,.add-btn').forEach(node=>node.remove());
-
-    if(!card.querySelector('.event-row'))card.remove();
-  });
-
-  host.querySelectorAll('[data-share-day]').forEach(btn=>{
-    btn.addEventListener('click',()=>shareProgramImage(
-      [btn.dataset.shareDay],
-      'جمعية-ملاك-المطاعم-والمقاهي-برنامج-'+btn.dataset.shareDay+'-سيئول-2026.png',
-      ''
-    ));
-  });
+  const publicShell=document.getElementById('public-program'),programSection=document.getElementById('program-admin');
+  if(!publicShell||!programSection)return;
+  if(isAdmin){publicShell.hidden=true;publicShell.setAttribute('aria-hidden','true');return}
+  const published=Boolean(state.programPublished)&&safeArray(state.program).some(programItemIsPublic);
+  publicShell.hidden=!published;
+  publicShell.setAttribute('aria-hidden',published?'false':'true');
+  if(!published)return;
+  if(programSection.parentNode!==publicShell)publicShell.replaceChildren(programSection);
+  programSection.hidden=false;
 }
 {% endcapture %}
 {% assign page_source = page_source | replace: program_public_render_v409_old, program_public_render_v409_new %}
@@ -1350,6 +1332,20 @@ body.admin-route .hero .stat{animation:none!important;transition:none!important}
 .program-admin-status-badge.is-proposed{background:#eef2f5;color:#526474}
 .program-admin-status-badge.is-postponed{background:#f2edf8;color:#6b4d86}
 .program-admin-status-badge.is-cancelled{background:#fbe9e9;color:#9a3f3f}
+/* program-exact-public-v410 */
+body:not(.admin-mode) #public-program{padding:0!important;margin:0!important;max-width:none!important;background:none!important;box-shadow:none!important;border:0!important}
+body:not(.admin-mode) #public-program #program-admin{display:block!important}
+body:not(.admin-mode) #public-program .published-program-head,
+body:not(.admin-mode) #public-program .published-program-badge,
+body:not(.admin-mode) #public-program #publicProgramLegend,
+body:not(.admin-mode) #public-program #publicProgramDays{display:none!important}
+body:not(.admin-mode) #program-admin .program-publish-status,
+body:not(.admin-mode) #program-admin .program-publish-toggle,
+body:not(.admin-mode) #program-admin .add-btn,
+body:not(.admin-mode) #program-admin .program-admin-status-badge,
+body:not(.admin-mode) #program-admin .program-row-actions,
+body:not(.admin-mode) #program-admin .row-drag-handle{display:none!important}
+
 </style>
 </head>
 {% endcapture %}
