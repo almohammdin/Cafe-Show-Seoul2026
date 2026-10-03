@@ -2271,24 +2271,10 @@ body.admin-mode #adminAccessBtn{
     targets.forEach(function(item){observer.observe(item)});
   }
 
-  function setupWhatsapp(){
+  function removeFloatingWhatsapp(){
     var button=document.getElementById('floatingWhatsappBtn');
-    var hero=document.querySelector('header.hero');
-    if(!button||!hero)return;
-    var scheduled=false;
-    function sync(){
-      scheduled=false;
-      var threshold=Math.max(520,hero.offsetHeight*.58);
-      button.classList.toggle('is-compact',window.scrollY>threshold);
-    }
-    function schedule(){
-      if(scheduled)return;
-      scheduled=true;
-      requestAnimationFrame(sync);
-    }
-    window.addEventListener('scroll',schedule,{passive:true});
-    window.addEventListener('resize',schedule,{passive:true});
-    sync();
+    if(button)button.remove();
+    document.querySelectorAll('.whatsapp-float-btn').forEach(function(item){item.remove()});
   }
 
   function start(){
@@ -2297,7 +2283,7 @@ body.admin-mode #adminAccessBtn{
     setupNavigation();
     setupActivities();
     setupSectionReveals();
-    setupWhatsapp();
+    removeFloatingWhatsapp();
     function stampVersion(){
       var version=document.querySelector('.private-version-tag');
       if(version&&version.textContent!=='v40.5')version.textContent='v40.5';
