@@ -2,6 +2,13 @@
 ---
 {% comment %}pages-redeploy-main-20260806-2230{% endcomment %}
 {% capture page_source %}{% include_relative original.html %}{% endcapture %}
+{% capture program_share_admin_style %}<style id="program-share-admin-only">
+body:not(.admin-mode) #shareProgramAll,
+body:not(.admin-mode) .day-share {
+  display: none !important;
+}
+</style></head>{% endcapture %}
+{% assign page_source = page_source | replace: '</head>', program_share_admin_style %}
 {% assign page_source = page_source | replace: 'seoul-trip-preview.png', 'seoul-trip-preview-v2.png' %}
 {% assign page_source = page_source | replace: '<span>اهتمام مبدئي</span>', '<span>المقاعد محدودة</span>' %}
 {% assign page_source = page_source | replace: 'التسجيل والتواصل عبر واتساب', 'سجّل اهتمامك عبر واتساب' %}
